@@ -1,17 +1,30 @@
 import { LoginForm } from "@/components/login-form"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { MinimalLayout } from "@/components/layouts/minimal-layout"
+import { useCallback, useContext } from "react"
+import type { UseAuthReturn, UserCredential } from "../hooks/useAuth"
+import { toast } from "sonner"
+import { AuthContext } from "../contexts/auth.context"
+import { useNavigate, useSearchParams } from "react-router"
 
 function LoginPage() {
+  const { handleLogin: handleLoginAuth } = useContext(AuthContext) as UseAuthReturn
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const redirectPath = searchParams.get('redirect') ?? '/';
+
+  const handleLogin = useCallback(async (credential: UserCredential) => {
+    try {
+      await handleLoginAuth(credential)
+      navigate(redirectPath)
+    } catch (error) {
+      toast.error((error as Error).message)
+    }
+  }, [redirectPath]);
+
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="absolute top-6 right-6">
-        <ThemeToggle />
-      </div>
-      
-      <div className="w-full max-w-sm">
-        <LoginForm />
-      </div>
-    </div>
+    <MinimalLayout>
+      <LoginForm handleLogin={handleLogin}/>
+    </MinimalLayout>
   )
 }
 

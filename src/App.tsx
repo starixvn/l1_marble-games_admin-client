@@ -1,12 +1,8 @@
-import { Route, Routes, Navigate } from "react-router"
-import LoginPage from "./pages/login.page"
+import { RouteHandler } from "@/routes/routes"
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="/login" element={<LoginPage />} />
-    </Routes>
+    <RouteHandler />
   )
 }
 
