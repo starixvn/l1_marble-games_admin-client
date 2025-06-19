@@ -1,21 +1,32 @@
-import { Button } from "@/components/ui/button";
-import { AuthContext } from "@/contexts/auth.context";
-import { useCallback, useContext } from "react";
-import type { UseAuthReturn } from "@/hooks/useAuth";
+import { AppSidebar } from "@/components/app-sidebar"
+import { SiteHeader } from "@/components/site-header"
+import {
+  SidebarInset,
+  SidebarProvider,
+} from "@/components/ui/sidebar"
+import { useOperator } from "@/hooks/useOperator";
+import { OperatorTable } from "../components/operator-table";
 
-const HomePage = () => {
-  const { handleLogout } = useContext(AuthContext) as UseAuthReturn;
+export default function Page() {
 
-
-  const handleLogoutClick = useCallback(() => {
-    handleLogout();
-  }, [handleLogout]);
+  const { operatorsQuery } = useOperator()
 
   return (
-    <div>
-      <Button onClick={handleLogoutClick}>Logout</Button>
-    </div>
-  );
-};
-
-export default HomePage;
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--header-height": "calc(var(--spacing) * 12)",
+        } as React.CSSProperties
+      }
+    >
+      <AppSidebar variant="inset" />
+      <SidebarInset>
+        <SiteHeader />
+        <div className="flex flex-1 flex-col">
+            <OperatorTable data={operatorsQuery.data?.data || []} />
+          </div>
+      </SidebarInset>
+    </SidebarProvider>
+  )
+}

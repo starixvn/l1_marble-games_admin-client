@@ -1,10 +1,11 @@
+import { useContext } from 'react';
+import { useLocation } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import type { UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
-import { useNavigate, useLocation } from 'react-router';
 import { AuthContext } from '@/contexts/auth.context';
-import { UnauthorizedError } from '@/shared/errors';
-import { useContext } from 'react';
-import type { UseAuthReturn } from './useAuth';
+import type { UseAuthReturn } from '@/hooks/useAuth';
+import { isUnauthorizedError } from '@/shared/errors';
+import { isLoginPage } from '@/shared/location';
 
 export function useErrorHandledQueryCall<
   TQueryFnData = unknown,
@@ -14,16 +15,14 @@ export function useErrorHandledQueryCall<
 >(
   options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
 ): UseQueryResult<TData, TError> {
-  const navigate = useNavigate();
   const location = useLocation();
   const { handleLogout } = useContext(AuthContext) as UseAuthReturn;
 
   const wrappedOptions = {
     ...options,
     throwOnError: (error: TError) => {
-      if (error instanceof UnauthorizedError && location.pathname !== '/login') {
+      if (isUnauthorizedError(error) && !isLoginPage(location.pathname)) {
         handleLogout();
-        navigate('/login', { replace: true });
         return false;
       }
       return true;

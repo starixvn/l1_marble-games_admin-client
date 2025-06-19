@@ -8,7 +8,7 @@ interface AuthProviderProps {
 }
 
 
-const AuthContext = createContext<UseAuthReturn | undefined>(undefined);
+const AuthContext = createContext<UseAuthReturn>({} as UseAuthReturn);
 
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {

@@ -1,10 +1,6 @@
-export class ApiError extends Error {
-}
+import axios from "axios";
 
-export class UnauthorizedError extends ApiError {
-  constructor(message: string) {
-    super(message);
-    this.name = 'UnauthorizedError';
-  }
-}
 
+export function isUnauthorizedError(error: unknown) {
+  return axios.isAxiosError(error) && error.response?.status === 401;
+}

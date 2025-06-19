@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { login } from '../api/auth.api';
+import { login } from '@/api/auth.api';
+import { AUTH_TOKEN_KEY } from '@/api/private.axios';
 
 interface AuthState {
   token: string | null;
@@ -18,7 +19,6 @@ export interface UserCredential {
   password: string;
 }
 
-const AUTH_TOKEN_KEY = 'auth_token';
 
 export const useAuth = (): UseAuthReturn => {
   const [authState, setAuthState] = useState<AuthState>({
@@ -69,7 +69,9 @@ export const useAuth = (): UseAuthReturn => {
 
   const handleLogout = useCallback(() => {
     try {
-      localStorage.removeItem(AUTH_TOKEN_KEY);
+      if (localStorage.getItem(AUTH_TOKEN_KEY)) {
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+      }
       setAuthState({
         token: null,
         isAuthenticated: false,

@@ -12,6 +12,10 @@ const routes = [
         path: '/login',
         element: <LoginPage />,
         public: true,
+    },
+    {
+        path: '*',
+        element: <HomePage />,
     }
 ]
 
