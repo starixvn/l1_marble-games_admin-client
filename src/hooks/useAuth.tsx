@@ -36,6 +36,12 @@ export const useAuth = (): UseAuthReturn => {
           isAuthenticated: true,
           isLoading: false,
         });
+      } else {
+        setAuthState({
+          token: null,
+          isAuthenticated: false,
+          isLoading: false,
+        });
       }
 
     } catch (error) {
