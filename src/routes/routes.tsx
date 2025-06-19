@@ -9,6 +9,10 @@ const routes = [
         element: <HomePage />,
     },
     {
+        path: '/operators',
+        element: <HomePage />,
+    },
+    {
         path: '/login',
         element: <LoginPage />,
         public: true,

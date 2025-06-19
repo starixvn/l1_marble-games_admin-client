@@ -1,7 +1,8 @@
 import * as React from "react"
 import {
   IconUser,
-  IconSettings
+  IconSettings,
+  IconHome
 } from "@tabler/icons-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -21,6 +22,11 @@ const data = {
     name: "admin"
   },
   navMain: [
+    {
+      title: "Home",
+      url: "/",
+      icon: IconHome,
+    },
     {
       title: "Operators",
       url: "/operators",
