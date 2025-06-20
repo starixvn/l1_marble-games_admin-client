@@ -1,3 +1,3 @@
 window.appConfig = {
-    apiBaseUrl: '',
+    apiBaseUrl: 'api',
 }
