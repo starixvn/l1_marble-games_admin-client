@@ -1,7 +1,6 @@
-import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogClose } from '@radix-ui/react-dialog'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { DialogHeader, DialogFooter } from '@/components/ui/dialog'
+import { DialogHeader, DialogFooter, Dialog, DialogContent, DialogTitle, DialogDescription, DialogClose } from '@/components/ui/dialog'
 
 export const OperatorChangePasswordDialog = ({
   isOpen,

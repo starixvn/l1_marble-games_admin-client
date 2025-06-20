@@ -1,5 +1,5 @@
-import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogClose } from '@radix-ui/react-dialog'
-import { Label } from '@radix-ui/react-dropdown-menu'
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogClose } from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { DialogHeader, DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
