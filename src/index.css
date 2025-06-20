@@ -118,3 +118,24 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Sonner Toast Styling */
+[data-sonner-toaster] [data-type="error"] {
+  color: #ef4444 !important;
+  border-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+[data-sonner-toaster] [data-type="success"] {
+  color: #22c55e !important;
+  border-color: rgba(34, 197, 94, 0.2) !important;
+}
+
+[data-sonner-toaster] [data-type="warning"] {
+  color: #eab308 !important;
+  border-color: rgba(234, 179, 8, 0.2) !important;
+}
+
+[data-sonner-toaster] [data-type="info"] {
+  color: #3b82f6 !important;
+  border-color: rgba(59, 130, 246, 0.2) !important;
+}

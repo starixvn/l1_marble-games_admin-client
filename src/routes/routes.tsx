@@ -1,7 +1,9 @@
 import { Route, Routes } from "react-router";
-import HomePage from "../pages/home.page";
-import LoginPage from "../pages/login.page";
-import { PrivateRoute } from "./private-route";
+import HomePage from "@/pages/home.page";
+import LoginPage from "@/pages/login.page";
+import { PrivateRoute } from "@/routes/private-route";
+import OperatorsPage from "@/pages/operators.page";
+import NotFoundPage from "@/pages/notfound.page";
 
 const routes = [
     {
@@ -10,7 +12,7 @@ const routes = [
     },
     {
         path: '/operators',
-        element: <HomePage />,
+        element: <OperatorsPage />,
     },
     {
         path: '/login',
@@ -19,7 +21,7 @@ const routes = [
     },
     {
         path: '*',
-        element: <HomePage />,
+        element: <NotFoundPage />,
     }
 ]
 

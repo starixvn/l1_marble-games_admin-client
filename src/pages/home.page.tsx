@@ -1,36 +1,15 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import { SiteHeader } from "@/components/site-header"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
-import { useOperator } from "@/hooks/useOperator";
-import { OperatorTable } from "@/components/operator-table";
-import { Toaster } from "@/components/ui/sonner";
+import { AdminLayout } from "@/components/layouts/admin-layot";
 
 export default function Page() {
 
-  const { operatorsQuery } = useOperator()
 
   return (
-    <>
-      <SidebarProvider
-        style={
-          {
-            "--sidebar-width": "calc(var(--spacing) * 72)",
-            "--header-height": "calc(var(--spacing) * 12)",
-          } as React.CSSProperties
-        }
-      >
-        <AppSidebar variant="inset" />
-        <SidebarInset>
-          <SiteHeader />
-          <div className="flex flex-1 flex-col">
-              <OperatorTable data={operatorsQuery.data?.data ?? []} />
-            </div>
-        </SidebarInset>
-      </SidebarProvider>
-      <Toaster />
-    </>
+    <AdminLayout>
+      <div className="flex items-center justify-center min-h-full">
+        <h4 className="scroll-m-20 text-xl font-semibold tracking-tight text-center ">
+          Use the sidebar to navigate to start
+        </h4>
+      </div>
+    </AdminLayout>
   )
 }
