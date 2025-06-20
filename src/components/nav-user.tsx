@@ -1,22 +1,9 @@
-import {
-  IconDotsVertical,
-  IconLogout,
-} from "@tabler/icons-react"
+import { IconDotsVertical, IconLogout } from '@tabler/icons-react'
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar"
-import { useContext } from "react"
-import { AuthContext } from "@/contexts/auth.context"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
+import { useContext } from 'react'
+import { AuthContext } from '@/contexts/auth.context'
 
 export function NavUser({
   user,
@@ -26,7 +13,7 @@ export function NavUser({
   }
 }>) {
   const { isMobile } = useSidebar()
-  const { handleLogout } = useContext(AuthContext);
+  const { handleLogout } = useContext(AuthContext)
 
   return (
     <SidebarMenu>
@@ -45,13 +32,13 @@ export function NavUser({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
+            side={isMobile ? 'bottom' : 'right'}
             align="end"
             sideOffset={4}
           >
             <DropdownMenuItem onClick={handleLogout}>
               <IconLogout />
-                Log out
+              Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -1,7 +1,7 @@
 interface Window {
-    appConfig?: AppConfig;
+  appConfig?: AppConfig
 }
 
 interface AppConfig {
-    apiBaseUrl: string;
+  apiBaseUrl: string
 }

@@ -1,8 +1,6 @@
-import { AdminLayout } from "@/components/layouts/admin-layot";
+import { AdminLayout } from '@/components/layouts/admin-layot'
 
 export default function Page() {
-
-
   return (
     <AdminLayout>
       <div className="flex items-center justify-center min-h-full">

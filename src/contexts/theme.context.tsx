@@ -14,17 +14,17 @@ export function ThemeProvider({ children }: Readonly<{ children: React.ReactNode
   const [theme, setTheme] = useState<Theme>(() => {
     const stored = localStorage.getItem('theme') as Theme
     if (stored) return stored
-    
+
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   })
 
   useEffect(() => {
     const root = window.document.documentElement
-    
+
     root.classList.remove('light', 'dark')
-    
+
     root.classList.add(theme)
-    
+
     localStorage.setItem('theme', theme)
   }, [theme])
 
@@ -32,17 +32,16 @@ export function ThemeProvider({ children }: Readonly<{ children: React.ReactNode
     setTheme(theme === 'light' ? 'dark' : 'light')
   }, [theme])
 
-  const contextValue = useMemo(() => ({
-    theme,
-    setTheme,
-    toggleTheme
-  }), [theme, setTheme, toggleTheme])
-
-  return (
-    <ThemeContext.Provider value={contextValue}>
-      {children}
-    </ThemeContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      theme,
+      setTheme,
+      toggleTheme,
+    }),
+    [theme, setTheme, toggleTheme],
   )
+
+  return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>
 }
 
 export function useTheme() {
@@ -51,4 +50,4 @@ export function useTheme() {
     throw new Error('useTheme must be used within a ThemeProvider')
   }
   return context
-} 
+}

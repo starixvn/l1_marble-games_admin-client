@@ -1,9 +1,7 @@
-import { RouteHandler } from "@/routes/routes"
+import { RouteHandler } from '@/routes/routes'
 
 function App() {
-  return (
-    <RouteHandler />
-  )
+  return <RouteHandler />
 }
 
 export default App
