@@ -3,7 +3,6 @@ import { useLocation } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import type { UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 import { AuthContext } from '@/contexts/auth.context';
-import type { UseAuthReturn } from '@/hooks/useAuth';
 import { isUnauthorizedError } from '@/shared/errors';
 import { isLoginPage } from '@/shared/location';
 
@@ -16,7 +15,7 @@ export function useErrorHandledQueryCall<
   options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
 ): UseQueryResult<TData, TError> {
   const location = useLocation();
-  const { handleLogout } = useContext(AuthContext) as UseAuthReturn;
+  const { handleLogout } = useContext(AuthContext);
 
   const wrappedOptions = {
     ...options,
@@ -26,6 +25,12 @@ export function useErrorHandledQueryCall<
         return false;
       }
       return true;
+    },
+    retry: (failureCount: number, error: TError) => {
+      if (isUnauthorizedError(error)) {
+        return false;
+      }
+      return failureCount < 3;
     },
   };
 

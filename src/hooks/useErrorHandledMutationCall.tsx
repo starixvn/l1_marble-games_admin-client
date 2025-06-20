@@ -3,7 +3,6 @@ import type { UseMutationOptions, UseMutationResult } from '@tanstack/react-quer
 import { useLocation } from 'react-router';
 import { AuthContext } from '@/contexts/auth.context';
 import { useContext } from 'react';
-import type { UseAuthReturn } from '@/hooks/useAuth';
 import { isUnauthorizedError } from '@/shared/errors';
 import { isLoginPage } from '@/shared/location';
 
@@ -16,7 +15,7 @@ export function useErrorHandledMutationCall<
   options: UseMutationOptions<TData, TError, TVariables, TContext>
 ): UseMutationResult<TData, TError, TVariables, TContext> {
   const location = useLocation();
-  const { handleLogout } = useContext(AuthContext) as UseAuthReturn;
+  const { handleLogout } = useContext(AuthContext);
 
   const wrappedOptions = {
     ...options,
@@ -26,6 +25,12 @@ export function useErrorHandledMutationCall<
         return false;
       }
       return true;
+    },
+    retry: (failureCount: number, error: TError) => {
+      if (isUnauthorizedError(error)) {
+        return false;
+      }
+      return failureCount < 3;
     },
   };
 

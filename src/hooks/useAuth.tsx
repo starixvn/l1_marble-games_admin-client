@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { login } from '@/api/auth.api';
-import { AUTH_TOKEN_KEY } from '@/api/private.axios';
+import { AUTH_TOKEN_KEY, globalAuthEventEmitter } from '@/api/private.axios';
 
 interface AuthState {
   token: string | null;
@@ -28,6 +28,9 @@ export const useAuth = (): UseAuthReturn => {
   });
 
   useEffect(() => {
+
+    globalAuthEventEmitter.addEventListener('logout', handleLogout);
+
     try {
       const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
       if (storedToken) {
@@ -51,6 +54,10 @@ export const useAuth = (): UseAuthReturn => {
         isAuthenticated: false,
         isLoading: false,
       });
+    }
+
+    return () => {
+      globalAuthEventEmitter.removeEventListener('logout', handleLogout);
     }
   }, []);
 
