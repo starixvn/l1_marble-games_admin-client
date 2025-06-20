@@ -5,28 +5,32 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { useOperator } from "@/hooks/useOperator";
-import { OperatorTable } from "../components/operator-table";
+import { OperatorTable } from "@/components/operator-table";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function Page() {
 
   const { operatorsQuery } = useOperator()
 
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader />
-        <div className="flex flex-1 flex-col">
-            <OperatorTable data={operatorsQuery.data?.data ?? []} />
-          </div>
-      </SidebarInset>
-    </SidebarProvider>
+    <>
+      <SidebarProvider
+        style={
+          {
+            "--sidebar-width": "calc(var(--spacing) * 72)",
+            "--header-height": "calc(var(--spacing) * 12)",
+          } as React.CSSProperties
+        }
+      >
+        <AppSidebar variant="inset" />
+        <SidebarInset>
+          <SiteHeader />
+          <div className="flex flex-1 flex-col">
+              <OperatorTable data={operatorsQuery.data?.data ?? []} />
+            </div>
+        </SidebarInset>
+      </SidebarProvider>
+      <Toaster />
+    </>
   )
 }

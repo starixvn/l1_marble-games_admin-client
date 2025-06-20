@@ -33,7 +33,7 @@ export const updateOperatorName = async (request: UpdateOperatorNameRequest) => 
 
 export const generatePassword = async (query: OperatorQuery) => {
     validateOperatorQuery(query);
-    return privateApiClient.post('/api/operator/generatePassword', { params: query });
+    return privateApiClient.post('/api/operator/generatePassword', {}, { params: query });
 }
 
 const validateOperatorQuery = (query: OperatorQuery) => {

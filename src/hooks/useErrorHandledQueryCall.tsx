@@ -22,9 +22,8 @@ export function useErrorHandledQueryCall<
     throwOnError: (error: TError) => {
       if (isUnauthorizedError(error) && !isLoginPage(location.pathname)) {
         handleLogout();
-        return false;
       }
-      return true;
+      return false;
     },
     retry: (failureCount: number, error: TError) => {
       if (isUnauthorizedError(error)) {
