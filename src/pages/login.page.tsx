@@ -1,5 +1,5 @@
 import { LoginForm } from '@/components/login-form'
-import { MinimalLayout } from '@/components/layouts/minimal-layout'
+import { MinimalLayout } from '@/components/layouts/minimal.layout'
 import { useCallback, useContext, useEffect } from 'react'
 import type { UserCredential } from '../hooks/useAuth'
 import { toast } from 'sonner'

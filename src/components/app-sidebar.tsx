@@ -29,8 +29,8 @@ const data = {
       icon: IconUser,
     },
     {
-      title: 'Game Config',
-      url: '/game-config',
+      title: 'Game Configs',
+      url: '/game-configs',
       icon: IconSettings,
     },
   ],
