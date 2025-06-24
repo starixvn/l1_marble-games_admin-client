@@ -57,7 +57,7 @@ export function GameConfigTableItem({
     <TableRow key={gameId}>
       <TableCell className="px-6">{gameId}</TableCell>
       <TableCell className="">
-        <Button variant="outline" onClick={() => handleConfigClick(gameId)}>
+        <Button className="w-[100px]" variant="outline" onClick={() => handleConfigClick(gameId)}>
           Config
         </Button>
       </TableCell>
@@ -76,7 +76,7 @@ export function NewGameConfigTableItem(
     <TableRow>
       <TableCell className="px-6">New</TableCell>
       <TableCell className="">
-        <Button variant="outline" onClick={() => handleConfigClick()}>
+        <Button className="w-[100px] text-green-500" variant="outline" onClick={() => handleConfigClick()}>
           New
         </Button>
       </TableCell>
