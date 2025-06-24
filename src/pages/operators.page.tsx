@@ -3,7 +3,7 @@ import { OperatorTable } from '@/components/operator-table'
 import { AdminLayout } from '@/components/layouts/admin.layout'
 import { CreateOperatorSection } from '@/components/create-operator-section'
 import { ErrorTable } from '@/components/error-table'
-import { TableSkeleton } from '@/components/table-skeleton'
+import { FullpageSkeleton } from '@/components/full-page-skeleton'
 
 export default function OperatorsPage() {
   const { operatorsQuery } = useOperator()
@@ -16,7 +16,7 @@ export default function OperatorsPage() {
     if (operatorsQuery.isLoading) {
       return (
         <div className="flex flex-1 flex-col gap-2 m-2">
-          <TableSkeleton/>
+          <FullpageSkeleton/>
         </div>
       )
     }

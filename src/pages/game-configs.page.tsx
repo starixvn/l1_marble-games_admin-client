@@ -3,44 +3,46 @@ import validator from '@rjsf/validator-ajv8';
 import { AdminLayout } from "@/components/layouts/admin.layout";
 import type { RJSFSchema } from '@rjsf/utils';
 import { GameConfigSchemaCombobox } from '@/components/game-config-schema-combobox';
-
-const schema: RJSFSchema = {
-    "title": "Marble soccer",
-    "description": "Game config for the marble leagues",
-    "type": "object",
-    "properties": {
-        "enabled": {
-            "title": "Enabled",
-            "type": "boolean",
-        },
-        "teams": {
-            "type": "array",
-            "title": "Teams",
-            "items": {
-                "type": "string"
-            }
-        },
-        "numberOfVideos": {
-            "title": "Number of videos",
-            "type": "object",
-            "additionalProperties": {
-                "type": "number"
-            }
-        }
-    },
-    "required": ["enabled", "teams", "numberOfVideos"],
-    "additionalProperties": false
-}
+import { useGameConfigSchema } from '@/hooks/useGameConfigSchema';
 
 
 export default function GameConfigsPage() {
+
+    const { gameConfigSchemaGetQuery, currentSchemaId, setCurrentSchemaId, gameConfigSchemaListQuery } = useGameConfigSchema();
+
+    function renderSchemaCombobox() {
+        if (gameConfigSchemaListQuery.isLoading) {
+            return <div>Loading...</div>
+        }
+
+        return <GameConfigSchemaCombobox
+            currentSchemaId={currentSchemaId}
+            setCurrentSchemaId={setCurrentSchemaId}
+            data={gameConfigSchemaListQuery.data?.data}
+        />
+    }
+
+    function renderSchemaForm() {
+        if (currentSchemaId === null) {
+            return <div>No schema selected</div>
+        }
+    
+        if (gameConfigSchemaGetQuery.isLoading) {
+            return <div>Loading...</div>
+        }
+    
+        return <div className="[&_form]:space-y-4 mt-4">
+                <Form schema={gameConfigSchemaGetQuery.data?.data?.schema as RJSFSchema} validator={validator} onSubmit={(data) => console.log(data.formData)} />
+            </div>
+
+    }
+
+
     return (
         <AdminLayout>
             <div className="p-6">
-                <GameConfigSchemaCombobox/>
-                <div className="[&_form]:space-y-4 mt-4">
-                    <Form schema={schema} validator={validator} onSubmit={(data) => console.log(data.formData)} />
-                </div>
+                {renderSchemaCombobox()}
+                {renderSchemaForm()}
             </div>
         </AdminLayout>
     )

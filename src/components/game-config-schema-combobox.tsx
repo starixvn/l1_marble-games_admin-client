@@ -18,16 +18,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { useGameConfigSchemaList } from "@/hooks/useGameConfigSchema"
+import type { GameConfigSchemaListResponse } from "../api/game-config-schema.api"
 
-export function GameConfigSchemaCombobox() {
+export function GameConfigSchemaCombobox({
+  currentSchemaId,
+  setCurrentSchemaId,
+  data
+}: Readonly<{
+  currentSchemaId: string | null;
+  setCurrentSchemaId: (id: string | null) => void;
+  data: GameConfigSchemaListResponse | undefined;
+}>) {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
-  const { gameConfigSchemaListQuery } = useGameConfigSchemaList();
-
-  if (gameConfigSchemaListQuery.isLoading) {
-    return <div>Loading...</div>
-  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -35,30 +37,30 @@ export function GameConfigSchemaCombobox() {
         <Button
           variant="outline"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-[300px] justify-between"
         >
-          {value
-            ? gameConfigSchemaListQuery.data?.data?.find((schema) => schema.id === value)?.name
-            : "Select framework..."}
+          {currentSchemaId
+            ? data?.find((schema) => schema.id === currentSchemaId)?.name
+            : "Select game config schema..."}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[300px] p-0">
         <Command>
           <CommandInput placeholder="Search game config schema..." className="h-9" />
           <CommandList>
             <CommandEmpty>No game config schema found.</CommandEmpty>
             <CommandGroup>
-              {gameConfigSchemaListQuery.data?.data?.map((schema) => (
+              {data?.map((schema) => (
                 <CommandItem
                   key={schema.id}
                   value={schema.name}
                   onSelect={(currentValue) => {
-                    const selectedSchema = gameConfigSchemaListQuery.data?.data?.find(
+                    const selectedSchema = data?.find(
                       (s) => s.name === currentValue
                     )
                     const selectedId = selectedSchema?.id ?? ""
-                    setValue(selectedId === value ? "" : selectedId)
+                    setCurrentSchemaId(selectedId)
                     setOpen(false)
                   }}
                 >
@@ -66,7 +68,7 @@ export function GameConfigSchemaCombobox() {
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === schema.id ? "opacity-100" : "opacity-0"
+                      currentSchemaId === schema.id ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>
