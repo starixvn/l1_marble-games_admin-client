@@ -1,27 +1,47 @@
-import { listGameConfigs } from "@/api/game-config.api";
+import { upsertGameConfig, listGameConfigs, getGameConfig } from "@/api/game-config.api";
 import { useErrorHandledQueryCall } from "./useErrorHandledQueryCall";
+import { useErrorHandledMutationCall } from "./useErrorHandledMutationCall";
 import { useState } from "react";
-import { getGameConfigSchema } from "@/api/game-config-schema.api";
 
 export function useGameConfig() {
 
-    const [currentSchemaId, setCurrentSchemaId] = useState<string | null>(null);
+    const [currentGameId, setCurrentGameId] = useState<number | null>(null);
 
     const gameConfigQuery = useErrorHandledQueryCall({
         queryKey: ['gameConfigs'],
         queryFn: () => listGameConfigs(),
     });
 
-    const gameConfigSchemaQuery = useErrorHandledQueryCall({
-        queryKey: ['gameConfigSchema', currentSchemaId],
-        queryFn: () => getGameConfigSchema(currentSchemaId!),
-        enabled: currentSchemaId !== null,
+
+    const gameConfigUpsertMutation = useErrorHandledMutationCall({
+        mutationFn: upsertGameConfig,
+        onSuccess: () => {
+            gameConfigQuery.refetch()
+        },
+    });
+
+    const gameConfigWithIdQuery = useErrorHandledQueryCall({
+        queryKey: ['gameConfig', currentGameId],
+        queryFn: () => getGameConfig(currentGameId!),
+        enabled: currentGameId !== null,
     });
 
     return {
         gameConfigQuery,
-        currentSchemaId,
-        setCurrentSchemaId,
-        gameConfigSchemaQuery,
+        gameConfigUpsertMutation,
+        currentGameId,
+        setCurrentGameId,
+        gameConfigWithIdQuery,
+    }
+}
+
+export function useGameConfigWithId({ gameId }: { gameId: number }) {
+    const gameConfigWithIdQuery = useErrorHandledQueryCall({
+        queryKey: ['gameConfig', gameId],
+        queryFn: () => getGameConfig(gameId),
+    });
+
+    return {
+        gameConfigWithIdQuery,
     }
 }

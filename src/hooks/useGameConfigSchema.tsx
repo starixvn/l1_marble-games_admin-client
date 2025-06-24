@@ -6,6 +6,8 @@ export function useGameConfigSchemaList() {
     const gameConfigSchemaListQuery = useErrorHandledQueryCall({
         queryKey: ['gameConfigSchemaList'],
         queryFn: () => listGameConfigSchemas(),
+        staleTime: 5 * 60 * 1000, 
+        gcTime: 10 * 60 * 1000,
     });
 
     return {
@@ -13,11 +15,14 @@ export function useGameConfigSchemaList() {
     }
 }
 
-export function useGameConfigSchemaWithId({ id }: { id: string | null }) {
+export function useGameConfigSchemaWithId({ id }: { id?: string }) {
     const gameConfigSchemaGetQuery = useErrorHandledQueryCall({
         queryKey: ['gameConfigSchemaGet', id],
         queryFn: () => getGameConfigSchema(id!),
-        enabled: id !== null,
+        enabled: id !== undefined && id !== null,
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+        
     });
 
     return {
@@ -25,11 +30,12 @@ export function useGameConfigSchemaWithId({ id }: { id: string | null }) {
     }
 }
 
-export function useGameConfigSchema() {
+export function useGameConfigSchema({ id }: { id? : string}) {
     const { gameConfigSchemaListQuery } = useGameConfigSchemaList();
-    const [currentSchemaId, setCurrentSchemaId] = useState<string | null>(null);
+    const [currentSchemaId, setCurrentSchemaId] = useState<string | undefined>(id);
 
-    const { gameConfigSchemaGetQuery } = useGameConfigSchemaWithId({ id: currentSchemaId! });
+    const { gameConfigSchemaGetQuery } = useGameConfigSchemaWithId(
+        { id: currentSchemaId}, );
 
     return {
         gameConfigSchemaListQuery,

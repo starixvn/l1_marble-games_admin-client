@@ -12,6 +12,11 @@ export type GameConfigResponse = {
     config: object;
 }
 
+export type GameConfigUpsert = {
+  request: GameConfigUpsertRequest;
+  query: GameConfigUpsertQuery;
+}
+
 export const listGameConfigs = async () => {
   return privateApiClient.get('/api/gameConfig/list')
 }
@@ -24,8 +29,8 @@ export const getGameConfig = async (id: number) => {
   })
 }
 
-export const upsertGameConfig = async (request: GameConfigUpsertRequest, query: GameConfigUpsertQuery) => {
-  return privateApiClient.post('/api/gameConfig/upsert', request, {
-    params: query
+export const upsertGameConfig = async (upsert: GameConfigUpsert) => {
+  return privateApiClient.post('/api/gameConfig/upsert', upsert.request, {
+    params: upsert.query
   })
 }

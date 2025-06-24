@@ -24,7 +24,7 @@ export function useErrorHandledMutationCall<TData = unknown, TError = Error, TVa
       if (isUnauthorizedError(error)) {
         return false
       }
-      return failureCount < 3
+      return failureCount < 1
     },
   }
 

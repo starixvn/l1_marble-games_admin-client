@@ -25,8 +25,8 @@ export function GameConfigSchemaCombobox({
   setCurrentSchemaId,
   data
 }: Readonly<{
-  currentSchemaId: string | null;
-  setCurrentSchemaId: (id: string | null) => void;
+  currentSchemaId?: string;
+  setCurrentSchemaId?: (id: string | undefined) => void;
   data: GameConfigSchemaListResponse | undefined;
 }>) {
   const [open, setOpen] = React.useState(false)
@@ -60,7 +60,9 @@ export function GameConfigSchemaCombobox({
                       (s) => s.name === currentValue
                     )
                     const selectedId = selectedSchema?.id ?? ""
-                    setCurrentSchemaId(selectedId)
+                    if (setCurrentSchemaId) {
+                      setCurrentSchemaId(selectedId)
+                    }
                     setOpen(false)
                   }}
                 >

@@ -1,48 +1,39 @@
-import Form from '@rjsf/shadcn';
-import validator from '@rjsf/validator-ajv8';
-import { AdminLayout } from "@/components/layouts/admin.layout";
-import type { RJSFSchema } from '@rjsf/utils';
-import { GameConfigSchemaCombobox } from '@/components/game-config-schema-combobox';
-import { useGameConfigSchema } from '@/hooks/useGameConfigSchema';
-
+import { useParams } from "react-router";
+import { GameConfigTable } from "../components/game-config-table";
+import { AdminLayout } from "../components/layouts/admin.layout";
+import { useGameConfig } from "@/hooks/useGameConfig";
+import { GameConfigForm } from "../components/game-config-form";
+import NewGameForm from "../components/new-game-form";
 
 export default function GameConfigsPage() {
+    const { gameConfigQuery } = useGameConfig();
+    const { gameId } = useParams<{ gameId: string }>();
 
-    const { gameConfigSchemaGetQuery, currentSchemaId, setCurrentSchemaId, gameConfigSchemaListQuery } = useGameConfigSchema();
-
-    function renderSchemaCombobox() {
-        if (gameConfigSchemaListQuery.isLoading) {
+    function renderGameConfigTable() {
+        if (gameConfigQuery.isLoading) {
             return <div>Loading...</div>
         }
-
-        return <GameConfigSchemaCombobox
-            currentSchemaId={currentSchemaId}
-            setCurrentSchemaId={setCurrentSchemaId}
-            data={gameConfigSchemaListQuery.data?.data}
-        />
+        
+        return <GameConfigTable data={gameConfigQuery.data?.data} />
     }
 
-    function renderSchemaForm() {
-        if (currentSchemaId === null) {
-            return <div>No schema selected</div>
+    function renderGameConfigForm() {
+        if (!gameId) {
+            return null
         }
-    
-        if (gameConfigSchemaGetQuery.isLoading) {
-            return <div>Loading...</div>
-        }
-    
-        return <div className="[&_form]:space-y-4 mt-4">
-                <Form schema={gameConfigSchemaGetQuery.data?.data?.schema as RJSFSchema} validator={validator} onSubmit={(data) => console.log(data.formData)} />
-            </div>
 
+        if (Number.isNaN(Number(gameId))) {
+            return <NewGameForm />
+        }
+
+        return <GameConfigForm gameId={Number(gameId)} />
     }
-
 
     return (
         <AdminLayout>
-            <div className="p-6">
-                {renderSchemaCombobox()}
-                {renderSchemaForm()}
+                {renderGameConfigTable()}
+            <div className="mx-2">
+                {renderGameConfigForm()}
             </div>
         </AdminLayout>
     )

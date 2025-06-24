@@ -21,6 +21,10 @@ const routes = [
     public: true,
   },
   {
+    path: '/game-configs/:gameId',
+    element: <GameConfigsPage />,
+  },
+  {
     path: '/game-configs',
     element: <GameConfigsPage />,
   },
