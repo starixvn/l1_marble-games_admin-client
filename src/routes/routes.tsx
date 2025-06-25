@@ -5,6 +5,7 @@ import { PrivateRoute } from '@/routes/private-route'
 import OperatorsPage from '@/pages/operators.page'
 import NotFoundPage from '@/pages/notfound.page'
 import GameConfigsPage from '@/pages/game-configs.page'
+import { GameIntegrationsPage } from '@/pages/game-integrations.page'
 
 const routes = [
   {
@@ -27,6 +28,10 @@ const routes = [
   {
     path: '/game-configs',
     element: <GameConfigsPage />,
+  },
+  {
+    path: '/game-integrations',
+    element: <GameIntegrationsPage />,
   },
   {
     path: '*',

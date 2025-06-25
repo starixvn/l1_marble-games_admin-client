@@ -6,7 +6,17 @@ interface AuthProviderProps {
   children: ReactNode
 }
 
-const AuthContext = createContext<UseAuthReturn>({} as UseAuthReturn)
+// Create a default context value with no-op functions to prevent errors
+const defaultAuthContext: UseAuthReturn = {
+  token: null,
+  isAuthenticated: false,
+  isLoading: true,
+  handleLogout: () => {},
+  updateAuthToken: () => {},
+  handleLogin: async () => {},
+}
+
+const AuthContext = createContext<UseAuthReturn>(defaultAuthContext)
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const authState = useAuthHook()

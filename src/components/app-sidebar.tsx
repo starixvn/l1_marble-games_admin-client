@@ -33,6 +33,11 @@ const data = {
       url: '/game-configs',
       icon: IconSettings,
     },
+    {
+      title: 'Game Integrations',
+      url: '/game-integrations',
+      icon: IconSettings,
+    },
   ],
 }
 

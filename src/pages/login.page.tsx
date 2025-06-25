@@ -14,7 +14,7 @@ function LoginPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(redirectPath, { replace: true })
+      navigate(redirectPath, { replace: true, state: { from: redirectPath } })
     }
   }, [isAuthenticated, navigate, redirectPath])
 
