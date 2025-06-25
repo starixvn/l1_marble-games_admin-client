@@ -1,9 +1,11 @@
 import { useParams } from "react-router";
-import { GameConfigTable } from "../components/game-config-table";
-import { AdminLayout } from "../components/layouts/admin.layout";
+import { GameConfigTable } from "@/components/game-config-table";
+import { AdminLayout } from "@/components/layouts/admin.layout";
 import { useGameConfig } from "@/hooks/useGameConfig";
-import { GameConfigForm } from "../components/game-config-form";
-import NewGameForm from "../components/new-game-form";
+import { GameConfigForm } from "@/components/game-config-form";
+import NewGameForm from "@/components/new-game-form";
+import { FullpageSkeleton } from "@/components/full-page-skeleton";
+import { ErrorTable } from "../components/error-table";
 
 export default function GameConfigsPage() {
     const { gameConfigQuery } = useGameConfig();
@@ -11,7 +13,11 @@ export default function GameConfigsPage() {
 
     function renderGameConfigTable() {
         if (gameConfigQuery.isLoading) {
-            return <div>Loading...</div>
+            return <FullpageSkeleton/>
+        }
+
+        if (gameConfigQuery.isError) {
+            return <ErrorTable onClick={() => gameConfigQuery.refetch()} />
         }
         
         return <GameConfigTable data={gameConfigQuery.data?.data} />
