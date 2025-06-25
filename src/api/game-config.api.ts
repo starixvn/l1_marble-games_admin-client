@@ -18,11 +18,11 @@ export type GameConfigUpsert = {
 }
 
 export const listGameConfigs = async () => {
-  return privateApiClient.get('/api/gameConfig/list')
+  return privateApiClient.get('/gameConfig/list')
 }
 
 export const getGameConfig = async (id: number) => {
-  return privateApiClient.get(`/api/gameConfig/get`, {
+  return privateApiClient.get(`/gameConfig/get`, {
     params: {
         gameId: id
     }
@@ -30,7 +30,7 @@ export const getGameConfig = async (id: number) => {
 }
 
 export const upsertGameConfig = async (upsert: GameConfigUpsert) => {
-  return privateApiClient.post('/api/gameConfig/upsert', upsert.request, {
+  return privateApiClient.post('/gameConfig/upsert', upsert.request, {
     params: upsert.query
   })
 }

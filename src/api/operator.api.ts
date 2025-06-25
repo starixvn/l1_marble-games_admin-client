@@ -15,25 +15,25 @@ interface OperatorQuery {
 }
 
 export const createOperator = async (request: CreateOperatorRequest) => {
-  return privateApiClient.post('/api/operator/create', request)
+  return privateApiClient.post('/operator/create', request)
 }
 
 export const listOperators = async () => {
-  return privateApiClient.get('/api/operator/list')
+  return privateApiClient.get('/operator/list')
 }
 
 export const getOperator = async (query: OperatorQuery) => {
   validateOperatorQuery(query)
-  return privateApiClient.get('/api/operator/get', { params: query })
+  return privateApiClient.get('/operator/get', { params: query })
 }
 
 export const updateOperatorName = async (request: UpdateOperatorNameRequest) => {
-  return privateApiClient.post('/api/operator/updateName', request)
+  return privateApiClient.post('/operator/updateName', request)
 }
 
 export const generatePassword = async (query: OperatorQuery) => {
   validateOperatorQuery(query)
-  return privateApiClient.post('/api/operator/generatePassword', {}, { params: query })
+  return privateApiClient.post('/operator/generatePassword', {}, { params: query })
 }
 
 const validateOperatorQuery = (query: OperatorQuery) => {

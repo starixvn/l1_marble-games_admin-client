@@ -11,11 +11,11 @@ export type GameConfigSchema = {
 }
 
 export const listGameConfigSchemas = async () => {
-  return privateApiClient.get<GameConfigSchemaListResponse>('/api/gameConfigSchema/list')
+  return privateApiClient.get<GameConfigSchemaListResponse>('/gameConfigSchema/list')
 }
 
 export const getGameConfigSchema = async (id: string) => {
-  return privateApiClient.get<GameConfigSchema>(`/api/gameConfigSchema/get`, {
+  return privateApiClient.get<GameConfigSchema>(`/gameConfigSchema/get`, {
     params: {
       id,
     },
