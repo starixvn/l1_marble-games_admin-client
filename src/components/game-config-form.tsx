@@ -55,6 +55,11 @@ function GameConfigSchemaForm({
         setCurrentSchemaId(gameConfigSchemaId)
     }, [gameConfigSchemaId, setCurrentSchemaId])
 
+    useEffect(() => {
+        setCurrentFormData(gameConfig);
+        setFormKey(prev => prev + 1);
+    }, [gameConfig])
+
     const [isJsonEditorOpen, setIsJsonEditorOpen] = useState(false);
     const [json, setJson] = useState<string>('{}');
     
