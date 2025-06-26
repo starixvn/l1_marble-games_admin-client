@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
 import { JsonEditorWithDragDrop } from "./json-editor-with-drag-drop";
@@ -26,6 +26,11 @@ export function JsonEditorDialog({
     isError = false
 }: Readonly<JsonEditorDialogProps>) {
     const [currentEditorValue, setCurrentEditorValue] = useState<string>(initialValue);
+    useEffect(() => {
+        if (isOpen) {
+            setCurrentEditorValue(initialValue);
+        }
+    }, [isOpen]);
 
     const handleSubmit = () => {
         try {
@@ -38,9 +43,6 @@ export function JsonEditorDialog({
     };
 
     const handleOpenChange = (open: boolean) => {
-        if (open) {
-            setCurrentEditorValue(initialValue);
-        }
         onOpenChange(open);
     };
 

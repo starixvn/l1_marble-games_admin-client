@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import { CodeXml } from "lucide-react";
 import { JsonEditorDialog } from "@/components/json-editor-dialog";
 import { apply } from "json-merge-patch";
+import { toast } from "sonner";
 
 export default function NewGameForm() {
     const { gameConfigSchemaListQuery, currentSchemaId, setCurrentSchemaId, gameConfigSchemaGetQuery } = useGameConfigSchema({});
@@ -19,26 +20,39 @@ export default function NewGameForm() {
     const { gameConfigUpsertMutation } = useGameConfig();
     const [isJsonEditorOpen, setIsJsonEditorOpen] = useState(false);
     const [json, setJson] = useState<string>('{}');
+    const [currentFormData, setCurrentFormData] = useState<object>({});
 
-    const handleSubmit = (data: IChangeEvent<object>) => {
+    const handleSubmit = () => {
        if (!newGameId || !currentSchemaId) {
         return;
        }
 
-        // Apply JSON patch if any JSON edits were made
-        const finalFormData = apply(data.formData as object, JSON.parse(json));
-
-        gameConfigUpsertMutation.mutate({
+        const request = {
             query: {
                 gameId: newGameId,
                 schemaId: currentSchemaId,
             },
-            request: finalFormData
+            request: currentFormData
+        }
+        console.log(request);
+
+        gameConfigUpsertMutation.mutate(request, {
+            onSuccess: () => {
+                toast.success("Game config created")
+            },
+            onError: () => {
+                toast.error("Failed to create game config")
+            }
         })
     }
 
     const handleJsonEditorSubmit = (jsonString: string) => {
-        setJson(jsonString);
+      setCurrentFormData({...apply(currentFormData, JSON.parse(jsonString))});
+      setJson('{}');
+    }
+
+    const handleFormChange = (data: IChangeEvent<object>) => {
+      setCurrentFormData({ ...data.formData as object });
     }
 
     function renderComboboxAndJsonEditor() {
@@ -92,8 +106,9 @@ export default function NewGameForm() {
       return (
         <div className="[&_form]:space-y-4 mt-4">
           <Form 
-            key={json} 
-            formData={apply({}, JSON.parse(json))} 
+            key={JSON.stringify(currentFormData)} 
+            formData={currentFormData} 
+            onChange={handleFormChange}
             schema={gameConfigSchemaGetQuery.data?.data?.schema ?? DEFAULT_SCHEMA} 
             validator={validator} 
             onSubmit={handleSubmit} 

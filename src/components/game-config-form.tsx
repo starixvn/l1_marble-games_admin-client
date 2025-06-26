@@ -48,6 +48,7 @@ function GameConfigSchemaForm({
 
     const { gameConfigSchemaGetQuery, gameConfigSchemaListQuery, currentSchemaId, setCurrentSchemaId } = useGameConfigSchema({ id: gameConfigSchemaId })
     const { gameConfigUpsertMutation } = useGameConfig();
+    const [currentFormData, setCurrentFormData] = useState<object>(gameConfig);
 
     useEffect(() => {
         setCurrentSchemaId(gameConfigSchemaId)
@@ -56,6 +57,9 @@ function GameConfigSchemaForm({
     const [isJsonEditorOpen, setIsJsonEditorOpen] = useState(false);
     const [json, setJson] = useState<string>('{}');
     
+    const handleFormChange = (data: IChangeEvent<object>) => {
+        setCurrentFormData({ ...data.formData as object });
+    }
 
     const handleSubmit = (data: IChangeEvent<object>) => {
         if (!currentSchemaId) {
@@ -81,7 +85,8 @@ function GameConfigSchemaForm({
     }
 
     const handleJsonEditorSubmit = (jsonString: string) => {
-        setJson(jsonString);
+        setCurrentFormData({...apply(currentFormData, JSON.parse(jsonString))});
+        setJson('{}');
     }
 
     function renderForm() {
@@ -91,11 +96,12 @@ function GameConfigSchemaForm({
     
         return (<div className="[&_form]:space-y-4 mt-4">
             <Form 
-                key={json} 
-                formData={apply(gameConfig, JSON.parse(json))} 
+                key={JSON.stringify(currentFormData)} 
+                formData={currentFormData} 
                 schema={gameConfigSchemaGetQuery.data?.data?.schema ?? DEFAULT_SCHEMA} 
                 validator={validator} 
                 onSubmit={handleSubmit} 
+                onChange={handleFormChange}
             />
             <JsonEditorDialog
                 isOpen={isJsonEditorOpen}
