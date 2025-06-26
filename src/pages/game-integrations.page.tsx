@@ -1,11 +1,11 @@
 import { AdminLayout } from "@/components/layouts/admin.layout";
-import { GameIntegrationTable, type GameIntegrationConfigParam } from "../components/game-integration-table";
+import { GameIntegrationTable, type GameIntegrationConfigParam } from "@/components/game-integration-table";
 import { useState } from "react";
-import { GameIntegrationConfigDialog } from "../components/game-integration-config-dialog";
+import { GameIntegrationConfigDialog } from "@/components/game-integration-config-dialog";
 import { toast } from "sonner";
-import { useGameIntegrationList, useGameIntegrationUpsert } from "../hooks/useGameIntegration";
-import { useOperator } from "../hooks/useOperator";
-import { useGameConfig } from "../hooks/useGameConfig";
+import { useGameIntegrationDelete, useGameIntegrationList, useGameIntegrationUpsert } from "@/hooks/useGameIntegration";
+import { useOperator } from "@/hooks/useOperator";
+import { useGameConfig } from "@/hooks/useGameConfig";
 
 
 export function GameIntegrationsPage() {
@@ -19,12 +19,36 @@ export function GameIntegrationsPage() {
     const [currentDialogParam, setCurrentDialogParam] = useState<GameIntegrationConfigParam | null>(null);
 
     const { gameIntegrationUpsertMutation } = useGameIntegrationUpsert();
+    const { gameIntegrationDeleteMutation } = useGameIntegrationDelete();
+    const mapGameIntegrationsWithOperatorNames = (integrations: any[], operators: any[]) => {
+        return integrations?.map((integration: any) => {
+            const operator = operators?.find((op: any) => op.id === integration.operatorId);
+            return {
+                ...integration,
+                operatorName: operator?.name ?? undefined
+            };
+        }) ?? [];
+    };
 
     const handleConfigClick = (param: GameIntegrationConfigParam) => {
         setCurrentDialogParam(param)
         setIsConfigDialogOpen(true)
     }
 
+    const handleDeleteClick = (param: GameIntegrationConfigParam) => {
+        gameIntegrationDeleteMutation.mutate({
+            gameId: param.gameId,
+            operatorId: param.operatorId
+        }, {
+            onSuccess: () => {
+                toast.success('Game integration deleted successfully');
+                gameIntegrationListQuery.refetch();
+            },
+            onError: () => {
+                toast.error('Failed to delete game integration');
+            }
+        })
+    }
 
     const handleSubmit = async (json: string) => {
         try {
@@ -66,8 +90,14 @@ export function GameIntegrationsPage() {
         if (gameIntegrationListQuery.isError || gameConfigQuery.isError || operatorsQuery.isError) {
             return <div>Error</div>
         }
+
+        const gameIntegrationDataWithOperatorNames = mapGameIntegrationsWithOperatorNames(
+            gameIntegrationListQuery.data?.data ?? [],
+            operatorsQuery.data?.data ?? []
+        );
+
         return <GameIntegrationTable 
-            data={gameIntegrationListQuery.data?.data} 
+            data={gameIntegrationDataWithOperatorNames} 
             gameIds={gameConfigQuery.data?.data.map((game: any) => game.gameId)}
             operatorIds={operatorsQuery.data?.data}
             currentGameId={currentComboboxOperatorId}
@@ -75,6 +105,7 @@ export function GameIntegrationsPage() {
             setCurrentGameId={setCurrentComboboxOperatorId}
             setCurrentOperatorId={setCurrentComboboxOperatorName}
             handleConfigClick={handleConfigClick}
+            handleDeleteClick={handleDeleteClick}
         />
     }
     return (

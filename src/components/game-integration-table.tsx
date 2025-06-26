@@ -1,6 +1,7 @@
 import { Button } from "./ui/button";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "./ui/table";
 import { Combobox } from "./combobox";
+import { IconSettings, IconTrash } from '@tabler/icons-react';
 
 export type GameIntegrationConfigParam = {
     gameId: number,
@@ -12,6 +13,7 @@ export function GameIntegrationTable({
     gameIds,
     operatorIds,
     handleConfigClick,
+    handleDeleteClick,
     currentGameId,
     currentOperatorId,
     setCurrentGameId,
@@ -32,6 +34,7 @@ export function GameIntegrationTable({
     setCurrentGameId: (gameId: number | null) => void,
     setCurrentOperatorId: (operatorId: string | null) => void,
     handleConfigClick: (param: GameIntegrationConfigParam) => void,
+    handleDeleteClick: (param: GameIntegrationConfigParam) => void,
 }>) {
     return (
         <div className="overflow-hidden rounded-lg border m-2">
@@ -41,7 +44,12 @@ export function GameIntegrationTable({
                 </TableHeader>
                 <TableBody>
                 {data.map((item) => (
-                    <GameIntegrationTableItem key={item.gameId} {...item} handleConfigClick={handleConfigClick} />
+                    <GameIntegrationTableItem 
+                        key={`${item.gameId}-${item.operatorId}`} 
+                        handleConfigClick={handleConfigClick} 
+                        handleDeleteClick={handleDeleteClick} 
+                        {...item} 
+                    />
                 ))}
                 <NewGameIntegrationTableItem
                     handleConfigClick={handleConfigClick}
@@ -61,9 +69,9 @@ export function GameIntegrationTable({
 export function GameIntegrationTableHeader() {
     return (
         <TableRow>
-            <TableCell className="px-6">Game ID</TableCell>
-            <TableCell className="px-6">Operator ID</TableCell>
-            <TableCell className="">Action</TableCell>
+            <TableCell className="px-6 font-bold">Game ID</TableCell>
+            <TableCell className="px-6 font-bold">Operator ID</TableCell>
+            <TableCell className="font-bold">Actions</TableCell>
         </TableRow>
     )
 }
@@ -73,19 +81,32 @@ export function GameIntegrationTableItem({
     operatorId,
     operatorName,
     handleConfigClick,
+    handleDeleteClick,
 }: Readonly<{
     gameId: number,
     operatorId: string,
     operatorName?: string,
     handleConfigClick: (param: GameIntegrationConfigParam) => void,
+    handleDeleteClick: (param: GameIntegrationConfigParam) => void,
 }>) {
     return (
         <TableRow key={gameId}>
           <TableCell className="px-6">{gameId}</TableCell>
           <TableCell className="px-6">{operatorId} {operatorName ? `(${operatorName})` : ''}</TableCell>
-          <TableCell className="">
-            <Button className="w-[100px]" variant="outline" onClick={() => handleConfigClick({gameId, operatorId})}>
-              Config
+          <TableCell className="flex gap-2">
+            <Button 
+              className="h-9 w-9 p-0" 
+              variant="outline" 
+              onClick={() => handleConfigClick({gameId, operatorId})}
+            >
+              <IconSettings className="h-4 w-4" />
+            </Button>
+            <Button 
+              className="h-9 w-9 p-0 text-red-600 hover:text-red-700 hover:bg-red-50" 
+              variant="outline" 
+              onClick={() => handleDeleteClick({gameId, operatorId})}
+            >
+              <IconTrash className="h-4 w-4" />
             </Button>
           </TableCell>
         </TableRow>
@@ -136,7 +157,7 @@ export function NewGameIntegrationTableItem({
                     />
             </TableCell>
             <TableCell className="">
-            <Button className="w-[100px]" variant="outline" onClick={handleNewGameIntegration}>
+            <Button className="w-[5rem]" variant="outline" onClick={handleNewGameIntegration}>
               New
             </Button>
           </TableCell>

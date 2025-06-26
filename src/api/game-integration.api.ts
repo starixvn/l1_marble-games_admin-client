@@ -32,3 +32,15 @@ export const upsertGameIntegration = async ({
         params: query,
     })
 }
+
+export const deleteGameIntegration = async ({
+    gameId,
+    operatorId,
+}: GameIntegrationQuery) => {
+    return privateApiClient.delete('/gameIntegration/delete', {
+        params: {
+            gameId,
+            operatorId,
+        }
+    })
+}

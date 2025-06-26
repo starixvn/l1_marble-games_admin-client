@@ -1,4 +1,4 @@
-import { getGameIntegration, listGameIntegration, upsertGameIntegration } from "@/api/game-integration.api"
+import { deleteGameIntegration, getGameIntegration, listGameIntegration, upsertGameIntegration } from "@/api/game-integration.api"
 import { useErrorHandledQueryCall } from "@/hooks/useErrorHandledQueryCall"
 import { useErrorHandledMutationCall } from "@/hooks/useErrorHandledMutationCall"
 
@@ -28,4 +28,12 @@ export const useGameIntegrationUpsert = () => {
     })
 
     return { gameIntegrationUpsertMutation }
+}
+
+export const useGameIntegrationDelete = () => {
+    const gameIntegrationDeleteMutation = useErrorHandledMutationCall({
+        mutationFn: deleteGameIntegration
+    })
+
+    return { gameIntegrationDeleteMutation }
 }
