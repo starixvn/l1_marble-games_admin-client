@@ -4,7 +4,7 @@ import { GameConfigSchemaCombobox } from "@/components/game-config-schema-combob
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Form from "@rjsf/shadcn";
-import validator from "@rjsf/validator-ajv8";
+import { validatorWithDataSupport } from "@/lib/validator";
 import { DEFAULT_SCHEMA } from "@/shared/const";
 import { useGameConfig } from "@/hooks/useGameConfig";
 import type { IChangeEvent } from "@rjsf/core";
@@ -112,8 +112,9 @@ export default function NewGameForm() {
             formData={currentFormData} 
             onChange={handleFormChange}
             schema={gameConfigSchemaGetQuery.data?.data?.schema ?? DEFAULT_SCHEMA} 
-            validator={validator} 
+            validator={validatorWithDataSupport} 
             onSubmit={handleSubmit} 
+            liveValidate
           />
         </div>
       )

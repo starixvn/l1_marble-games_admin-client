@@ -1,7 +1,7 @@
 import { useGameConfig, useGameConfigWithId } from "@/hooks/useGameConfig"
 import { useGameConfigSchema } from "@/hooks/useGameConfigSchema"
 import Form from '@rjsf/shadcn';
-import validator from '@rjsf/validator-ajv8';
+import { validatorWithDataSupport } from "@/lib/validator";
 import { GameConfigSchemaCombobox } from "@/components/game-config-schema-combobox";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -101,9 +101,10 @@ function GameConfigSchemaForm({
                 key={formKey}
                 formData={currentFormData} 
                 schema={gameConfigSchemaGetQuery.data?.data?.schema ?? DEFAULT_SCHEMA} 
-                validator={validator} 
+                validator={validatorWithDataSupport} 
                 onSubmit={handleSubmit} 
                 onChange={handleFormChange}
+                liveValidate
             />
             <JsonEditorDialog
                 isOpen={isJsonEditorOpen}
