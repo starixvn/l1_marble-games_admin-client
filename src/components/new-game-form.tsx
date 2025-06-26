@@ -21,6 +21,7 @@ export default function NewGameForm() {
     const [isJsonEditorOpen, setIsJsonEditorOpen] = useState(false);
     const [json, setJson] = useState<string>('{}');
     const [currentFormData, setCurrentFormData] = useState<object>({});
+    const [formKey, setFormKey] = useState<number>(0);
 
     const handleSubmit = () => {
        if (!newGameId || !currentSchemaId) {
@@ -48,6 +49,7 @@ export default function NewGameForm() {
 
     const handleJsonEditorSubmit = (jsonString: string) => {
       setCurrentFormData({...apply(currentFormData, JSON.parse(jsonString))});
+      setFormKey(prev => prev + 1); // fix bug form data not updated when form data is changed, this is library bug
       setJson('{}');
     }
 
@@ -106,7 +108,7 @@ export default function NewGameForm() {
       return (
         <div className="[&_form]:space-y-4 mt-4">
           <Form 
-            key={JSON.stringify(currentFormData)} 
+            key={formKey}
             formData={currentFormData} 
             onChange={handleFormChange}
             schema={gameConfigSchemaGetQuery.data?.data?.schema ?? DEFAULT_SCHEMA} 
