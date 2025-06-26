@@ -1,44 +1,74 @@
 import { useState } from "react";
-import { useGameConfigSchema } from "../hooks/useGameConfigSchema";
-import { GameConfigSchemaCombobox } from "./game-config-schema-combobox";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+import { useGameConfigSchema } from "@/hooks/useGameConfigSchema";
+import { GameConfigSchemaCombobox } from "@/components/game-config-schema-combobox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Form from "@rjsf/shadcn";
 import validator from "@rjsf/validator-ajv8";
-import { DEFAULT_SCHEMA } from "../shared/const";
-import { useGameConfig } from "../hooks/useGameConfig";
+import { DEFAULT_SCHEMA } from "@/shared/const";
+import { useGameConfig } from "@/hooks/useGameConfig";
 import type { IChangeEvent } from "@rjsf/core";
+import { Button } from "./ui/button";
+import { CodeXml } from "lucide-react";
+import { JsonEditorDialog } from "@/components/json-editor-dialog";
+import { apply } from "json-merge-patch";
 
 export default function NewGameForm() {
     const { gameConfigSchemaListQuery, currentSchemaId, setCurrentSchemaId, gameConfigSchemaGetQuery } = useGameConfigSchema({});
     const [newGameId, setNewGameId] = useState<number | null>(null);
     const { gameConfigUpsertMutation } = useGameConfig();
+    const [isJsonEditorOpen, setIsJsonEditorOpen] = useState(false);
+    const [json, setJson] = useState<string>('{}');
 
     const handleSubmit = (data: IChangeEvent<object>) => {
        if (!newGameId || !currentSchemaId) {
         return;
        }
 
+        // Apply JSON patch if any JSON edits were made
+        const finalFormData = apply(data.formData as object, JSON.parse(json));
+
         gameConfigUpsertMutation.mutate({
             query: {
                 gameId: newGameId,
                 schemaId: currentSchemaId,
             },
-            request: data.formData as object
+            request: finalFormData
         })
     }
 
-    function renderCombobox() {
+    const handleJsonEditorSubmit = (jsonString: string) => {
+        setJson(jsonString);
+    }
+
+    function renderComboboxAndJsonEditor() {
       if (gameConfigSchemaListQuery.isLoading) {
         return <div>Loading...</div>
       }
 
       return (
-              <GameConfigSchemaCombobox 
-                currentSchemaId={currentSchemaId} 
-                setCurrentSchemaId={setCurrentSchemaId} 
-                data={gameConfigSchemaListQuery.data?.data} 
+          <div>
+              <div className="flex items-center gap-2">
+                  <GameConfigSchemaCombobox 
+                    currentSchemaId={currentSchemaId} 
+                    setCurrentSchemaId={setCurrentSchemaId} 
+                    data={gameConfigSchemaListQuery.data?.data} 
+                  />
+                  <Button variant="outline" size="icon" onClick={() => setIsJsonEditorOpen(true)}>
+                      <CodeXml className="h-4 w-4 text-blue-500 drop-shadow-lg" strokeWidth={3} style={{ filter: 'drop-shadow(0 0 6px rgba(59, 130, 246, 0.5))' }} />
+                  </Button>
+              </div>
+              <JsonEditorDialog
+                  isOpen={isJsonEditorOpen}
+                  onOpenChange={setIsJsonEditorOpen}
+                  initialValue={json}
+                  onSubmit={handleJsonEditorSubmit}
+                  title="New Game Config"
+                  description="Paste json below or drag and drop file"
+                  isLoading={gameConfigSchemaGetQuery.isLoading}
+                  isError={gameConfigSchemaGetQuery.isError}
               />
+          </div>
       )
     }
 
@@ -61,7 +91,13 @@ export default function NewGameForm() {
 
       return (
         <div className="[&_form]:space-y-4 mt-4">
-          <Form schema={gameConfigSchemaGetQuery.data?.data?.schema ?? DEFAULT_SCHEMA} onSubmit={handleSubmit} validator={validator} />
+          <Form 
+            key={json} 
+            formData={apply({}, JSON.parse(json))} 
+            schema={gameConfigSchemaGetQuery.data?.data?.schema ?? DEFAULT_SCHEMA} 
+            validator={validator} 
+            onSubmit={handleSubmit} 
+          />
         </div>
       )
     }
@@ -74,7 +110,7 @@ export default function NewGameForm() {
             </h5>
             <Label htmlFor="newGameId" className="mb-2">Game ID</Label>
             <Input id="newGameId" className="mb-4 w-[200px]" type="number" value={newGameId ?? ""} onChange={(e) => setNewGameId(Number(e.target.value))} />
-            {renderCombobox()}
+            {renderComboboxAndJsonEditor()}
             {renderForm()}
         </>
     )

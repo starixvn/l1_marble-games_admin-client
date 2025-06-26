@@ -9,8 +9,7 @@ import type { IChangeEvent } from "@rjsf/core";
 import { DEFAULT_SCHEMA } from "@/shared/const";
 import { Button } from "@/components/ui/button";
 import { CodeXml } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
-import { JsonEditorWithDragDrop } from "./json-editor-with-drag-drop";
+import { JsonEditorDialog } from "@/components/json-editor-dialog";
 import { apply } from "json-merge-patch"
 
 export function GameConfigForm({
@@ -56,7 +55,6 @@ function GameConfigSchemaForm({
 
     const [isJsonEditorOpen, setIsJsonEditorOpen] = useState(false);
     const [json, setJson] = useState<string>('{}');
-    const [currentEditorValue, setCurrentEditorValue] = useState<string>('');
     
 
     const handleSubmit = (data: IChangeEvent<object>) => {
@@ -82,19 +80,8 @@ function GameConfigSchemaForm({
         })
     }
 
-    const handleJsonEditorSubmit = () => {
-        try {
-            JSON.parse(currentEditorValue);
-            setJson(currentEditorValue);
-            setIsJsonEditorOpen(false);
-        } catch {
-            toast.error("Invalid JSON format");
-        }
-    }
-
-    const handleJsonEditorOpen = () => {
-        setCurrentEditorValue(json)
-        setIsJsonEditorOpen(true)
+    const handleJsonEditorSubmit = (jsonString: string) => {
+        setJson(jsonString);
     }
 
     function renderForm() {
@@ -110,30 +97,16 @@ function GameConfigSchemaForm({
                 validator={validator} 
                 onSubmit={handleSubmit} 
             />
-                <Dialog open={isJsonEditorOpen} onOpenChange={setIsJsonEditorOpen}>
-                 <DialogContent className="max-w-4xl">
-                     <DialogHeader>
-                         <DialogTitle>Game Config</DialogTitle>
-                         <DialogDescription>Paste json below or drag and drop file</DialogDescription>
-                     </DialogHeader>
-                     <JsonEditorWithDragDrop
-                         value={currentEditorValue}
-                         onChange={setCurrentEditorValue}
-                         isLoading={gameConfigSchemaGetQuery.isLoading}
-                         isError={gameConfigSchemaGetQuery.isError}
-                     />
-                     <div className="flex justify-end pt-4 gap-2">
-                         <Button 
-                             onClick={handleJsonEditorSubmit}
-                         >
-                             OK
-                         </Button>
-                         <Button variant="outline" onClick={() => setIsJsonEditorOpen(false)}>
-                            Cancel
-                         </Button>
-                     </div>
-                 </DialogContent>
-             </Dialog>
+            <JsonEditorDialog
+                isOpen={isJsonEditorOpen}
+                onOpenChange={setIsJsonEditorOpen}
+                initialValue={json}
+                onSubmit={handleJsonEditorSubmit}
+                title="Game Config"
+                description="Paste json below or drag and drop file"
+                isLoading={gameConfigSchemaGetQuery.isLoading}
+                isError={gameConfigSchemaGetQuery.isError}
+            />
         </div>)
     }
 
@@ -145,7 +118,7 @@ function GameConfigSchemaForm({
         return (
             <div className="flex items-center gap-2">
                 <GameConfigSchemaCombobox currentSchemaId={currentSchemaId} setCurrentSchemaId={setCurrentSchemaId} data={gameConfigSchemaListQuery.data?.data} />
-                <Button variant="outline" size="icon" onClick={handleJsonEditorOpen}>
+                <Button variant="outline" size="icon" onClick={() => setIsJsonEditorOpen(true)}>
                     <CodeXml className="h-4 w-4 text-blue-500 drop-shadow-lg" strokeWidth={3} style={{ filter: 'drop-shadow(0 0 6px rgba(59, 130, 246, 0.5))' }} />
                 </Button>
             </div>
