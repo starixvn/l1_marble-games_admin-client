@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { IconUser, IconSettings, IconHome } from '@tabler/icons-react'
+import { IconUser, IconSettings, IconHome, IconCode } from '@tabler/icons-react'
 
 import { NavMain } from '@/components/nav-main'
 import { NavUser } from '@/components/nav-user'
@@ -36,8 +36,13 @@ const data = {
     {
       title: 'Game Integrations',
       url: '/game-integrations',
-      icon: IconSettings,
+      icon: IconCode,
     },
+    {
+      title: 'Game Config Schemas',
+      url: '/game-config-schemas',
+      icon: IconCode,
+    }
   ],
 }
 

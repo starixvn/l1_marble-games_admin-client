@@ -6,6 +6,7 @@ import OperatorsPage from '@/pages/operators.page'
 import NotFoundPage from '@/pages/notfound.page'
 import GameConfigsPage from '@/pages/game-configs.page'
 import { GameIntegrationsPage } from '@/pages/game-integrations.page'
+import GameConfigSchemaPage from '@/pages/game-config-schema.page'
 
 const routes = [
   {
@@ -28,6 +29,10 @@ const routes = [
   {
     path: '/game-configs',
     element: <GameConfigsPage />,
+  },
+  {
+    path: '/game-config-schemas',
+    element: <GameConfigSchemaPage />,
   },
   {
     path: '/game-integrations',

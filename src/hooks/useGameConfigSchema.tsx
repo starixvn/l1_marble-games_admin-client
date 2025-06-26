@@ -1,6 +1,7 @@
 import { useErrorHandledQueryCall } from "@/hooks/useErrorHandledQueryCall";
-import { getGameConfigSchema, listGameConfigSchemas } from "@/api/game-config-schema.api";
+import { getGameConfigSchema, listGameConfigSchemas, upsertGameConfigSchema } from "@/api/game-config-schema.api";
 import { useState } from "react";
+import { useErrorHandledMutationCall } from "./useErrorHandledMutationCall";
 
 export function useGameConfigSchemaList() {
     const gameConfigSchemaListQuery = useErrorHandledQueryCall({
@@ -42,5 +43,15 @@ export function useGameConfigSchema({ id }: { id? : string}) {
         currentSchemaId,
         setCurrentSchemaId,
         gameConfigSchemaGetQuery,
+    }
+}
+
+export function useGameConfigSchemaUpsert() {
+    const gameConfigSchemaUpsertMutation = useErrorHandledMutationCall({
+        mutationFn: upsertGameConfigSchema,
+    });
+
+    return {
+        gameConfigSchemaUpsertMutation,
     }
 }
