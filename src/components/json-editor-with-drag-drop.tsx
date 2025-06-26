@@ -1,6 +1,7 @@
 import Editor from "@monaco-editor/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/contexts/theme.context";
 
 interface JsonEditorWithDragDropProps {
     value: string;
@@ -24,6 +25,7 @@ export const JsonEditorWithDragDrop = ({
     className = "",
 }: JsonEditorWithDragDropProps) => {
     const [isDragging, setIsDragging] = useState(false);
+    const { theme } = useTheme();
 
     const handleFileRead = (file: File) => {
         if (file.type === 'application/json' || file.name.endsWith('.json')) {
@@ -96,7 +98,7 @@ export const JsonEditorWithDragDrop = ({
                 width="100%"
                 defaultLanguage="json"
                 value={value}
-                theme="vs-dark"
+                theme={theme === 'dark' ? 'vs-dark' : 'light'}
                 onChange={(value) => onChange?.(value ?? '')}
                 options={{
                     automaticLayout: true,
