@@ -1,12 +1,17 @@
-import { useGameConfig, useGameConfigWithId } from "../hooks/useGameConfig"
-import { useGameConfigSchema } from "../hooks/useGameConfigSchema"
+import { useGameConfig, useGameConfigWithId } from "@/hooks/useGameConfig"
+import { useGameConfigSchema } from "@/hooks/useGameConfigSchema"
 import Form from '@rjsf/shadcn';
 import validator from '@rjsf/validator-ajv8';
-import { GameConfigSchemaCombobox } from "./game-config-schema-combobox";
-import { useEffect } from "react";
+import { GameConfigSchemaCombobox } from "@/components/game-config-schema-combobox";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { IChangeEvent } from "@rjsf/core";
-import { DEFAULT_SCHEMA } from "../shared/const";
+import { DEFAULT_SCHEMA } from "@/shared/const";
+import { Button } from "@/components/ui/button";
+import { CodeXml } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
+import { JsonEditorWithDragDrop } from "./json-editor-with-drag-drop";
+import { apply } from "json-merge-patch"
 
 export function GameConfigForm({
     gameId
@@ -48,6 +53,10 @@ function GameConfigSchemaForm({
     useEffect(() => {
         setCurrentSchemaId(gameConfigSchemaId)
     }, [gameConfigSchemaId, setCurrentSchemaId])
+
+    const [isJsonEditorOpen, setIsJsonEditorOpen] = useState(false);
+    const [json, setJson] = useState<string>('{}');
+    const [currentEditorValue, setCurrentEditorValue] = useState<string>('');
     
 
     const handleSubmit = (data: IChangeEvent<object>) => {
@@ -55,40 +64,92 @@ function GameConfigSchemaForm({
             return;
         }
 
-        gameConfigUpsertMutation.mutate({
+        const fullRequest = {
             query: {
                 gameId,
                 schemaId: currentSchemaId,
             },
             request: data.formData as object
-        }, {
+        }
+
+        gameConfigUpsertMutation.mutate(fullRequest, {
             onSuccess: () => {
                 toast.success("Game config updated")
             },
-            onError: (err) => {
+            onError: () => {
                 toast.error("Failed to update game config")
-                console.error(err)
             }
         })
     }
 
+    const handleJsonEditorSubmit = () => {
+        try {
+            JSON.parse(currentEditorValue);
+            setJson(currentEditorValue);
+            setIsJsonEditorOpen(false);
+        } catch {
+            toast.error("Invalid JSON format");
+        }
+    }
+
+    const handleJsonEditorOpen = () => {
+        setCurrentEditorValue(json)
+        setIsJsonEditorOpen(true)
+    }
 
     function renderForm() {
         if (gameConfigSchemaGetQuery.isLoading) {
             return <div>Loading...</div>
         }
     
-        return <div className="[&_form]:space-y-4 mt-4">
-            <Form formData={gameConfig} schema={gameConfigSchemaGetQuery.data?.data?.schema ?? DEFAULT_SCHEMA} validator={validator} onSubmit={handleSubmit} />
-        </div>
+        return (<div className="[&_form]:space-y-4 mt-4">
+            <Form 
+                key={json} 
+                formData={apply(gameConfig, JSON.parse(json))} 
+                schema={gameConfigSchemaGetQuery.data?.data?.schema ?? DEFAULT_SCHEMA} 
+                validator={validator} 
+                onSubmit={handleSubmit} 
+            />
+                <Dialog open={isJsonEditorOpen} onOpenChange={setIsJsonEditorOpen}>
+                 <DialogContent className="max-w-4xl">
+                     <DialogHeader>
+                         <DialogTitle>Game Config</DialogTitle>
+                         <DialogDescription>Paste json below or drag and drop file</DialogDescription>
+                     </DialogHeader>
+                     <JsonEditorWithDragDrop
+                         value={currentEditorValue}
+                         onChange={setCurrentEditorValue}
+                         isLoading={gameConfigSchemaGetQuery.isLoading}
+                         isError={gameConfigSchemaGetQuery.isError}
+                     />
+                     <div className="flex justify-end pt-4 gap-2">
+                         <Button 
+                             onClick={handleJsonEditorSubmit}
+                         >
+                             OK
+                         </Button>
+                         <Button variant="outline" onClick={() => setIsJsonEditorOpen(false)}>
+                            Cancel
+                         </Button>
+                     </div>
+                 </DialogContent>
+             </Dialog>
+        </div>)
     }
 
-    function renderCombobox() {
+    function renderComboboxAndJsonEditor() {
         if (gameConfigSchemaListQuery.isLoading) {
             return <div>Loading...</div>
         }
         
-        return <GameConfigSchemaCombobox currentSchemaId={currentSchemaId} setCurrentSchemaId={setCurrentSchemaId} data={gameConfigSchemaListQuery.data?.data} />
+        return (
+            <div className="flex items-center gap-2">
+                <GameConfigSchemaCombobox currentSchemaId={currentSchemaId} setCurrentSchemaId={setCurrentSchemaId} data={gameConfigSchemaListQuery.data?.data} />
+                <Button variant="outline" size="icon" onClick={handleJsonEditorOpen}>
+                    <CodeXml className="h-4 w-4 text-blue-500 drop-shadow-lg" strokeWidth={3} style={{ filter: 'drop-shadow(0 0 6px rgba(59, 130, 246, 0.5))' }} />
+                </Button>
+            </div>
+        )
     }
 
     return (
@@ -96,7 +157,7 @@ function GameConfigSchemaForm({
             <h5 className="scroll-m-20 text-2xl font-extrabold tracking-tight mb-4">
                 Game Config for game id {gameId}
             </h5>
-            {renderCombobox()}
+            {renderComboboxAndJsonEditor()}
             {renderForm()}
         </div>
     )
