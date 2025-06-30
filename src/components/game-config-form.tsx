@@ -1,7 +1,7 @@
 import { useGameConfig, useGameConfigWithId } from "@/hooks/useGameConfig"
 import { useGameConfigSchema } from "@/hooks/useGameConfigSchema"
 import Form from '@rjsf/shadcn';
-import { validatorWithDataSupport } from "@/lib/validator";
+import { filterDataBySchema, validatorWithDataSupport } from "@/lib/validator";
 import { GameConfigSchemaCombobox } from "@/components/game-config-schema-combobox";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -28,7 +28,7 @@ export function GameConfigForm({
     }
 
     if (gameConfigWithIdQuery.isSuccess) {
-        return <GameConfigSchemaForm gameId={gameId} gameConfigSchemaId={gameConfigWithIdQuery.data?.data?.gameConfigSchema} gameConfig={gameConfigWithIdQuery.data?.data?.config} />
+        return <GameConfigSchemaForm key={gameId} gameId={gameId} gameConfigSchemaId={gameConfigWithIdQuery.data?.data?.gameConfigSchema} gameConfig={gameConfigWithIdQuery.data?.data?.config} />
     }
 
     return null;
@@ -54,11 +54,6 @@ function GameConfigSchemaForm({
     useEffect(() => {
         setCurrentSchemaId(gameConfigSchemaId)
     }, [gameConfigSchemaId, setCurrentSchemaId])
-
-    useEffect(() => {
-        setCurrentFormData(gameConfig);
-        setFormKey(prev => prev + 1);
-    }, [gameConfig])
 
     const [isJsonEditorOpen, setIsJsonEditorOpen] = useState(false);
     const [json, setJson] = useState<string>('{}');
@@ -100,12 +95,20 @@ function GameConfigSchemaForm({
         if (gameConfigSchemaGetQuery.isLoading) {
             return <div>Loading...</div>
         }
+
+        if (gameConfigSchemaGetQuery.isError) {
+            return <div>Error</div>
+        }
+
+        const schema = gameConfigSchemaGetQuery.data?.data?.schema ?? DEFAULT_SCHEMA;
+        const formData = filterDataBySchema(currentFormData, schema);
+
     
         return (<div className="[&_form]:space-y-4 mt-4">
             <Form 
                 key={formKey}
-                formData={currentFormData} 
-                schema={gameConfigSchemaGetQuery.data?.data?.schema ?? DEFAULT_SCHEMA} 
+                formData={formData} 
+                schema={schema} 
                 validator={validatorWithDataSupport} 
                 onSubmit={handleSubmit} 
                 onChange={handleFormChange}

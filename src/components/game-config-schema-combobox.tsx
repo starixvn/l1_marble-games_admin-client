@@ -25,7 +25,7 @@ export function GameConfigSchemaCombobox({
       placeholder="Select game config schema..."
       nothingFoundMessage="No game config schema found."
       className="w-[300px]"
-      valueFormatter={(item) => `${item.name}`}
+      valueFormatter={(item) => `${item?.name ?? 'Not found, please select another schema'}`}
     />
   )
 }
