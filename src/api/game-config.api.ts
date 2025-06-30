@@ -1,20 +1,20 @@
-import { privateApiClient } from "./private.axios";
+import { privateApiClient } from './private.axios'
 
-export type GameConfigUpsertRequest = object;
+export type GameConfigUpsertRequest = object
 export type GameConfigUpsertQuery = {
-    gameId: number;
-    schemaId: string;
+  gameId: number
+  schemaId: string
 }
 
 export type GameConfigResponse = {
-    gameId: number;
-    gameConfigSchema: string;
-    config: object;
+  gameId: number
+  gameConfigSchema: string
+  config: object
 }
 
 export type GameConfigUpsert = {
-  request: GameConfigUpsertRequest;
-  query: GameConfigUpsertQuery;
+  request: GameConfigUpsertRequest
+  query: GameConfigUpsertQuery
 }
 
 export const listGameConfigs = async () => {
@@ -24,13 +24,13 @@ export const listGameConfigs = async () => {
 export const getGameConfig = async (id: number) => {
   return privateApiClient.get(`/gameConfig/get`, {
     params: {
-        gameId: id
-    }
+      gameId: id,
+    },
   })
 }
 
 export const upsertGameConfig = async (upsert: GameConfigUpsert) => {
   return privateApiClient.post('/gameConfig/upsert', upsert.request, {
-    params: upsert.query
+    params: upsert.query,
   })
 }

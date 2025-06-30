@@ -1,9 +1,10 @@
 import { Moon, Sun } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useTheme } from '@/contexts/theme.context'
+import { useContext } from 'react'
+import { ThemeContext } from '@/contexts/theme.context'
 
 export function ThemeToggle() {
-  const { toggleTheme } = useTheme()
+  const { toggleTheme } = useContext(ThemeContext)
 
   return (
     <Button variant="outline" size="icon" onClick={toggleTheme} className="relative">

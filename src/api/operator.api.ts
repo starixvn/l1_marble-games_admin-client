@@ -14,12 +14,17 @@ interface OperatorQuery {
   name?: string
 }
 
+export interface OperatorListResponse {
+  id: string
+  name: string
+}
+
 export const createOperator = async (request: CreateOperatorRequest) => {
   return privateApiClient.post('/operator/create', request)
 }
 
 export const listOperators = async () => {
-  return privateApiClient.get('/operator/list')
+  return privateApiClient.get<OperatorListResponse[]>('/operator/list')
 }
 
 export const getOperator = async (query: OperatorQuery) => {

@@ -7,6 +7,7 @@ import { useOperator } from '../hooks/useOperator'
 import { toast } from 'sonner'
 import { OperatorRenameDialog } from '@/components/operator-rename-dialog'
 import { OperatorChangePasswordDialog } from '@/components/operator-change-password-dialog'
+import type { AxiosError } from 'axios'
 
 export interface OperatorTableItemProps extends React.HTMLAttributes<HTMLTableRowElement> {
   operator: {
@@ -39,8 +40,8 @@ export const OperatorTableItem = ({ operator }: OperatorTableItemProps) => {
         onSuccess: () => {
           toast.success('Operator name updated successfully')
         },
-        onError: (error: any) => {
-          toast.error(error.message)
+        onError: (error: unknown) => {
+          toast.error((error as Error).message)
         },
       },
     )
@@ -56,9 +57,11 @@ export const OperatorTableItem = ({ operator }: OperatorTableItemProps) => {
         onSuccess: () => {
           toast.success('Password generated successfully')
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
           const errorMessage =
-            error?.response?.data?.message ?? error?.message ?? 'Failed to generate password. Please try again.'
+            (error as AxiosError<{ message?: string }>).response?.data?.message ??
+            (error as Error).message ??
+            'Failed to generate password. Please try again.'
           toast.error(errorMessage)
           handlePasswordDialogClose()
         },

@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react'
+import React, { createContext } from 'react'
+import { useTheme as useThemeHook } from '@/hooks/useTheme'
 
 type Theme = 'light' | 'dark'
 
@@ -8,46 +9,18 @@ interface ThemeContextType {
   toggleTheme: () => void
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
+const defaultThemeContext: ThemeContextType = {
+  theme: 'light',
+  setTheme: () => {},
+  toggleTheme: () => {},
+}
+
+const ThemeContext = createContext<ThemeContextType>(defaultThemeContext)
 
 export function ThemeProvider({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    const stored = localStorage.getItem('theme') as Theme
-    if (stored) return stored
+  const themeHook = useThemeHook()
 
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-  })
-
-  useEffect(() => {
-    const root = window.document.documentElement
-
-    root.classList.remove('light', 'dark')
-
-    root.classList.add(theme)
-
-    localStorage.setItem('theme', theme)
-  }, [theme])
-
-  const toggleTheme = useCallback(() => {
-    setTheme(theme === 'light' ? 'dark' : 'light')
-  }, [theme])
-
-  const contextValue = useMemo(
-    () => ({
-      theme,
-      setTheme,
-      toggleTheme,
-    }),
-    [theme, setTheme, toggleTheme],
-  )
-
-  return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>
+  return <ThemeContext.Provider value={themeHook}>{children}</ThemeContext.Provider>
 }
 
-export function useTheme() {
-  const context = useContext(ThemeContext)
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider')
-  }
-  return context
-}
+export { ThemeContext }

@@ -1,25 +1,26 @@
-"use client"
-import type { GameConfigSchemaListResponse } from "../api/game-config-schema.api"
-import { Combobox } from "./combobox"
+'use client'
+import type { GameConfigSchemaListResponse } from '../api/game-config-schema.api'
+import { Combobox } from './combobox'
 
 export function GameConfigSchemaCombobox({
   currentSchemaId,
   setCurrentSchemaId,
-  data
+  data,
 }: Readonly<{
-  currentSchemaId?: string;
-  setCurrentSchemaId?: (id: string | undefined) => void;
-  data: GameConfigSchemaListResponse | undefined;
+  currentSchemaId?: string
+  setCurrentSchemaId?: (id: string | null) => void
+  data: GameConfigSchemaListResponse[] | undefined
 }>) {
-
   return (
-    <Combobox 
-      list={data?.map((schema) => ({
-        id: schema.id,
-        name: schema.name,
-      })) ?? []}
+    <Combobox
+      list={
+        data?.map((schema) => ({
+          id: schema.id,
+          name: schema.name,
+        })) ?? []
+      }
       currentValue={currentSchemaId}
-      setCurrentValue={setCurrentSchemaId ?? (() => {})}
+      setCurrentValue={(setCurrentSchemaId ?? (() => {})) as (value: string | number | null) => void}
       keyProp="id"
       valueProp="name"
       placeholder="Select game config schema..."

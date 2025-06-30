@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -120,34 +120,46 @@
 }
 
 /* Sonner Toast Styling */
-[data-sonner-toaster] [data-type="error"] {
+[data-sonner-toaster] [data-type='error'] {
   color: #ef4444 !important;
   border-color: rgba(239, 68, 68, 0.2) !important;
 }
 
-[data-sonner-toaster] [data-type="success"] {
+[data-sonner-toaster] [data-type='success'] {
   color: #22c55e !important;
   border-color: rgba(34, 197, 94, 0.2) !important;
 }
 
-[data-sonner-toaster] [data-type="warning"] {
+[data-sonner-toaster] [data-type='warning'] {
   color: #eab308 !important;
   border-color: rgba(234, 179, 8, 0.2) !important;
 }
 
-[data-sonner-toaster] [data-type="info"] {
+[data-sonner-toaster] [data-type='info'] {
   color: #3b82f6 !important;
   border-color: rgba(59, 130, 246, 0.2) !important;
 }
 
 @layer components {
-  .h-9 { height: 2.25rem; }
-  .w-9 { width: 2.25rem; }     
-  .aspect-square { aspect-ratio: 1 / 1; } 
-  .items-end { align-items: flex-end; }  
-  .justify-end { justify-content: flex-end; } 
-  .gap-2 { gap: 0.5rem; }
-  
+  .h-9 {
+    height: 2.25rem;
+  }
+  .w-9 {
+    width: 2.25rem;
+  }
+  .aspect-square {
+    aspect-ratio: 1 / 1;
+  }
+  .items-end {
+    align-items: flex-end;
+  }
+  .justify-end {
+    justify-content: flex-end;
+  }
+  .gap-2 {
+    gap: 0.5rem;
+  }
+
   /* Fix spacing between RJSF array input and buttons */
   .rjsf-field-array .flex.flex-row.flex-wrap {
     gap: 0.75rem; /* 12px gap between input and buttons */

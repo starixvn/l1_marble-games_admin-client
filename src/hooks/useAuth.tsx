@@ -26,6 +26,41 @@ export const useAuth = (): UseAuthReturn => {
     isLoading: true,
   })
 
+  const setAuthToken = useCallback((newToken: string) => {
+    localStorage.setItem(AUTH_TOKEN_KEY, newToken)
+    setAuthState({
+      token: newToken,
+      isAuthenticated: true,
+      isLoading: false,
+    })
+  }, [])
+
+  const handleLogout = useCallback(() => {
+    if (localStorage.getItem(AUTH_TOKEN_KEY)) {
+      localStorage.removeItem(AUTH_TOKEN_KEY)
+    }
+    setAuthState({
+      token: null,
+      isAuthenticated: false,
+      isLoading: false,
+    })
+  }, [])
+
+  const updateAuthToken = useCallback(
+    (newToken: string) => {
+      setAuthToken(newToken)
+    },
+    [setAuthToken],
+  )
+
+  const handleLogin = useCallback(
+    async (credential: UserCredential) => {
+      const response = await login(credential)
+      setAuthToken(response.access_token)
+    },
+    [setAuthToken],
+  )
+
   useEffect(() => {
     globalAuthEventEmitter.addEventListener('logout', handleLogout)
 
@@ -44,8 +79,7 @@ export const useAuth = (): UseAuthReturn => {
           isLoading: false,
         })
       }
-    } catch (error) {
-      console.error('Error loading auth token from localStorage:', error)
+    } catch {
       setAuthState({
         token: null,
         isAuthenticated: false,
@@ -56,44 +90,7 @@ export const useAuth = (): UseAuthReturn => {
     return () => {
       globalAuthEventEmitter.removeEventListener('logout', handleLogout)
     }
-  }, [])
-
-  const setAuthToken = useCallback((newToken: string) => {
-    try {
-      localStorage.setItem(AUTH_TOKEN_KEY, newToken)
-      setAuthState({
-        token: newToken,
-        isAuthenticated: true,
-        isLoading: false,
-      })
-    } catch (error) {
-      console.error('Error saving auth token to localStorage:', error)
-    }
-  }, [])
-
-  const handleLogout = useCallback(() => {
-    try {
-      if (localStorage.getItem(AUTH_TOKEN_KEY)) {
-        localStorage.removeItem(AUTH_TOKEN_KEY)
-      }
-      setAuthState({
-        token: null,
-        isAuthenticated: false,
-        isLoading: false,
-      })
-    } catch (error) {
-      console.error('Error removing auth token from localStorage:', error)
-    }
-  }, [])
-
-  const updateAuthToken = useCallback((newToken: string) => {
-    setAuthToken(newToken)
-  }, [])
-
-  const handleLogin = useCallback(async (credential: UserCredential) => {
-    const response = await login(credential)
-    setAuthToken(response.access_token)
-  }, [])
+  }, [handleLogout])
 
   return {
     ...authState,

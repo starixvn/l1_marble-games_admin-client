@@ -1,22 +1,25 @@
 import { Button } from '@/components/ui/button'
 import { CreateOperatorDialog } from './create-operator-dialog'
 import { useState } from 'react'
-import { useOperator } from '../hooks/useOperator';
-import { toast } from 'sonner';
+import { useOperator } from '../hooks/useOperator'
+import { toast } from 'sonner'
 
 export const CreateOperatorSection = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { createOperatorMutation } = useOperator();
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const { createOperatorMutation } = useOperator()
 
   const handleCreateOperator = (name: string) => {
-    createOperatorMutation.mutate({ name }, {
-      onSuccess: () => {
-        toast.success('Operator created successfully')
+    createOperatorMutation.mutate(
+      { name },
+      {
+        onSuccess: () => {
+          toast.success('Operator created successfully')
+        },
+        onError: () => {
+          toast.error('Failed to create operator')
+        },
       },
-      onError: () => {
-        toast.error('Failed to create operator')
-      }
-    })
+    )
   }
 
   const handleDialogOpenChange = (open: boolean) => {

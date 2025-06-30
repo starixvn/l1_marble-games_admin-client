@@ -42,7 +42,7 @@ const data = {
       title: 'Game Config Schemas',
       url: '/game-config-schemas',
       icon: IconCode,
-    }
+    },
   ],
 }
 

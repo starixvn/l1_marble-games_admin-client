@@ -1,4 +1,12 @@
-import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogClose, DialogHeader, DialogFooter } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+  DialogHeader,
+  DialogFooter,
+} from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -26,7 +34,8 @@ export const CreateOperatorDialog = ({
 
   const copyToClipboard = () => {
     if (createdOperator) {
-      const { name, ...operatorWithoutName } = createdOperator as { name: string }
+      const operatorWithoutName = { ...createdOperator } as Record<string, unknown>
+      delete operatorWithoutName.name
       navigator.clipboard.writeText(JSON.stringify(operatorWithoutName, null, 2))
       toast.success('Operator data copied to clipboard')
     }
@@ -72,14 +81,9 @@ export const CreateOperatorDialog = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {createdOperator ? 'Operator Created Successfully' : 'Create Operator'}
-          </DialogTitle>
+          <DialogTitle>{createdOperator ? 'Operator Created Successfully' : 'Create Operator'}</DialogTitle>
           <DialogDescription>
-            {createdOperator
-              ? `Operator has been created successfully`
-              : 'Enter the name for the new operator'
-            }
+            {createdOperator ? `Operator has been created successfully` : 'Enter the name for the new operator'}
           </DialogDescription>
         </DialogHeader>
 
@@ -95,4 +99,4 @@ export const CreateOperatorDialog = ({
       </DialogContent>
     </Dialog>
   )
-} 
+}

@@ -6,7 +6,6 @@ interface AuthProviderProps {
   children: ReactNode
 }
 
-// Create a default context value with no-op functions to prevent errors
 const defaultAuthContext: UseAuthReturn = {
   token: null,
   isAuthenticated: false,

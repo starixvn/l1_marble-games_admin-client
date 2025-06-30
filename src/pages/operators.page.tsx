@@ -10,13 +10,13 @@ export default function OperatorsPage() {
 
   function renderOperatorTable() {
     if (operatorsQuery.error) {
-      return <ErrorTable onClick={() => operatorsQuery.refetch()}/>
+      return <ErrorTable onClick={() => operatorsQuery.refetch()} />
     }
 
     if (operatorsQuery.isLoading) {
       return (
         <div className="flex flex-1 flex-col gap-2 m-2">
-          <FullpageSkeleton/>
+          <FullpageSkeleton />
         </div>
       )
     }
@@ -29,9 +29,5 @@ export default function OperatorsPage() {
     )
   }
 
-  return (
-    <AdminLayout>
-      {renderOperatorTable()}
-    </AdminLayout>
-  )
+  return <AdminLayout>{renderOperatorTable()}</AdminLayout>
 }

@@ -1,4 +1,5 @@
-import { customizeValidator } from '@rjsf/validator-ajv8';
+import type { RJSFSchema } from '@rjsf/utils'
+import { customizeValidator } from '@rjsf/validator-ajv8'
 
 export const validatorWithDataSupport = customizeValidator({
   ajvOptionsOverrides: {
@@ -6,10 +7,10 @@ export const validatorWithDataSupport = customizeValidator({
     removeAdditional: 'all',
     $data: true,
   },
-}); 
+})
 
-export const filterDataBySchema = (data: any, schema: any) => {
-  const clone = structuredClone(data);
-  validatorWithDataSupport.rawValidation(schema, clone);
-  return clone;
+export const filterDataBySchema = (data: unknown, schema: RJSFSchema) => {
+  const clone = structuredClone(data)
+  validatorWithDataSupport.rawValidation(schema, clone)
+  return clone
 }

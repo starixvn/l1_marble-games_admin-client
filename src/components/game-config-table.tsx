@@ -12,36 +12,38 @@ export function GameConfigTable({
     gameConfigSchema: string
   }[]
 }>) {
-
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleConfigClick = (gameId: number) => {
-    navigate(`/game-configs/${gameId}`);
+    navigate(`/game-configs/${gameId}`)
   }
 
   const handleNewGameClick = () => {
-    navigate(`/game-configs/new`);
+    navigate(`/game-configs/new`)
   }
 
   return (
-        <div className="overflow-hidden rounded-lg border m-2">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[300px] px-6">Game Id</TableHead>
-                <TableHead className="px-6">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.map((gameConfig) => (
-                <GameConfigTableItem key={gameConfig.gameId} gameId={gameConfig.gameId} handleConfigClick={handleConfigClick} />
-              ))}
+    <div className="overflow-hidden rounded-lg border m-2">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[300px] px-6">Game Id</TableHead>
+            <TableHead className="px-6">Action</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.map((gameConfig) => (
+            <GameConfigTableItem
+              key={gameConfig.gameId}
+              gameId={gameConfig.gameId}
+              handleConfigClick={handleConfigClick}
+            />
+          ))}
 
-              <NewGameConfigTableItem handleConfigClick={handleNewGameClick} />
-
-            </TableBody>
-          </Table>
-        </div>
+          <NewGameConfigTableItem handleConfigClick={handleNewGameClick} />
+        </TableBody>
+      </Table>
+    </div>
   )
 }
 
@@ -52,8 +54,7 @@ export function GameConfigTableItem({
   gameId: number
   handleConfigClick: (gameId: number) => void
 }>) {
-
-    return (
+  return (
     <TableRow key={gameId}>
       <TableCell className="px-6">{gameId}</TableCell>
       <TableCell className="">
@@ -65,13 +66,11 @@ export function GameConfigTableItem({
   )
 }
 
-export function NewGameConfigTableItem(
-  {
-    handleConfigClick,
-  }: Readonly<{
-    handleConfigClick: () => void
-  }>
-) {
+export function NewGameConfigTableItem({
+  handleConfigClick,
+}: Readonly<{
+  handleConfigClick: () => void
+}>) {
   return (
     <TableRow>
       <TableCell className="px-6">New</TableCell>
