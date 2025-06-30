@@ -20,7 +20,7 @@ export function useGameConfigSchemaWithId({ id }: { id?: string }) {
   const gameConfigSchemaGetQuery = useErrorHandledQueryCall({
     queryKey: ['gameConfigSchemaGet', id],
     queryFn: () => getGameConfigSchema(id!),
-    enabled: id !== undefined && id !== null,
+    enabled: id !== undefined,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   })
