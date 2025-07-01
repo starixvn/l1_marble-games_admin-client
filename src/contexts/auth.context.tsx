@@ -1,6 +1,6 @@
 import React, { createContext } from 'react'
 import type { ReactNode } from 'react'
-import { useAuth as useAuthHook, type UseAuthReturn } from '@/hooks/useAuth'
+import { useAuth , type UseAuthReturn } from '@/hooks/useAuth'
 
 interface AuthProviderProps {
   children: ReactNode
@@ -18,7 +18,7 @@ const defaultAuthContext: UseAuthReturn = {
 const AuthContext = createContext<UseAuthReturn>(defaultAuthContext)
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const authState = useAuthHook()
+  const authState = useAuth()
 
   return <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
 }

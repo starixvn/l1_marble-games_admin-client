@@ -1,5 +1,5 @@
 import React, { createContext } from 'react'
-import { useTheme as useThemeHook } from '@/hooks/useTheme'
+import { useTheme } from '@/hooks/useTheme'
 
 type Theme = 'light' | 'dark'
 
@@ -18,7 +18,7 @@ const defaultThemeContext: ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType>(defaultThemeContext)
 
 export function ThemeProvider({ children }: Readonly<{ children: React.ReactNode }>) {
-  const themeHook = useThemeHook()
+  const themeHook = useTheme()
 
   return <ThemeContext.Provider value={themeHook}>{children}</ThemeContext.Provider>
 }
