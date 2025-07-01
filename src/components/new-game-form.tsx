@@ -36,7 +36,6 @@ export default function NewGameForm() {
       },
       request: currentFormData,
     }
-    console.log(request)
 
     gameConfigUpsertMutation.mutate(request, {
       onSuccess: () => {

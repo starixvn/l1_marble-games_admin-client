@@ -3,7 +3,7 @@ import { useTheme as useThemeHook } from '@/hooks/useTheme'
 
 type Theme = 'light' | 'dark'
 
-interface ThemeContextType {
+export interface ThemeContextType {
   theme: Theme
   setTheme: (theme: Theme) => void
   toggleTheme: () => void

@@ -1,6 +1,6 @@
 import { Toaster } from '@/components/ui/sonner'
-import { AppSidebar } from '../app-sidebar'
-import { SiteHeader } from '../site-header'
+import { AppSidebar } from '@/components/app-sidebar'
+import { SiteHeader } from '@/components/site-header'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 
 interface AdminLayoutProps {
