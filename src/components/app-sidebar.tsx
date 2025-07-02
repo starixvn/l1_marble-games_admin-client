@@ -43,6 +43,11 @@ const data = {
       url: '/game-config-schemas',
       icon: IconCode,
     },
+    {
+      title: 'Api Logs',
+      url: '/logs-api',
+      icon: IconCode,
+    },
   ],
 }
 

@@ -2,6 +2,7 @@ import { Button } from './ui/button'
 import { Table, TableBody, TableCell, TableHeader, TableRow } from './ui/table'
 import { Combobox } from './combobox'
 import { IconSettings, IconTrash } from '@tabler/icons-react'
+import { cn } from '../lib/utils'
 
 export type GameIntegrationConfigParam = {
   gameId: number
@@ -186,6 +187,7 @@ export function OperatorIdCombobox({
   operatorIds,
   currentOperatorId,
   setCurrentOperatorId,
+  className = "w-[300px]",
 }: Readonly<{
   operatorIds: {
     id: string
@@ -193,6 +195,7 @@ export function OperatorIdCombobox({
   }[]
   currentOperatorId: string | null
   setCurrentOperatorId: (operatorId: string | null) => void
+  className?: string
 }>) {
   return (
     <Combobox
@@ -204,7 +207,7 @@ export function OperatorIdCombobox({
       setCurrentValue={setCurrentOperatorId as (value: string | number | null) => void}
       keyProp="id"
       valueProp="id"
-      className="w-[300px]"
+      className={className}
       valueFormatter={(item) => `${item.id} ${formatName(item.name as string)}`}
     />
   )
