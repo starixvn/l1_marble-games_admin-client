@@ -1,5 +1,5 @@
-import { getApiLogs, type ApiLogQuery } from "../api/api-log.api"
-import { useErrorHandledQueryCall } from "./useErrorHandledQueryCall"
+import { getApiLogs, type ApiLogQuery } from "@/api/api-log.api"
+import { useErrorHandledQueryCall } from "@/hooks/useErrorHandledQueryCall"
 
 export const useApiLog = ({
   startDate,
