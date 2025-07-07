@@ -1,9 +1,8 @@
 import type { PropsWithoutRef } from "react"
 import type { ApiLogResponseItem } from "@/api/api-log.api"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { DialogTitle } from "@radix-ui/react-dialog"
 
 export type ApiLogRequestDialogProps = PropsWithoutRef<{
   isOpen: boolean
@@ -18,10 +17,12 @@ export function ApiLogRequestDialog({
 }: Readonly<ApiLogRequestDialogProps>) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent >
+      <DialogHeader>
         <DialogTitle className="sr-only">
           Request Details
         </DialogTitle>
+      </DialogHeader>
+      <DialogContent >
           <Label>
             <span className="font-medium text-green-400">
               {request.method}

@@ -7,6 +7,8 @@ import type { ApiLogResponseItem } from '@/api/api-log.api'
 vi.mock('@/components/ui/dialog', () => ({
   Dialog: vi.fn(),
   DialogContent: vi.fn(),
+  DialogHeader: vi.fn(),
+  DialogTitle: vi.fn(),
 }))
 
 vi.mock('@/components/ui/label', () => ({
@@ -18,12 +20,14 @@ vi.mock('@/components/ui/button', () => ({
 }))
 
 // Import mocked functions
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 
 const mockDialog = vi.mocked(Dialog)
 const mockDialogContent = vi.mocked(DialogContent)
+const mockDialogHeader = vi.mocked(DialogHeader)
+const mockDialogTitle = vi.mocked(DialogTitle)
 const mockLabel = vi.mocked(Label)
 const mockButton = vi.mocked(Button)
 
@@ -52,6 +56,14 @@ describe('ApiLogRequestDialog', () => {
     
     mockDialogContent.mockImplementation(({ children }) => (
       <div data-testid="dialog-content">{children}</div>
+    ))
+
+    mockDialogHeader.mockImplementation(({ children }) => (
+      <div data-testid="dialog-header">{children}</div>
+    ))
+
+    mockDialogTitle.mockImplementation(({ children, className }) => (
+      <div data-testid="dialog-title" data-class={className}>{children}</div>
     ))
     
     mockLabel.mockImplementation(({ children }) => (
@@ -96,7 +108,37 @@ describe('ApiLogRequestDialog', () => {
     expect(screen.queryByTestId('dialog-content')).not.toBeInTheDocument()
   })
 
-  it('should display request method and path', () => {
+  it('should render dialog title for screen readers', () => {
+    // Arrange & Act
+    render(
+      <ApiLogRequestDialog
+        isOpen={true}
+        onOpenChange={mockOnOpenChange}
+        request={mockRequest}
+      />
+    )
+
+    // Assert
+    expect(screen.getByTestId('dialog-title')).toBeInTheDocument()
+    expect(screen.getByTestId('dialog-title')).toHaveAttribute('data-class', 'sr-only')
+    expect(screen.getByText('Request Details')).toBeInTheDocument()
+  })
+
+  it('should render dialog header', () => {
+    // Arrange & Act
+    render(
+      <ApiLogRequestDialog
+        isOpen={true}
+        onOpenChange={mockOnOpenChange}
+        request={mockRequest}
+      />
+    )
+
+    // Assert
+    expect(screen.getByTestId('dialog-header')).toBeInTheDocument()
+  })
+
+  it('should display request method and path with proper labels', () => {
     // Arrange & Act
     render(
       <ApiLogRequestDialog
@@ -109,9 +151,13 @@ describe('ApiLogRequestDialog', () => {
     // Assert
     expect(screen.getByText('GET')).toBeInTheDocument()
     expect(screen.getByText('/api/test')).toBeInTheDocument()
+    
+    // Check that labels are rendered
+    const labels = screen.getAllByTestId('label')
+    expect(labels.length).toBeGreaterThan(0)
   })
 
-  it('should display query parameters as formatted JSON', () => {
+  it('should display query parameters as formatted JSON with proper label', () => {
     // Arrange & Act
     render(
       <ApiLogRequestDialog
@@ -122,6 +168,7 @@ describe('ApiLogRequestDialog', () => {
     )
 
     // Assert
+    expect(screen.getByText('Query')).toBeInTheDocument()
     const preElement = screen.getByTestId('dialog-content').querySelector('pre')
     expect(preElement).toBeInTheDocument()
     expect(preElement?.textContent).toContain('"test": "value"')
@@ -200,6 +247,7 @@ describe('ApiLogRequestDialog', () => {
     )
 
     // Assert
+    expect(screen.getByText('Query')).toBeInTheDocument()
     expect(screen.getByText('{}')).toBeInTheDocument()
   })
 
@@ -229,6 +277,7 @@ describe('ApiLogRequestDialog', () => {
     )
 
     // Assert
+    expect(screen.getByText('Query')).toBeInTheDocument()
     const preElement = screen.getByTestId('dialog-content').querySelector('pre')
     expect(preElement).toBeInTheDocument()
     expect(preElement?.textContent).toContain('"eventId": "123"')
@@ -327,5 +376,23 @@ describe('ApiLogRequestDialog', () => {
     // Assert - now open
     expect(screen.getByTestId('dialog')).toHaveAttribute('data-open', 'true')
     expect(screen.getByTestId('dialog-content')).toBeInTheDocument()
+  })
+
+  it('should render all required a11y elements', () => {
+    // Arrange & Act
+    render(
+      <ApiLogRequestDialog
+        isOpen={true}
+        onOpenChange={mockOnOpenChange}
+        request={mockRequest}
+      />
+    )
+
+    // Assert
+    expect(screen.getByTestId('dialog-header')).toBeInTheDocument()
+    expect(screen.getByTestId('dialog-title')).toBeInTheDocument()
+    expect(screen.getByText('Request Details')).toBeInTheDocument()
+    expect(screen.getByText('Query')).toBeInTheDocument()
+    expect(screen.getAllByTestId('label').length).toBeGreaterThan(0)
   })
 })

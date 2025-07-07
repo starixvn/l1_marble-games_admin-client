@@ -1,7 +1,7 @@
 import type { PropsWithoutRef } from "react"
-import type { ApiLogResponseItem } from "../../api/api-log.api"
-import { Dialog, DialogContent, DialogTitle } from "../ui/dialog"
-import { Label } from "../ui/label"
+import type { ApiLogResponseItem } from "@/api/api-log.api"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
 
 export type ResponseDialogProps = PropsWithoutRef<{
   isOpen: boolean
@@ -16,10 +16,12 @@ export function ApiLogResponseDialog({
 }: Readonly<ResponseDialogProps>) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent >
+      <DialogHeader>
         <DialogTitle className="sr-only">
           Response Details
         </DialogTitle>
+      </DialogHeader>
+      <DialogContent >
         <div className="flex flex-col gap-2 overflow-hidden">
           <Label>
             <span className="font-medium">

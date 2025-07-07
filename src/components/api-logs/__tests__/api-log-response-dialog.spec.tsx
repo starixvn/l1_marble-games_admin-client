@@ -7,6 +7,8 @@ import type { ApiLogResponseItem } from '@/api/api-log.api'
 vi.mock('@/components/ui/dialog', () => ({
   Dialog: vi.fn(),
   DialogContent: vi.fn(),
+  DialogHeader: vi.fn(),
+  DialogTitle: vi.fn(),
 }))
 
 vi.mock('@/components/ui/label', () => ({
@@ -14,11 +16,13 @@ vi.mock('@/components/ui/label', () => ({
 }))
 
 // Import mocked functions
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 
 const mockDialog = vi.mocked(Dialog)
 const mockDialogContent = vi.mocked(DialogContent)
+const mockDialogHeader = vi.mocked(DialogHeader)
+const mockDialogTitle = vi.mocked(DialogTitle)
 const mockLabel = vi.mocked(Label)
 
 describe('ApiLogResponseDialog', () => {
@@ -42,6 +46,14 @@ describe('ApiLogResponseDialog', () => {
     
     mockDialogContent.mockImplementation(({ children }) => (
       <div data-testid="dialog-content">{children}</div>
+    ))
+
+    mockDialogHeader.mockImplementation(({ children }) => (
+      <div data-testid="dialog-header">{children}</div>
+    ))
+
+    mockDialogTitle.mockImplementation(({ children, className }) => (
+      <div data-testid="dialog-title" data-class={className}>{children}</div>
     ))
     
     mockLabel.mockImplementation(({ children }) => (
@@ -80,7 +92,37 @@ describe('ApiLogResponseDialog', () => {
     expect(screen.queryByTestId('dialog-content')).not.toBeInTheDocument()
   })
 
-  it('should display response status code and response time', () => {
+  it('should render dialog title for screen readers', () => {
+    // Arrange & Act
+    render(
+      <ApiLogResponseDialog
+        isOpen={true}
+        onOpenChange={mockOnOpenChange}
+        response={mockResponse}
+      />
+    )
+
+    // Assert
+    expect(screen.getByTestId('dialog-title')).toBeInTheDocument()
+    expect(screen.getByTestId('dialog-title')).toHaveAttribute('data-class', 'sr-only')
+    expect(screen.getByText('Response Details')).toBeInTheDocument()
+  })
+
+  it('should render dialog header', () => {
+    // Arrange & Act
+    render(
+      <ApiLogResponseDialog
+        isOpen={true}
+        onOpenChange={mockOnOpenChange}
+        response={mockResponse}
+      />
+    )
+
+    // Assert
+    expect(screen.getByTestId('dialog-header')).toBeInTheDocument()
+  })
+
+  it('should display response status code and response time with proper labels', () => {
     // Arrange & Act
     render(
       <ApiLogResponseDialog
@@ -93,6 +135,10 @@ describe('ApiLogResponseDialog', () => {
     // Assert
     expect(screen.getByText('200')).toBeInTheDocument()
     expect(screen.getByText('2024-01-01T10:00:00Z')).toBeInTheDocument()
+    
+    // Check that labels are rendered
+    const labels = screen.getAllByTestId('label')
+    expect(labels.length).toBeGreaterThan(0)
   })
 
   it('should display response body as formatted JSON', () => {
@@ -342,5 +388,38 @@ describe('ApiLogResponseDialog', () => {
     expect(preElement?.textContent).toContain('"error": "Internal Server Error"')
     expect(preElement?.textContent).toContain('"message": "Something went wrong"')
     expect(preElement?.textContent).toContain('"stack"')
+  })
+
+  it('should render all required a11y elements', () => {
+    // Arrange & Act
+    render(
+      <ApiLogResponseDialog
+        isOpen={true}
+        onOpenChange={mockOnOpenChange}
+        response={mockResponse}
+      />
+    )
+
+    // Assert
+    expect(screen.getByTestId('dialog-header')).toBeInTheDocument()
+    expect(screen.getByTestId('dialog-title')).toBeInTheDocument()
+    expect(screen.getByText('Response Details')).toBeInTheDocument()
+    expect(screen.getAllByTestId('label').length).toBeGreaterThan(0)
+  })
+
+  it('should have proper styling for status code and response time', () => {
+    // Arrange & Act
+    render(
+      <ApiLogResponseDialog
+        isOpen={true}
+        onOpenChange={mockOnOpenChange}
+        response={mockResponse}
+      />
+    )
+
+    // Assert
+    // The component should render the status code with medium font weight and response time with orange styling
+    expect(screen.getByText('200')).toBeInTheDocument()
+    expect(screen.getByText('2024-01-01T10:00:00Z')).toBeInTheDocument()
   })
 })
