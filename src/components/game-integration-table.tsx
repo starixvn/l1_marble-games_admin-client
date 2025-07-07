@@ -2,7 +2,6 @@ import { Button } from './ui/button'
 import { Table, TableBody, TableCell, TableHeader, TableRow } from './ui/table'
 import { Combobox } from './combobox'
 import { IconSettings, IconTrash } from '@tabler/icons-react'
-import { cn } from '../lib/utils'
 
 export type GameIntegrationConfigParam = {
   gameId: number
