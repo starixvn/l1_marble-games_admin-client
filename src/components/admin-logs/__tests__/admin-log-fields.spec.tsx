@@ -200,7 +200,7 @@ describe('AdminLogFields', () => {
       expect(mockOnSubmit).toHaveBeenCalledWith({
         startDate: mockDate.toISOString(),
         endDate: new Date(mockDate.getTime() + 1000 * 60 * 60).toISOString(),
-        author: '',
+        author: 'admin',
         resource: 'operator',
         action: 'insert',
       })
@@ -236,7 +236,7 @@ describe('AdminLogFields', () => {
     const options = Array.from(resourceSelect.querySelectorAll('option'))
     expect(options).toHaveLength(5)
     expect(options[0]).toHaveTextContent('ALL')
-    expect(options[0]).toHaveValue('')
+    expect(options[0]).toHaveValue('ALL')
     expect(options[1]).toHaveTextContent('operator')
     expect(options[1]).toHaveValue('operator')
     expect(options[2]).toHaveTextContent('game-config')
@@ -260,7 +260,7 @@ describe('AdminLogFields', () => {
     const options = Array.from(actionSelect.querySelectorAll('option'))
     expect(options).toHaveLength(4)
     expect(options[0]).toHaveTextContent('ALL')
-    expect(options[0]).toHaveValue('')
+    expect(options[0]).toHaveValue('ALL')
     expect(options[1]).toHaveTextContent('insert')
     expect(options[1]).toHaveValue('insert')
     expect(options[2]).toHaveTextContent('update')
@@ -277,6 +277,6 @@ describe('AdminLogFields', () => {
     // Assert
     const labels = screen.getAllByTestId('label')
     const lastLabel = labels[labels.length - 1]
-    expect(lastLabel).toHaveTextContent('\u00A0') // Non-breaking space
+    expect(lastLabel).toHaveTextContent('')
   })
 })

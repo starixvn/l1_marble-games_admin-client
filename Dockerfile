@@ -1,4 +1,4 @@
-FROM hub.lumigame.com/base/node:20.9.0-alpine-24h1.1 AS builder
+FROM hub.lumigame.com/base/node:22-alpine-25h1.1 AS builder
 WORKDIR /app
 
 COPY package.json yarn.lock ./

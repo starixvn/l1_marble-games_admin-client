@@ -225,7 +225,7 @@ describe('AdminLogTable', () => {
     fireEvent.click(viewDiffButtons[0])
 
     // Assert
-    expect(screen.getByTestId('admin-log-diff-viewer')).toHaveAttribute('data-diff', 'undefined')
+    expect(screen.getByTestId('admin-log-diff-viewer')).not.toHaveAttribute('data-diff')
   })
 
   it('should prioritize loading state over error state', () => {
