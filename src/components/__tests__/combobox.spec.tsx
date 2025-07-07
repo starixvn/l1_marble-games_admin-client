@@ -3,10 +3,14 @@ import { render, screen, fireEvent } from '@testing-library/react'
 vi.mock('lucide-react', () => ({
   Check: vi.fn(() => <div data-testid="check-icon" />),
   ChevronsUpDown: vi.fn(() => <div data-testid="chevron-icon" />),
+  X: vi.fn(() => <div data-testid="x-icon" />),
 }))
 
 vi.mock('@/components/ui/button', () => ({
-  Button: vi.fn(({ children, ...props }) => <button data-testid="button" {...props}>{children}</button>),
+  Button: vi.fn(({ children, ...props }) => {
+    const testId = props['aria-label'] === 'Clear selection' ? 'clear-button' : 'button'
+    return <button data-testid={testId} {...props}>{children}</button>
+  }),
 }))
 
 vi.mock('@/components/ui/popover', () => ({
@@ -51,7 +55,7 @@ describe('Combobox', () => {
     { id: 3, name: 'Game 3', category: 'Puzzle' },
   ]
 
-  const mockValueFormatter = (item: Record<string, number | string | null>) => item.name as string
+  const mockValueFormatter = (item: Record<string, number | string | null | undefined>) => item.name as string
 
   it('should render the combobox with correct structure', () => {
     // Arrange
@@ -232,5 +236,84 @@ describe('Combobox', () => {
 
     // Assert
     expect(screen.getByText('Select...')).toBeInTheDocument()
+  })
+
+  it('should show clear button when an option is selected', () => {
+    // Arrange
+    const props = {
+      list: mockList,
+      currentValue: 1,
+      keyProp: 'id',
+      valueProp: 'name',
+      valueFormatter: mockValueFormatter,
+    }
+
+    // Act
+    render(<Combobox {...props} />)
+
+    // Assert
+    expect(screen.getByTestId('x-icon')).toBeInTheDocument()
+    expect(screen.getByLabelText('Clear selection')).toBeInTheDocument()
+  })
+
+  it('should not show clear button when no option is selected', () => {
+    // Arrange
+    const props = {
+      list: mockList,
+      currentValue: null,
+      keyProp: 'id',
+      valueProp: 'name',
+      valueFormatter: mockValueFormatter,
+    }
+
+    // Act
+    render(<Combobox {...props} />)
+
+    // Assert
+    expect(screen.queryByTestId('x-icon')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Clear selection')).not.toBeInTheDocument()
+  })
+
+  it('should call setCurrentValue with null when clear button is clicked', () => {
+    // Arrange
+    const mockSetCurrentValue = vi.fn()
+    const props = {
+      list: mockList,
+      currentValue: 1,
+      keyProp: 'id',
+      valueProp: 'name',
+      setCurrentValue: mockSetCurrentValue,
+      valueFormatter: mockValueFormatter,
+    }
+
+    // Act
+    render(<Combobox {...props} />)
+    const clearButton = screen.getByTestId('clear-button')
+    fireEvent.click(clearButton)
+
+    // Assert
+    expect(mockSetCurrentValue).toHaveBeenCalledWith(null)
+  })
+
+  it('should prevent event propagation when clear button is clicked', () => {
+    // Arrange
+    const mockSetCurrentValue = vi.fn()
+    const props = {
+      list: mockList,
+      currentValue: 1,
+      keyProp: 'id',
+      valueProp: 'name',
+      setCurrentValue: mockSetCurrentValue,
+      valueFormatter: mockValueFormatter,
+    }
+
+    // Act
+    render(<Combobox {...props} />)
+    const clearButton = screen.getByTestId('clear-button')
+    const mockEvent = { stopPropagation: vi.fn() }
+    fireEvent.click(clearButton, mockEvent)
+
+    // Assert
+    expect(mockSetCurrentValue).toHaveBeenCalledWith(null)
   })
 })

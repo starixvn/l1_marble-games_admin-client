@@ -8,6 +8,7 @@ import GameConfigsPage from '@/pages/game-configs.page'
 import { GameIntegrationsPage } from '@/pages/game-integrations.page'
 import GameConfigSchemaPage from '@/pages/game-config-schema.page'
 import { ApiLogsPage } from '@/pages/api-log.page'
+import { AdminLogPage } from '@/pages/admin-log.page'
 
 const routes = [
   {
@@ -42,6 +43,10 @@ const routes = [
   {
     path: '/logs-api',
     element: <ApiLogsPage />,
+  },
+  {
+    path: '/admin-log',
+    element: <AdminLogPage />,
   },
   {
     path: '*',

@@ -1,12 +1,14 @@
-import { Check, ChevronsUpDown } from 'lucide-react'
+import { Check, ChevronsUpDown, X } from 'lucide-react'
 import React from 'react'
 import { cn } from '../lib/utils'
 import { Button } from './ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import { CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, Command } from './ui/command'
 
+export type ComboboxGenericProp = string | number | null | undefined
+
 type ComboboxProps = {
-  list: Record<string, number | string | null>[]
+  list: Record<string, ComboboxGenericProp>[]
   currentValue?: number | string | null
   setCurrentValue?: (value: number | string | null) => void
   keyProp: string
@@ -14,7 +16,7 @@ type ComboboxProps = {
   placeholder?: string
   nothingFoundMessage?: string
   className?: string
-  valueFormatter: (value: Record<string, number | string | null>) => string
+  valueFormatter: (value: Record<string, number | string | null | undefined>) => string
 }
 
 export function Combobox({
@@ -32,12 +34,32 @@ export function Combobox({
 
   const currentItem = currentValue ? list.find((item) => item[keyProp] === currentValue) : null
 
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (setCurrentValue) {
+      setCurrentValue(null)
+    }
+  }
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" aria-expanded={open} className={cn('justify-between', className)}>
           {currentItem ? valueFormatter(currentItem) : (placeholder ?? 'Select...')}
-          <ChevronsUpDown className="opacity-50" />
+          <div className="flex items-center gap-1">
+            {currentItem && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-4 w-4 p-0 hover:bg-transparent"
+                onClick={handleClear}
+                aria-label="Clear selection"
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            )}
+            <ChevronsUpDown className="opacity-50" />
+          </div>
         </Button>
       </PopoverTrigger>
       <PopoverContent className={cn('p-0', className)}>

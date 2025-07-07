@@ -48,6 +48,11 @@ const data = {
       url: '/logs-api',
       icon: IconCode,
     },
+    {
+      title: 'Admin Log',
+      url: '/admin-log',
+      icon: IconCode,
+    },
   ],
 }
 
