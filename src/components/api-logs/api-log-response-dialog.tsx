@@ -1,6 +1,6 @@
 import type { PropsWithoutRef } from "react"
 import type { ApiLogResponseItem } from "../../api/api-log.api"
-import { Dialog, DialogContent } from "../ui/dialog"
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog"
 import { Label } from "../ui/label"
 
 export type ResponseDialogProps = PropsWithoutRef<{
@@ -17,6 +17,9 @@ export function ApiLogResponseDialog({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent >
+        <DialogTitle className="sr-only">
+          Response Details
+        </DialogTitle>
         <div className="flex flex-col gap-2 overflow-hidden">
           <Label>
             <span className="font-medium">
