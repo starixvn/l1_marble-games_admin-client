@@ -1,9 +1,10 @@
-import { IconDotsVertical, IconLogout } from '@tabler/icons-react'
+import { IconDotsVertical, IconLogout, IconLock } from '@tabler/icons-react'
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { AuthContext } from '@/contexts/auth.context'
+import { ChangePassword } from './change-password-dropdown'
 
 export function NavUser({
   user,
@@ -14,6 +15,7 @@ export function NavUser({
 }>) {
   const { isMobile } = useSidebar()
   const { handleLogout } = useContext(AuthContext)
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false)
 
   return (
     <SidebarMenu>
@@ -40,9 +42,14 @@ export function NavUser({
               <IconLogout />
               Log out
             </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setIsChangePasswordOpen(true)}>
+              <IconLock />
+              Change Password
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
+      <ChangePassword open={isChangePasswordOpen} onOpenChange={setIsChangePasswordOpen} />
     </SidebarMenu>
   )
 }

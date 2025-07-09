@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 vi.mock('@tabler/icons-react', () => ({
   IconDotsVertical: vi.fn(({ className }) => <div data-testid="dots-icon" className={className} />),
   IconLogout: vi.fn(() => <div data-testid="logout-icon" />),
+  IconLock: vi.fn(() => <div data-testid="lock-icon" />),
 }))
 
 vi.mock('@/components/ui/dropdown-menu', () => ({
@@ -41,6 +42,16 @@ vi.mock('@/components/ui/sidebar', () => ({
     setOpenMobile: vi.fn(),
     toggleSidebar: vi.fn(),
   })),
+}))
+
+vi.mock('@/components/change-password-dropdown', () => ({
+  ChangePassword: vi.fn(({ open, onOpenChange }) => (
+    <div data-testid="change-password-dialog" data-open={open}>
+      <button data-testid="change-password-trigger" onClick={() => onOpenChange?.(!open)}>
+        Change Password Dialog
+      </button>
+    </div>
+  )),
 }))
 
 vi.mock('react', async () => {
@@ -131,8 +142,8 @@ describe('NavUser', () => {
     render(<NavUser user={mockUser} />)
 
     // Assert
-    expect(screen.getByTestId('dropdown-menu-item')).toBeInTheDocument()
-    expect(screen.getByText('Log out')).toBeInTheDocument()
+    const logoutMenuItem = screen.getByText('Log out')
+    expect(logoutMenuItem).toBeInTheDocument()
     expect(screen.getByTestId('logout-icon')).toBeInTheDocument()
   })
 
@@ -145,6 +156,58 @@ describe('NavUser', () => {
 
     // Assert
     expect(mockHandleLogout).toHaveBeenCalledTimes(1)
+  })
+
+  it('should render change password menu item with icon', () => {
+    // Arrange
+    // Act
+    render(<NavUser user={mockUser} />)
+
+    // Assert
+    const changePasswordMenuItem = screen.getByText('Change Password')
+    expect(changePasswordMenuItem).toBeInTheDocument()
+    expect(screen.getByTestId('lock-icon')).toBeInTheDocument()
+  })
+
+  it('should open change password dialog when change password menu item is clicked', () => {
+    // Arrange
+    // Act
+    render(<NavUser user={mockUser} />)
+    const changePasswordMenuItem = screen.getByText('Change Password')
+    fireEvent.click(changePasswordMenuItem)
+
+    // Assert
+    expect(screen.getByTestId('change-password-dialog')).toBeInTheDocument()
+    expect(screen.getByTestId('change-password-dialog')).toHaveAttribute('data-open', 'true')
+  })
+
+  it('should render change password dialog component', () => {
+    // Arrange
+    // Act
+    render(<NavUser user={mockUser} />)
+
+    // Assert
+    expect(screen.getByTestId('change-password-dialog')).toBeInTheDocument()
+    expect(screen.getByTestId('change-password-dialog')).toHaveAttribute('data-open', 'false')
+  })
+
+  it('should handle change password dialog state changes', () => {
+    // Arrange
+    // Act
+    render(<NavUser user={mockUser} />)
+    
+    // Initially closed
+    expect(screen.getByTestId('change-password-dialog')).toHaveAttribute('data-open', 'false')
+    
+    // Open dialog
+    const changePasswordMenuItem = screen.getByText('Change Password')
+    fireEvent.click(changePasswordMenuItem)
+    expect(screen.getByTestId('change-password-dialog')).toHaveAttribute('data-open', 'true')
+    
+    // Close dialog via trigger
+    const dialogTrigger = screen.getByTestId('change-password-trigger')
+    fireEvent.click(dialogTrigger)
+    expect(screen.getByTestId('change-password-dialog')).toHaveAttribute('data-open', 'false')
   })
 
   it('should set asChild prop on dropdown menu trigger', () => {
@@ -228,5 +291,29 @@ describe('NavUser', () => {
     // Assert
     expect(screen.getByText('Very Long User Name That Should Be Truncated')).toBeInTheDocument()
     expect(screen.getByText('Very Long User Name That Should Be Truncated')).toHaveClass('truncate')
+  })
+
+  it('should render both logout and change password menu items in correct order', () => {
+    // Arrange
+    // Act
+    render(<NavUser user={mockUser} />)
+
+    // Assert
+    const menuItems = screen.getAllByTestId('dropdown-menu-item')
+    expect(menuItems).toHaveLength(2)
+    
+    // Check that logout comes first, then change password
+    expect(menuItems[0]).toHaveTextContent('Log out')
+    expect(menuItems[1]).toHaveTextContent('Change Password')
+  })
+
+  it('should have correct icons for both menu items', () => {
+    // Arrange
+    // Act
+    render(<NavUser user={mockUser} />)
+
+    // Assert
+    expect(screen.getByTestId('logout-icon')).toBeInTheDocument()
+    expect(screen.getByTestId('lock-icon')).toBeInTheDocument()
   })
 }) 

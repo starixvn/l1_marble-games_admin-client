@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { login, getProfile } from '../auth.api'
+import { login, getProfile, changePassword } from '../auth.api'
 import { apiClient } from '../base.axios'
 import { privateApiClient } from '../private.axios'
 
@@ -12,12 +12,13 @@ vi.mock('../base.axios', () => ({
 vi.mock('../private.axios', () => ({
   privateApiClient: {
     get: vi.fn(),
+    post: vi.fn(),
   },
 }))
 
 describe('Auth API', () => {
   const mockApiClient = apiClient as unknown as { post: ReturnType<typeof vi.fn> }
-  const mockPrivateApiClient = privateApiClient as unknown as { get: ReturnType<typeof vi.fn> }
+  const mockPrivateApiClient = privateApiClient as unknown as { get: ReturnType<typeof vi.fn>; post: ReturnType<typeof vi.fn> }
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -344,6 +345,25 @@ describe('Auth API', () => {
         email: 'test@example.com',
         lastLogin: '2024-01-01T00:00:00Z',
       })
+    })
+  })
+
+  describe('changePassword', () => {
+    it('should call change password endpoint with correct URL', async () => {
+      // Arrange
+      const mockResponse = {
+        data: {
+          username: 'testuser',
+          password: 'newpassword123',
+        },
+      }
+      mockPrivateApiClient.post.mockResolvedValue(mockResponse)
+
+      // Act
+      await changePassword()
+
+      // Assert
+      expect(mockPrivateApiClient.post).toHaveBeenCalledWith('/auth/changePassword')
     })
   })
 })
