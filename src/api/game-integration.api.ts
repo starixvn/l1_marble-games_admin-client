@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from './api-endpoints'
 import { privateApiClient } from './private.axios'
 
 export type GameIntegrationQuery = {
@@ -15,7 +16,7 @@ export const listGameIntegration = async () => {
 }
 
 export const getGameIntegration = async ({ gameId, operatorId }: GameIntegrationQuery) => {
-  return privateApiClient.get('/gameIntegration/get', {
+  return privateApiClient.get(API_ENDPOINTS.GAME_INTEGRATION.GET, {
     params: {
       gameId,
       operatorId,
@@ -24,13 +25,13 @@ export const getGameIntegration = async ({ gameId, operatorId }: GameIntegration
 }
 
 export const upsertGameIntegration = async ({ query, json }: { query: GameIntegrationQuery; json: object }) => {
-  return privateApiClient.post('/gameIntegration/upsert', json, {
+  return privateApiClient.post(API_ENDPOINTS.GAME_INTEGRATION.UPSERT, json, {
     params: query,
   })
 }
 
 export const deleteGameIntegration = async ({ gameId, operatorId }: GameIntegrationQuery) => {
-  return privateApiClient.delete('/gameIntegration/delete', {
+  return privateApiClient.delete(API_ENDPOINTS.GAME_INTEGRATION.DELETE, {
     params: {
       gameId,
       operatorId,

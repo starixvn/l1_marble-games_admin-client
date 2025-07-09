@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 
 vi.mock('@/hooks/useGameIntegration', () => ({
   useGameIntegrationWithId: vi.fn(() => ({
@@ -10,9 +11,15 @@ vi.mock('@/hooks/useGameIntegration', () => ({
   })),
 }))
 
+vi.mock('@/hooks/usePermission', () => ({
+  usePermission: vi.fn(() => ({
+    isAllowed: true,
+  })),
+}))
+
 vi.mock('@/components/ui/button', () => ({
-  Button: vi.fn(({ children, onClick }) => (
-    <button data-testid="button" onClick={onClick}>
+  Button: vi.fn(({ children, onClick, disabled }) => (
+    <button data-testid="button" onClick={onClick} disabled={disabled}>
       {children}
     </button>
   )),
@@ -36,13 +43,14 @@ vi.mock('@/components/ui/dialog', () => ({
 }))
 
 vi.mock('@/components/json-editor-with-drag-drop', () => ({
-  JsonEditorWithDragDrop: vi.fn(({ value, onChange, isLoading, isError }) => (
-    <div data-testid="json-editor-with-drag-drop" data-loading={isLoading} data-error={isError}>
+  JsonEditorWithDragDrop: vi.fn(({ value, onChange, isLoading, isError, readOnly }) => (
+    <div data-testid="json-editor-with-drag-drop" data-loading={isLoading} data-error={isError} data-readonly={readOnly}>
       <textarea
         data-testid="json-textarea"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Enter JSON here"
+        readOnly={readOnly}
       />
     </div>
   )),
@@ -50,7 +58,17 @@ vi.mock('@/components/json-editor-with-drag-drop', () => ({
 
 import { GameIntegrationConfigDialog } from '../game-integration-config-dialog'
 import { useGameIntegrationWithId } from '@/hooks/useGameIntegration'
+import { usePermission } from '@/hooks/usePermission'
 import type { AxiosResponse } from 'axios'
+
+// Helper function to render with router
+const renderWithRouter = (component: React.ReactElement) => {
+  return render(
+    <MemoryRouter>
+      {component}
+    </MemoryRouter>
+  )
+}
 
 describe('GameIntegrationConfigDialog', () => {
   const mockOnOpenChange = vi.fn()
@@ -97,6 +115,10 @@ describe('GameIntegrationConfigDialog', () => {
         promise: Promise.resolve({} as AxiosResponse),
       },
     })
+    // Default permission mock - allowed
+    vi.mocked(usePermission).mockReturnValue({
+      isAllowed: true,
+    })
   })
 
   it('should render the dialog with correct structure', () => {
@@ -111,7 +133,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
 
     // Assert
     expect(screen.getByTestId('dialog')).toBeInTheDocument()
@@ -134,7 +156,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
 
     // Assert
     const dialog = screen.getByTestId('dialog')
@@ -153,7 +175,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
 
     // Assert
     expect(screen.getByText('Game Integration Config')).toBeInTheDocument()
@@ -173,7 +195,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
 
     // Assert
     const dialogContent = screen.getByTestId('dialog-content')
@@ -192,7 +214,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
 
     // Assert
     expect(screen.getByText('Submit')).toBeInTheDocument()
@@ -211,7 +233,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
     const submitButton = screen.getByText('Submit')
     fireEvent.click(submitButton)
 
@@ -235,7 +257,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
 
     // Assert
     const textarea = screen.getByTestId<HTMLTextAreaElement>('json-textarea')
@@ -254,7 +276,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
 
     // Assert
     const textarea = screen.getByTestId<HTMLTextAreaElement>('json-textarea')
@@ -273,7 +295,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
     const textarea = screen.getByTestId('json-textarea')
     fireEvent.change(textarea, { target: { value: '{"new": "value"}' } })
 
@@ -294,7 +316,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
     const textarea = screen.getByTestId('json-textarea')
     fireEvent.change(textarea, { target: { value: '{"updated": "value"}' } })
     
@@ -348,7 +370,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
 
     // Assert
     const jsonEditor = screen.getByTestId('json-editor-with-drag-drop')
@@ -396,7 +418,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
 
     // Assert
     const jsonEditor = screen.getByTestId('json-editor-with-drag-drop')
@@ -413,7 +435,7 @@ describe('GameIntegrationConfigDialog', () => {
 
     // Act & Assert
     testCases.forEach(({ gameId, operatorId }) => {
-      render(
+      renderWithRouter(
         <GameIntegrationConfigDialog
           isOpen={true}
           onOpenChange={mockOnOpenChange}
@@ -440,7 +462,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
 
     // Assert
     const textarea = screen.getByTestId<HTMLTextAreaElement>('json-textarea')
@@ -506,7 +528,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
 
     // Assert
     const textarea = screen.getByTestId<HTMLTextAreaElement>('json-textarea')
@@ -525,7 +547,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
 
     // Assert
     expect(screen.getByText(/Game Integration config for game id/)).toBeInTheDocument()
@@ -545,7 +567,7 @@ describe('GameIntegrationConfigDialog', () => {
     }
 
     // Act
-    render(<GameIntegrationConfigDialog {...props} />)
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
     const submitButton = screen.getByText('Submit')
     fireEvent.click(submitButton)
 
@@ -555,5 +577,140 @@ describe('GameIntegrationConfigDialog', () => {
       const calledValue = asyncHandleSubmit.mock.calls[0][0]
       expect(JSON.parse(calledValue)).toEqual({ config: { test: 'value' } })
     })
+  })
+
+  it('should call usePermission with correct path', () => {
+    // Arrange
+    const props = {
+      isOpen: true,
+      onOpenChange: mockOnOpenChange,
+      handleSubmit: mockHandleSubmit,
+      currentGameId: 123,
+      currentOperatorId: 'operator-1',
+      existingGameIntegration: mockExistingGameIntegration,
+    }
+
+    // Act
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
+
+    // Assert
+    expect(usePermission).toHaveBeenCalledWith({
+      path: ['/gameIntegration/upsert']
+    })
+  })
+
+  it('should disable submit button when permission is not allowed', () => {
+    // Arrange
+    vi.mocked(usePermission).mockReturnValue({
+      isAllowed: false,
+    })
+    const props = {
+      isOpen: true,
+      onOpenChange: mockOnOpenChange,
+      handleSubmit: mockHandleSubmit,
+      currentGameId: 123,
+      currentOperatorId: 'operator-1',
+      existingGameIntegration: mockExistingGameIntegration,
+    }
+
+    // Act
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
+
+    // Assert
+    const submitButton = screen.getByText('Submit')
+    expect(submitButton).toBeDisabled()
+  })
+
+  it('should enable submit button when permission is allowed', () => {
+    // Arrange
+    vi.mocked(usePermission).mockReturnValue({
+      isAllowed: true,
+    })
+    const props = {
+      isOpen: true,
+      onOpenChange: mockOnOpenChange,
+      handleSubmit: mockHandleSubmit,
+      currentGameId: 123,
+      currentOperatorId: 'operator-1',
+      existingGameIntegration: mockExistingGameIntegration,
+    }
+
+    // Act
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
+
+    // Assert
+    const submitButton = screen.getByText('Submit')
+    expect(submitButton).not.toBeDisabled()
+  })
+
+  it('should set JSON editor to read-only when permission is not allowed', () => {
+    // Arrange
+    vi.mocked(usePermission).mockReturnValue({
+      isAllowed: false,
+    })
+    const props = {
+      isOpen: true,
+      onOpenChange: mockOnOpenChange,
+      handleSubmit: mockHandleSubmit,
+      currentGameId: 123,
+      currentOperatorId: 'operator-1',
+      existingGameIntegration: mockExistingGameIntegration,
+    }
+
+    // Act
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
+
+    // Assert
+    const jsonEditor = screen.getByTestId('json-editor-with-drag-drop')
+    const textarea = screen.getByTestId('json-textarea')
+    expect(jsonEditor).toHaveAttribute('data-readonly', 'true')
+    expect(textarea).toHaveAttribute('readonly')
+  })
+
+  it('should set JSON editor to editable when permission is allowed', () => {
+    // Arrange
+    vi.mocked(usePermission).mockReturnValue({
+      isAllowed: true,
+    })
+    const props = {
+      isOpen: true,
+      onOpenChange: mockOnOpenChange,
+      handleSubmit: mockHandleSubmit,
+      currentGameId: 123,
+      currentOperatorId: 'operator-1',
+      existingGameIntegration: mockExistingGameIntegration,
+    }
+
+    // Act
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
+
+    // Assert
+    const jsonEditor = screen.getByTestId('json-editor-with-drag-drop')
+    const textarea = screen.getByTestId('json-textarea')
+    expect(jsonEditor).toHaveAttribute('data-readonly', 'false')
+    expect(textarea).not.toHaveAttribute('readonly')
+  })
+
+  it('should not call handleSubmit when submit button is clicked and permission is not allowed', async () => {
+    // Arrange
+    vi.mocked(usePermission).mockReturnValue({
+      isAllowed: false,
+    })
+    const props = {
+      isOpen: true,
+      onOpenChange: mockOnOpenChange,
+      handleSubmit: mockHandleSubmit,
+      currentGameId: 123,
+      currentOperatorId: 'operator-1',
+      existingGameIntegration: mockExistingGameIntegration,
+    }
+
+    // Act
+    renderWithRouter(<GameIntegrationConfigDialog {...props} />)
+    const submitButton = screen.getByText('Submit')
+    fireEvent.click(submitButton)
+
+    // Assert
+    expect(mockHandleSubmit).not.toHaveBeenCalled()
   })
 }) 

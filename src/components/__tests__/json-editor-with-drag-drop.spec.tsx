@@ -238,6 +238,7 @@ describe('JsonEditorWithDragDrop', () => {
     const options = JSON.parse(optionsElement.textContent ?? '{}')
     expect(options).toEqual({
       automaticLayout: true,
+      readOnly: false,
       wordWrap: 'on',
       minimap: { enabled: false },
       scrollBeyondLastLine: false,
@@ -392,5 +393,202 @@ describe('JsonEditorWithDragDrop', () => {
     // Assert
     const container = screen.getByTestId('monaco-editor').closest('section')
     expect(container).toHaveClass('test-class', 'another-class')
+  })
+
+  describe('readOnly functionality', () => {
+    it('should render with readOnly prop set to true', () => {
+      // Arrange
+      const props = {
+        value: '{"test": "value"}',
+        readOnly: true,
+      }
+
+      // Act
+      render(<JsonEditorWithDragDrop {...props} />)
+
+      // Assert
+      const optionsElement = screen.getByTestId('editor-options')
+      const options = JSON.parse(optionsElement.textContent ?? '{}')
+      expect(options.readOnly).toBe(true)
+    })
+
+    it('should render with readOnly prop set to false', () => {
+      // Arrange
+      const props = {
+        value: '{"test": "value"}',
+        readOnly: false,
+      }
+
+      // Act
+      render(<JsonEditorWithDragDrop {...props} />)
+
+      // Assert
+      const optionsElement = screen.getByTestId('editor-options')
+      const options = JSON.parse(optionsElement.textContent ?? '{}')
+      expect(options.readOnly).toBe(false)
+    })
+
+    it('should default readOnly to false when not provided', () => {
+      // Arrange
+      const props = {
+        value: '{"test": "value"}',
+      }
+
+      // Act
+      render(<JsonEditorWithDragDrop {...props} />)
+
+      // Assert
+      const optionsElement = screen.getByTestId('editor-options')
+      const options = JSON.parse(optionsElement.textContent ?? '{}')
+      expect(options.readOnly).toBe(false)
+    })
+
+    it('should not show drop message when dragging in readonly mode', () => {
+      // Arrange
+      const props = {
+        value: '{"test": "value"}',
+        readOnly: true,
+      }
+
+      // Act
+      render(<JsonEditorWithDragDrop {...props} />)
+      const container = screen.getByTestId('monaco-editor').closest('section')
+      if (container) {
+        fireEvent.dragOver(container)
+      }
+
+      // Assert
+      expect(screen.queryByText('Drop JSON file here')).not.toBeInTheDocument()
+    })
+
+    it('should show drop message when dragging in non-readonly mode', () => {
+      // Arrange
+      const props = {
+        value: '{"test": "value"}',
+        readOnly: false,
+      }
+
+      // Act
+      render(<JsonEditorWithDragDrop {...props} />)
+      const container = screen.getByTestId('monaco-editor').closest('section')
+      if (container) {
+        fireEvent.dragOver(container)
+      }
+
+      // Assert
+      expect(screen.getByText('Drop JSON file here')).toBeInTheDocument()
+    })
+
+    it('should not call onChange when editor value changes in readonly mode', () => {
+      // Arrange
+      const props = {
+        value: '{"test": "value"}',
+        readOnly: true,
+        onChange: mockOnChange,
+      }
+
+      // Act
+      render(<JsonEditorWithDragDrop {...props} />)
+      const textarea = screen.getByTestId('editor-textarea')
+      fireEvent.change(textarea, { target: { value: '{"new": "value"}' } })
+
+      // Assert
+      expect(mockOnChange).not.toHaveBeenCalled()
+    })
+
+    it('should call onChange when editor value changes in non-readonly mode', () => {
+      // Arrange
+      const props = {
+        value: '{"test": "value"}',
+        readOnly: false,
+        onChange: mockOnChange,
+      }
+
+      // Act
+      render(<JsonEditorWithDragDrop {...props} />)
+      const textarea = screen.getByTestId('editor-textarea')
+      fireEvent.change(textarea, { target: { value: '{"new": "value"}' } })
+
+      // Assert
+      expect(mockOnChange).toHaveBeenCalledWith('{"new": "value"}')
+    })
+
+    it('should not apply drag styling in readonly mode', () => {
+      // Arrange
+      const props = {
+        value: '{"test": "value"}',
+        readOnly: true,
+      }
+
+      // Act
+      render(<JsonEditorWithDragDrop {...props} />)
+      const container = screen.getByTestId('monaco-editor').closest('section')
+      if (container) {
+        fireEvent.dragOver(container)
+      }
+
+      // Assert
+      expect(container).not.toHaveClass('border-blue-400', 'bg-blue-50/10')
+    })
+
+    it('should apply drag styling in non-readonly mode', () => {
+      // Arrange
+      const props = {
+        value: '{"test": "value"}',
+        readOnly: false,
+      }
+
+      // Act
+      render(<JsonEditorWithDragDrop {...props} />)
+      const container = screen.getByTestId('monaco-editor').closest('section')
+      if (container) {
+        fireEvent.dragOver(container)
+      }
+
+      // Assert
+      expect(container).toHaveClass('border-blue-400', 'bg-blue-50/10')
+    })
+
+    it('should handle drag leave in readonly mode', () => {
+      // Arrange
+      const props = {
+        value: '{"test": "value"}',
+        readOnly: true,
+      }
+
+      // Act
+      render(<JsonEditorWithDragDrop {...props} />)
+      const container = screen.getByTestId('monaco-editor').closest('section')
+      if (container) {
+        fireEvent.dragOver(container)
+        fireEvent.dragLeave(container)
+      }
+
+      // Assert
+      // Should not have drag styling since readonly mode doesn't show drag state
+      expect(container).toHaveClass('w-full min-w-0 relative border-2 border-dashed transition-colors border-transparent')
+    })
+
+    it('should maintain all other Monaco editor options when readonly is true', () => {
+      // Arrange
+      const props = {
+        value: '{"test": "value"}',
+        readOnly: true,
+      }
+
+      // Act
+      render(<JsonEditorWithDragDrop {...props} />)
+
+      // Assert
+      const optionsElement = screen.getByTestId('editor-options')
+      const options = JSON.parse(optionsElement.textContent ?? '{}')
+      expect(options).toEqual({
+        automaticLayout: true,
+        readOnly: true,
+        wordWrap: 'on',
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+      })
+    })
   })
 }) 

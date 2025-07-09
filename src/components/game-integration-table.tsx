@@ -2,6 +2,8 @@ import { Button } from './ui/button'
 import { Table, TableBody, TableCell, TableHeader, TableRow } from './ui/table'
 import { Combobox } from './combobox'
 import { IconSettings, IconTrash } from '@tabler/icons-react'
+import { API_ENDPOINTS } from '../api/api-endpoints'
+import { usePermission } from '../hooks/usePermission'
 
 export type GameIntegrationConfigParam = {
   gameId: number
@@ -18,6 +20,8 @@ export function GameIntegrationTable({
   currentOperatorId,
   setCurrentGameId,
   setCurrentOperatorId,
+  readonly = false,
+  allowDelete = false,
 }: Readonly<{
   data: {
     gameId: number
@@ -35,7 +39,16 @@ export function GameIntegrationTable({
   setCurrentOperatorId: (operatorId: string | null) => void
   handleConfigClick: (param: GameIntegrationConfigParam) => void
   handleDeleteClick: (param: GameIntegrationConfigParam) => void
+  readonly?: boolean
+  allowDelete?: boolean
 }>) {
+
+  const { isAllowed: upsert } = usePermission({ 
+    path: [ 
+      API_ENDPOINTS.GAME_INTEGRATION.UPSERT,
+    ] 
+  })
+
   return (
     <div className="overflow-hidden rounded-lg border m-2">
       <Table>
@@ -49,8 +62,11 @@ export function GameIntegrationTable({
               handleConfigClick={handleConfigClick}
               handleDeleteClick={handleDeleteClick}
               {...item}
+              readonly={readonly}
+              allowDelete={allowDelete}
             />
           ))}
+          {!readonly && upsert && 
           <NewGameIntegrationTableItem
             handleConfigClick={handleConfigClick}
             gameIds={gameIds}
@@ -59,7 +75,8 @@ export function GameIntegrationTable({
             currentOperatorId={currentOperatorId}
             setCurrentGameId={setCurrentGameId}
             setCurrentOperatorId={setCurrentOperatorId}
-          />
+            readonly={readonly}
+          />}
         </TableBody>
       </Table>
     </div>
@@ -82,12 +99,16 @@ export function GameIntegrationTableItem({
   operatorName,
   handleConfigClick,
   handleDeleteClick,
+  readonly = false,
+  allowDelete = false,
 }: Readonly<{
   gameId: number
   operatorId: string
   operatorName?: string
   handleConfigClick: (param: GameIntegrationConfigParam) => void
   handleDeleteClick: (param: GameIntegrationConfigParam) => void
+  readonly?: boolean
+  allowDelete?: boolean
 }>) {
   return (
     <TableRow key={gameId}>
@@ -95,18 +116,18 @@ export function GameIntegrationTableItem({
       <TableCell className="px-6">
         {operatorId} {operatorName ? `(${operatorName})` : ''}
       </TableCell>
-      <TableCell className="flex gap-2">
+      {!readonly &&<TableCell className="flex gap-2">
         <Button className="h-9 w-9 p-0" variant="outline" onClick={() => handleConfigClick({ gameId, operatorId })}>
           <IconSettings className="h-4 w-4" />
         </Button>
-        <Button
+        <Button disabled={!allowDelete}
           className="h-9 w-9 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
           variant="outline"
           onClick={() => handleDeleteClick({ gameId, operatorId })}
         >
           <IconTrash className="h-4 w-4" />
         </Button>
-      </TableCell>
+      </TableCell>}
     </TableRow>
   )
 }
@@ -130,6 +151,7 @@ export function NewGameIntegrationTableItem({
   currentOperatorId: string | null
   setCurrentGameId: (gameId: number | null) => void
   setCurrentOperatorId: (operatorId: string | null) => void
+  readonly?: boolean
 }>) {
   const handleNewGameIntegration = () => {
     if (currentGameId && currentOperatorId) {

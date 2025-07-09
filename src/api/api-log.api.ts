@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "./api-endpoints"
 import { privateApiClient } from "./private.axios"
 
 export type ApiLogResponseItem = {
@@ -33,5 +34,5 @@ export type ApiLogQuery = {
 }
 
 export const getApiLogs = async (query: ApiLogQuery) => {
-  return privateApiClient.get('/apiLog', { params: query })
+  return privateApiClient.get(API_ENDPOINTS.API_LOG, { params: query })
 }

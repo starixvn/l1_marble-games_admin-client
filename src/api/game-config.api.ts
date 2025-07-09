@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from './api-endpoints'
 import { privateApiClient } from './private.axios'
 
 export type GameConfigUpsertRequest = object
@@ -18,11 +19,11 @@ export type GameConfigUpsert = {
 }
 
 export const listGameConfigs = async () => {
-  return privateApiClient.get('/gameConfig/list')
+  return privateApiClient.get(API_ENDPOINTS.GAME_CONFIG.LIST)
 }
 
 export const getGameConfig = async (id: number) => {
-  return privateApiClient.get(`/gameConfig/get`, {
+  return privateApiClient.get(API_ENDPOINTS.GAME_CONFIG.GET, {
     params: {
       gameId: id,
     },
@@ -30,7 +31,7 @@ export const getGameConfig = async (id: number) => {
 }
 
 export const upsertGameConfig = async (upsert: GameConfigUpsert) => {
-  return privateApiClient.post('/gameConfig/upsert', upsert.request, {
+  return privateApiClient.post(API_ENDPOINTS.GAME_CONFIG.UPSERT, upsert.request, {
     params: upsert.query,
   })
 }

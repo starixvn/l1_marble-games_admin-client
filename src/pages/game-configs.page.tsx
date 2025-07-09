@@ -6,10 +6,18 @@ import { GameConfigForm } from '@/components/game-config-form'
 import NewGameForm from '@/components/new-game-form'
 import { FullpageSkeleton } from '@/components/full-page-skeleton'
 import { ErrorTable } from '../components/error-table'
+import { usePermission } from '../hooks/usePermission'
+import { API_ENDPOINTS } from '../api/api-endpoints'
 
 export default function GameConfigsPage() {
   const { gameConfigQuery } = useGameConfig()
   const { gameId } = useParams<{ gameId: string }>()
+  const { isAllowed } = usePermission({ 
+    path: [ 
+      API_ENDPOINTS.GAME_CONFIG.UPSERT
+    ] 
+  })
+
 
   function renderGameConfigTable() {
     if (gameConfigQuery.isLoading) {
@@ -20,10 +28,14 @@ export default function GameConfigsPage() {
       return <ErrorTable onClick={() => gameConfigQuery.refetch()} />
     }
 
-    return <GameConfigTable data={gameConfigQuery.data?.data} />
+    return <GameConfigTable data={gameConfigQuery.data?.data} readonly={!isAllowed} />
   }
 
   function renderGameConfigForm() {
+    if (!isAllowed) {
+      return null
+    }
+
     if (!gameId) {
       return null
     }

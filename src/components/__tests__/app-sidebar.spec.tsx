@@ -9,8 +9,8 @@ vi.mock('@/components/nav-user', () => ({
 }))
 
 vi.mock('@/components/ui/sidebar', () => ({
-  Sidebar: vi.fn(({ children, collapsible, ...props }) => (
-    <div data-testid="sidebar" data-collapsible={collapsible} {...props}>
+  Sidebar: vi.fn(({ children, collapsible, className, ...props }) => (
+    <div data-testid="sidebar" data-collapsible={collapsible} className={className} {...props}>
       {children}
     </div>
   )),
@@ -26,9 +26,38 @@ vi.mock('@/components/ui/sidebar', () => ({
   )),
 }))
 
+// Mock the useMenu hook
+vi.mock('@/hooks/useMenu', () => ({
+  useMenu: vi.fn(),
+}))
+
 import { AppSidebar } from '../app-sidebar'
+import { useMenu } from '@/hooks/useMenu'
 
 describe('AppSidebar', () => {
+  const mockUseMenu = useMenu as ReturnType<typeof vi.fn>
+
+  beforeEach(() => {
+    // Default mock implementation
+    mockUseMenu.mockReturnValue({
+      menu: [
+        { title: 'Home', url: '/', icon: 'IconHome' },
+        { title: 'Operators', url: '/operators', icon: 'IconUser' },
+        { title: 'Game Configs', url: '/game-configs', icon: 'IconSettings' },
+        { title: 'Game Integrations', url: '/game-integrations', icon: 'IconCode' },
+        { title: 'Game Config Schemas', url: '/game-config-schemas', icon: 'IconCode' },
+        { title: 'Api Logs', url: '/logs-api', icon: 'IconCode' },
+        { title: 'Admin Log', url: '/admin-log', icon: 'IconCode' },
+      ],
+      isLoading: false,
+      profile: 'admin',
+    })
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
+
   it('should render the sidebar with correct structure', () => {
     // Arrange
     // Act
@@ -72,8 +101,18 @@ describe('AppSidebar', () => {
     expect(menuButton).toHaveAttribute('data-as-child', 'true')
   })
 
-  it('should render NavMain with correct navigation items', () => {
+  it('should render NavMain with filtered menu items from useMenu hook', () => {
     // Arrange
+    const mockMenu = [
+      { title: 'Home', url: '/', icon: 'IconHome' },
+      { title: 'Operators', url: '/operators', icon: 'IconUser' },
+    ]
+    mockUseMenu.mockReturnValue({
+      menu: mockMenu,
+      isLoading: false,
+      profile: 'admin',
+    })
+
     // Act
     render(<AppSidebar />)
 
@@ -82,20 +121,90 @@ describe('AppSidebar', () => {
     const navMainContent = screen.getByTestId('nav-main').textContent
     expect(navMainContent).toContain('Home')
     expect(navMainContent).toContain('Operators')
-    expect(navMainContent).toContain('Game Configs')
-    expect(navMainContent).toContain('Game Integrations')
-    expect(navMainContent).toContain('Game Config Schemas')
+    expect(navMainContent).not.toContain('Game Configs')
   })
 
-  it('should render NavUser with correct user data', () => {
+  it('should render NavUser with profile data from useMenu hook', () => {
     // Arrange
+    mockUseMenu.mockReturnValue({
+      menu: [],
+      isLoading: false,
+      profile: 'testuser',
+    })
+
     // Act
     render(<AppSidebar />)
 
     // Assert
     expect(screen.getByTestId('nav-user')).toBeInTheDocument()
     const navUserContent = screen.getByTestId('nav-user').textContent
-    expect(navUserContent).toContain('admin')
+    expect(navUserContent).toContain('testuser')
+  })
+
+  it('should show loading state with opacity when isLoading is true', () => {
+    // Arrange
+    mockUseMenu.mockReturnValue({
+      menu: [],
+      isLoading: true,
+      profile: 'admin',
+    })
+
+    // Act
+    render(<AppSidebar />)
+
+    // Assert
+    const sidebar = screen.getByTestId('sidebar')
+    expect(sidebar).toHaveClass('opacity-50')
+  })
+
+  it('should not show loading state when isLoading is false', () => {
+    // Arrange
+    mockUseMenu.mockReturnValue({
+      menu: [],
+      isLoading: false,
+      profile: 'admin',
+    })
+
+    // Act
+    render(<AppSidebar />)
+
+    // Assert
+    const sidebar = screen.getByTestId('sidebar')
+    expect(sidebar).not.toHaveClass('opacity-50')
+  })
+
+  it('should handle empty menu when user has no permissions', () => {
+    // Arrange
+    mockUseMenu.mockReturnValue({
+      menu: [],
+      isLoading: false,
+      profile: 'restricted-user',
+    })
+
+    // Act
+    render(<AppSidebar />)
+
+    // Assert
+    expect(screen.getByTestId('nav-main')).toBeInTheDocument()
+    const navMainContent = screen.getByTestId('nav-main').textContent
+    expect(navMainContent).toBe('[]')
+  })
+
+  it('should handle undefined profile gracefully', () => {
+    // Arrange
+    mockUseMenu.mockReturnValue({
+      menu: [],
+      isLoading: false,
+      profile: undefined,
+    })
+
+    // Act
+    render(<AppSidebar />)
+
+    // Assert
+    expect(screen.getByTestId('nav-user')).toBeInTheDocument()
+    const navUserContent = screen.getByTestId('nav-user').textContent
+    expect(navUserContent).toContain('""')
   })
 
   it('should pass through additional props to Sidebar', () => {
@@ -125,5 +234,14 @@ describe('AppSidebar', () => {
     expect(sidebar).toContainElement(header)
     expect(sidebar).toContainElement(content)
     expect(sidebar).toContainElement(footer)
+  })
+
+  it('should call useMenu hook when component renders', () => {
+    // Arrange
+    // Act
+    render(<AppSidebar />)
+
+    // Assert
+    expect(mockUseMenu).toHaveBeenCalledTimes(1)
   })
 })

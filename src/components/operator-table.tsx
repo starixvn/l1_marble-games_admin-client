@@ -3,11 +3,13 @@ import { Table, TableHeader, TableRow, TableHead, TableBody } from '@/components
 
 export function OperatorTable({
   data,
+  readonly = false,
 }: Readonly<{
   data: {
     id: string
     name: string
-  }[]
+  }[],
+  readonly?: boolean
 }>) {
   return (
     <div className="@container/main flex flex-1 flex-col gap-2">
@@ -22,7 +24,7 @@ export function OperatorTable({
             </TableHeader>
             <TableBody>
               {data.map((operator) => (
-                <OperatorTableItem key={operator.id} operator={operator} />
+                <OperatorTableItem key={operator.id} operator={operator} readonly={readonly} />
               ))}
             </TableBody>
           </Table>

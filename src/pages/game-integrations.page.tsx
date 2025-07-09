@@ -8,6 +8,8 @@ import { useOperator } from '@/hooks/useOperator'
 import { useGameConfig } from '@/hooks/useGameConfig'
 import type { GameIntegrationListResponse } from '@/api/game-integration.api'
 import type { OperatorListResponse } from '@/api/operator.api'
+import { API_ENDPOINTS } from '../api/api-endpoints'
+import { usePermission } from '../hooks/usePermission'
 
 export function GameIntegrationsPage() {
   const { gameIntegrationListQuery } = useGameIntegrationList()
@@ -17,9 +19,19 @@ export function GameIntegrationsPage() {
   const [currentComboboxOperatorId, setCurrentComboboxOperatorId] = useState<number | null>(null)
   const [currentComboboxOperatorName, setCurrentComboboxOperatorName] = useState<string | null>(null)
   const [currentDialogParam, setCurrentDialogParam] = useState<GameIntegrationConfigParam | null>(null)
-
   const { gameIntegrationUpsertMutation } = useGameIntegrationUpsert()
   const { gameIntegrationDeleteMutation } = useGameIntegrationDelete()
+  const { isAllowed: getPermission } = usePermission({ 
+    path: [ 
+      API_ENDPOINTS.GAME_INTEGRATION.GET,
+    ] 
+  })
+  const { isAllowed: deletePermission } = usePermission({ 
+    path: [ 
+      API_ENDPOINTS.GAME_INTEGRATION.DELETE,
+    ] 
+  })
+
   const mapGameIntegrationsWithOperatorNames = (
     integrations: GameIntegrationListResponse[],
     operators: OperatorListResponse[],
@@ -115,20 +127,21 @@ export function GameIntegrationsPage() {
         setCurrentOperatorId={setCurrentComboboxOperatorName}
         handleConfigClick={handleConfigClick}
         handleDeleteClick={handleDeleteClick}
+        allowDelete={deletePermission}
       />
     )
   }
   return (
     <AdminLayout>
       {renderGameIntegrationTable()}
-      <GameIntegrationConfigDialog
+      {getPermission && <GameIntegrationConfigDialog
         isOpen={isConfigDialogOpen}
         onOpenChange={setIsConfigDialogOpen}
         handleSubmit={handleSubmit}
         currentGameId={currentDialogParam?.gameId ?? null}
         currentOperatorId={currentDialogParam?.operatorId ?? null}
         existingGameIntegration={gameIntegrationListQuery.data?.data ?? []}
-      />
+      />}
     </AdminLayout>
   )
 }

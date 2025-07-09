@@ -24,7 +24,7 @@ export const useAuth = (): UseAuthReturn => {
     token: null,
     isAuthenticated: false,
     isLoading: true,
-  })
+  });
 
   const setAuthToken = useCallback((newToken: string) => {
     localStorage.setItem(AUTH_TOKEN_KEY, newToken)
@@ -44,7 +44,7 @@ export const useAuth = (): UseAuthReturn => {
       isAuthenticated: false,
       isLoading: false,
     })
-  }, [])
+  }, [setAuthState])
 
   const updateAuthToken = useCallback(
     (newToken: string) => {

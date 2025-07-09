@@ -22,6 +22,8 @@ import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { GameConfigSchemaListResponse } from '@/api/game-config-schema.api'
+import { API_ENDPOINTS } from '../api/api-endpoints'
+import { usePermission } from '../hooks/usePermission'
 
 export default function GameConfigSchemaPage() {
   return (
@@ -36,7 +38,17 @@ function GameConfigSchemaTable() {
   const [selectedSchemaId, setSelectedSchemaId] = useState<string | undefined>(undefined)
   const { gameConfigSchemaListQuery } = useGameConfigSchemaList()
   const { gameConfigSchemaUpsertMutation } = useGameConfigSchemaUpsert()
-
+  const { isAllowed: getPermission } = usePermission({ 
+    path: [ 
+      API_ENDPOINTS.GAME_CONFIG_SCHEMA.GET,
+    ] 
+  })
+  const { isAllowed: upsertPermission } = usePermission({ 
+    path: [ 
+      API_ENDPOINTS.GAME_CONFIG_SCHEMA.UPSERT,
+    ] 
+  })
+  
   function handleEdit(id?: string) {
     setSelectedSchemaId(id)
     setEditDialogOpen(true)
@@ -52,7 +64,6 @@ function GameConfigSchemaTable() {
         schema: json,
       },
     }
-    console.log(fullRequest)
     gameConfigSchemaUpsertMutation.mutate(fullRequest, {
       onSuccess: () => {
         toast.success('Schema updated successfully')
@@ -90,15 +101,15 @@ function GameConfigSchemaTable() {
                 </TableCell>
               </TableRow>
             ))}
-            <TableRow>
+            {upsertPermission && <TableRow>
               <TableCell className="px-6">New</TableCell>
               <TableCell className="px-6">New</TableCell>
-              <TableCell className="flex gap-2">
+              {getPermission && <TableCell className="flex gap-2">
                 <Button variant="outline" size="icon" onClick={() => handleEdit()}>
                   <IconPlus className="text-green-500" />
                 </Button>
-              </TableCell>
-            </TableRow>
+              </TableCell>}
+            </TableRow>}
           </TableBody>
         </Table>
       </div>
@@ -108,6 +119,7 @@ function GameConfigSchemaTable() {
         onOpenChange={setEditDialogOpen}
         id={selectedSchemaId}
         onSubmit={handleSubmit}
+        readOnly={!upsertPermission}
       />
     </>
   )
@@ -118,11 +130,13 @@ function GameConfigSchemaEditDialog({
   onOpenChange,
   id,
   onSubmit,
+  readOnly = false,
 }: Readonly<{
   isOpen: boolean
   onOpenChange: (open: boolean) => void
   id?: string
   onSubmit: (json: object, name: string) => void
+  readOnly: boolean
 }>) {
   const { gameConfigSchemaGetQuery } = useGameConfigSchemaWithId({ id: id })
   const [json, setJson] = useState<string>('{}')
@@ -171,7 +185,7 @@ function GameConfigSchemaEditDialog({
     return (
       <div className="flex flex-col gap-2 mb-4">
         <Label htmlFor="name">Name</Label>
-        <Input id="name" value={name} required onChange={(e) => setName(e.target.value)} placeholder="Name" />
+        <Input disabled={readOnly} id="name" value={name} required onChange={(e) => setName(e.target.value)} placeholder="Name" />
       </div>
     )
   }
@@ -190,9 +204,10 @@ function GameConfigSchemaEditDialog({
           onChange={setJson}
           isLoading={gameConfigSchemaGetQuery.isLoading}
           isError={gameConfigSchemaGetQuery.isError}
+          readOnly={readOnly}
         />
         <DialogFooter>
-          <Button onClick={handleSubmit}>Submit</Button>
+          <Button disabled={readOnly} onClick={handleSubmit}>Submit</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

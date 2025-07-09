@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { IconUser, IconSettings, IconHome, IconCode } from '@tabler/icons-react'
 
 import { NavMain } from '@/components/nav-main'
 import { NavUser } from '@/components/nav-user'
@@ -12,53 +11,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
-
-const data = {
-  user: {
-    name: 'admin',
-  },
-  navMain: [
-    {
-      title: 'Home',
-      url: '/',
-      icon: IconHome,
-    },
-    {
-      title: 'Operators',
-      url: '/operators',
-      icon: IconUser,
-    },
-    {
-      title: 'Game Configs',
-      url: '/game-configs',
-      icon: IconSettings,
-    },
-    {
-      title: 'Game Integrations',
-      url: '/game-integrations',
-      icon: IconCode,
-    },
-    {
-      title: 'Game Config Schemas',
-      url: '/game-config-schemas',
-      icon: IconCode,
-    },
-    {
-      title: 'Api Logs',
-      url: '/logs-api',
-      icon: IconCode,
-    },
-    {
-      title: 'Admin Log',
-      url: '/admin-log',
-      icon: IconCode,
-    },
-  ],
-}
+import { useMenu } from '@/hooks/useMenu'
+import { cn } from '../lib/utils'
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { menu, isLoading, profile } = useMenu();
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar collapsible="offcanvas" {...props} className={cn(isLoading ? 'opacity-50' : '', props.className)}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -69,10 +28,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={menu} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={{ name: profile ?? '' }} />
       </SidebarFooter>
     </Sidebar>
   )

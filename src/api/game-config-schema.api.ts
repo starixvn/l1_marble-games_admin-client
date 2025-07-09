@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from './api-endpoints'
 import { privateApiClient } from './private.axios'
 
 export type GameConfigSchemaListResponse = {
@@ -26,11 +27,11 @@ export type UpsertGameConfigSchemaFullRequest = {
 }
 
 export const listGameConfigSchemas = async () => {
-  return privateApiClient.get<GameConfigSchemaListResponse[]>('/gameConfigSchema/list')
+  return privateApiClient.get<GameConfigSchemaListResponse[]>(API_ENDPOINTS.GAME_CONFIG_SCHEMA.LIST)
 }
 
 export const getGameConfigSchema = async (id: string) => {
-  return privateApiClient.get<GameConfigSchema>(`/gameConfigSchema/get`, {
+  return privateApiClient.get<GameConfigSchema>(API_ENDPOINTS.GAME_CONFIG_SCHEMA.GET, {
     params: {
       id,
     },
@@ -38,7 +39,7 @@ export const getGameConfigSchema = async (id: string) => {
 }
 
 export const upsertGameConfigSchema = async ({ request, query }: UpsertGameConfigSchemaFullRequest) => {
-  return privateApiClient.post<GameConfigSchema>(`/gameConfigSchema/upsert`, request, {
+  return privateApiClient.post<GameConfigSchema>(API_ENDPOINTS.GAME_CONFIG_SCHEMA.UPSERT, request, {
     params: query,
   })
 }

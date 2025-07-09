@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from './api-endpoints'
 import { privateApiClient } from './private.axios'
 
 interface CreateOperatorRequest {
@@ -20,25 +21,25 @@ export interface OperatorListResponse {
 }
 
 export const createOperator = async (request: CreateOperatorRequest) => {
-  return privateApiClient.post('/operator/create', request)
+  return privateApiClient.post(API_ENDPOINTS.OPERATOR.CREATE, request)
 }
 
 export const listOperators = async () => {
-  return privateApiClient.get<OperatorListResponse[]>('/operator/list')
+  return privateApiClient.get<OperatorListResponse[]>(API_ENDPOINTS.OPERATOR.LIST)
 }
 
 export const getOperator = async (query: OperatorQuery) => {
   validateOperatorQuery(query)
-  return privateApiClient.get('/operator/get', { params: query })
+  return privateApiClient.get(API_ENDPOINTS.OPERATOR.GET, { params: query })
 }
 
 export const updateOperatorName = async (request: UpdateOperatorNameRequest) => {
-  return privateApiClient.post('/operator/updateName', request)
+  return privateApiClient.post(API_ENDPOINTS.OPERATOR.UPDATE_NAME, request)
 }
 
 export const generatePassword = async (query: OperatorQuery) => {
   validateOperatorQuery(query)
-  return privateApiClient.post('/operator/generatePassword', {}, { params: query })
+  return privateApiClient.post(API_ENDPOINTS.OPERATOR.GENERATE_PASSWORD, {}, { params: query })
 }
 
 const validateOperatorQuery = (query: OperatorQuery) => {

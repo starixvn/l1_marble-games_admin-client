@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { login } from '../auth.api'
+import { login, getProfile } from '../auth.api'
 import { apiClient } from '../base.axios'
+import { privateApiClient } from '../private.axios'
 
 vi.mock('../base.axios', () => ({
   apiClient: {
@@ -8,8 +9,15 @@ vi.mock('../base.axios', () => ({
   },
 }))
 
+vi.mock('../private.axios', () => ({
+  privateApiClient: {
+    get: vi.fn(),
+  },
+}))
+
 describe('Auth API', () => {
   const mockApiClient = apiClient as unknown as { post: ReturnType<typeof vi.fn> }
+  const mockPrivateApiClient = privateApiClient as unknown as { get: ReturnType<typeof vi.fn> }
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -203,6 +211,138 @@ describe('Auth API', () => {
         access_token: 'mock-token-123',
         expires_in: 3600,
         token_type: 'Bearer',
+      })
+    })
+  })
+
+  describe('getProfile', () => {
+    it('should call get profile endpoint successfully', async () => {
+      // Arrange
+      const mockResponse = {
+        data: {
+          username: 'testuser',
+          role: 'admin',
+          allowedEndpoints: ['/api/games', '/api/operators'],
+        },
+      }
+      mockPrivateApiClient.get.mockResolvedValue(mockResponse)
+
+      // Act
+      const result = await getProfile()
+
+      // Assert
+      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/auth/profile')
+      expect(result).toEqual({
+        username: 'testuser',
+        role: 'admin',
+        allowedEndpoints: ['/api/games', '/api/operators'],
+      })
+    })
+
+    it('should handle profile without role', async () => {
+      // Arrange
+      const mockResponse = {
+        data: {
+          username: 'testuser',
+          allowedEndpoints: ['/api/games'],
+        },
+      }
+      mockPrivateApiClient.get.mockResolvedValue(mockResponse)
+
+      // Act
+      const result = await getProfile()
+
+      // Assert
+      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/auth/profile')
+      expect(result).toEqual({
+        username: 'testuser',
+        allowedEndpoints: ['/api/games'],
+      })
+    })
+
+    it('should handle profile with empty allowed endpoints', async () => {
+      // Arrange
+      const mockResponse = {
+        data: {
+          username: 'testuser',
+          role: 'user',
+          allowedEndpoints: [],
+        },
+      }
+      mockPrivateApiClient.get.mockResolvedValue(mockResponse)
+
+      // Act
+      const result = await getProfile()
+
+      // Assert
+      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/auth/profile')
+      expect(result).toEqual({
+        username: 'testuser',
+        role: 'user',
+        allowedEndpoints: [],
+      })
+    })
+
+    it('should handle profile API errors', async () => {
+      // Arrange
+      const mockError = new Error('Unauthorized')
+      mockPrivateApiClient.get.mockRejectedValue(mockError)
+
+      // Act & Assert
+      await expect(getProfile()).rejects.toThrow('Unauthorized')
+      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/auth/profile')
+    })
+
+    it('should handle network errors', async () => {
+      // Arrange
+      const mockError = new Error('Network error')
+      mockPrivateApiClient.get.mockRejectedValue(mockError)
+
+      // Act & Assert
+      await expect(getProfile()).rejects.toThrow('Network error')
+    })
+
+    it('should handle malformed response', async () => {
+      // Arrange
+      const mockResponse = {
+        data: {
+          // Missing required fields
+        },
+      }
+      mockPrivateApiClient.get.mockResolvedValue(mockResponse)
+
+      // Act
+      const result = await getProfile()
+
+      // Assert
+      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/auth/profile')
+      expect(result).toEqual({})
+    })
+
+    it('should handle response with additional fields', async () => {
+      // Arrange
+      const mockResponse = {
+        data: {
+          username: 'testuser',
+          role: 'admin',
+          allowedEndpoints: ['/api/games'],
+          email: 'test@example.com',
+          lastLogin: '2024-01-01T00:00:00Z',
+        },
+      }
+      mockPrivateApiClient.get.mockResolvedValue(mockResponse)
+
+      // Act
+      const result = await getProfile()
+
+      // Assert
+      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/auth/profile')
+      expect(result).toEqual({
+        username: 'testuser',
+        role: 'admin',
+        allowedEndpoints: ['/api/games'],
+        email: 'test@example.com',
+        lastLogin: '2024-01-01T00:00:00Z',
       })
     })
   })

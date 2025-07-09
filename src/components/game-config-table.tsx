@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router'
 
 export function GameConfigTable({
   data,
+  readonly = false,
 }: Readonly<{
   data: {
     id: number
@@ -11,6 +12,7 @@ export function GameConfigTable({
     config: object
     gameConfigSchema: string
   }[]
+  readonly?: boolean
 }>) {
   const navigate = useNavigate()
 
@@ -28,7 +30,7 @@ export function GameConfigTable({
         <TableHeader>
           <TableRow>
             <TableHead className="w-[300px] px-6">Game Id</TableHead>
-            <TableHead className="px-6">Action</TableHead>
+            {!readonly && <TableHead className="px-6">Action</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -37,10 +39,11 @@ export function GameConfigTable({
               key={gameConfig.gameId}
               gameId={gameConfig.gameId}
               handleConfigClick={handleConfigClick}
+              readonly={readonly}
             />
           ))}
 
-          <NewGameConfigTableItem handleConfigClick={handleNewGameClick} />
+          {!readonly && <NewGameConfigTableItem handleConfigClick={handleNewGameClick} />}
         </TableBody>
       </Table>
     </div>
@@ -50,18 +53,20 @@ export function GameConfigTable({
 export function GameConfigTableItem({
   gameId,
   handleConfigClick,
+  readonly = false,
 }: Readonly<{
   gameId: number
   handleConfigClick: (gameId: number) => void
+  readonly?: boolean
 }>) {
   return (
     <TableRow key={gameId}>
       <TableCell className="px-6">{gameId}</TableCell>
-      <TableCell className="">
+      {!readonly && <TableCell className="">
         <Button className="w-[100px]" variant="outline" onClick={() => handleConfigClick(gameId)}>
           Config
-        </Button>
-      </TableCell>
+          </Button>
+        </TableCell>}
     </TableRow>
   )
 }

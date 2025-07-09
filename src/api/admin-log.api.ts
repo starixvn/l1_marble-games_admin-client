@@ -1,4 +1,5 @@
 import { privateApiClient } from "@/api/private.axios";
+import { API_ENDPOINTS } from "./api-endpoints";
 
 export type AdminLogQuery = {
     startDate: string;
@@ -21,5 +22,5 @@ export type AdminLogResponseItem = {
 }
 
 export const getAdminLogs = async (query: AdminLogQuery) => {
-    return privateApiClient.get('/adminLog', { params: query })
+    return privateApiClient.get(API_ENDPOINTS.ADMIN_LOG, { params: query })
 }

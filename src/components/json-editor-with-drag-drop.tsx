@@ -12,6 +12,7 @@ interface JsonEditorWithDragDropProps {
   loadingComponent?: React.ReactNode
   errorComponent?: React.ReactNode
   className?: string
+  readOnly?: boolean
 }
 
 export const JsonEditorWithDragDrop = ({
@@ -23,11 +24,16 @@ export const JsonEditorWithDragDrop = ({
   loadingComponent = <div>Loading...</div>,
   errorComponent = <div>Error</div>,
   className = '',
+  readOnly = false,
 }: JsonEditorWithDragDropProps) => {
   const [isDragging, setIsDragging] = useState(false)
   const { theme } = useContext(ThemeContext)
 
   const handleFileRead = (file: File) => {
+    if (readOnly) {
+      return
+    }
+
     if (file.type === 'application/json' || file.name.endsWith('.json')) {
       const reader = new FileReader()
       reader.onload = (e) => {
@@ -39,12 +45,18 @@ export const JsonEditorWithDragDrop = ({
   }
 
   const handleDragOver = (e: React.DragEvent) => {
+    if (readOnly) {
+      return
+    }
     e.preventDefault()
     e.stopPropagation()
     setIsDragging(true)
   }
 
   const handleDragLeave = (e: React.DragEvent) => {
+    if (readOnly) {
+      return
+    }
     e.preventDefault()
     e.stopPropagation()
 
@@ -76,6 +88,12 @@ export const JsonEditorWithDragDrop = ({
     return <>{errorComponent}</>
   }
 
+  const handleChange = (value: string | undefined) => {
+    if (!readOnly) {
+      onChange?.(value ?? '')
+    }
+  }
+
   return (
     <section
       className={cn(
@@ -88,7 +106,7 @@ export const JsonEditorWithDragDrop = ({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {isDragging && (
+      {isDragging && !readOnly && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-blue-50/20 backdrop-blur-sm">
           <div className="text-blue-600 font-medium">Drop JSON file here</div>
         </div>
@@ -99,9 +117,10 @@ export const JsonEditorWithDragDrop = ({
         defaultLanguage="json"
         value={value}
         theme={theme === 'dark' ? 'vs-dark' : 'light'}
-        onChange={(value) => onChange?.(value ?? '')}
+        onChange={handleChange}
         options={{
           automaticLayout: true,
+          readOnly: readOnly,
           wordWrap: 'on',
           minimap: { enabled: false },
           scrollBeyondLastLine: false,

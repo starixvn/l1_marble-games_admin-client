@@ -1,8 +1,23 @@
 import { render, screen, fireEvent } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
+
+// Mock react-router
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router')
+  return {
+    ...actual,
+    useLocation: vi.fn(() => ({
+      pathname: '/game-integrations',
+      search: '',
+      hash: '',
+      state: null,
+    })),
+  }
+})
 
 vi.mock('@/components/ui/button', () => ({
-  Button: vi.fn(({ children, className, variant, onClick }) => (
-    <button data-testid="button" className={className} data-variant={variant} onClick={onClick}>
+  Button: vi.fn(({ children, className, variant, onClick, disabled }) => (
+    <button data-testid="button" className={className} data-variant={variant} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   )),
@@ -38,6 +53,16 @@ vi.mock('@tabler/icons-react', () => ({
   IconTrash: vi.fn(() => <div data-testid="trash-icon" />),
 }))
 
+// Mock usePermission hook
+vi.mock('@/hooks/usePermission', () => ({
+  usePermission: vi.fn(),
+}))
+
+// Mock useProfile hook
+vi.mock('@/hooks/useProfile', () => ({
+  useProfile: vi.fn(),
+}))
+
 import {
   GameIntegrationTable,
   GameIntegrationTableHeader,
@@ -46,6 +71,17 @@ import {
   GameIdCombobox,
   OperatorIdCombobox,
 } from '../game-integration-table'
+import { usePermission } from '@/hooks/usePermission'
+import { useProfile } from '@/hooks/useProfile'
+
+// Helper function to render with router
+const renderWithRouter = (component: React.ReactElement) => {
+  return render(
+    <MemoryRouter>
+      {component}
+    </MemoryRouter>
+  )
+}
 
 describe('GameIntegrationTable', () => {
   const mockData = [
@@ -68,9 +104,43 @@ describe('GameIntegrationTable', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    // Default permission mock - user has upsert permission
+    vi.mocked(usePermission).mockReturnValue({ isAllowed: true })
+    vi.mocked(useProfile).mockReturnValue({
+      data: {
+        username: 'test-user',
+        allowedEndpoints: ['/gameIntegration/upsert', '/gameIntegration/delete']
+      },
+      isLoading: false,
+      isError: false,
+      error: null
+    })
   })
 
   it('should render the game integration table with correct structure', () => {
+    // Arrange
+    const props = {
+      data: mockData,
+      gameIds: mockGameIds,
+      operatorIds: mockOperatorIds,
+      handleConfigClick: mockHandleConfigClick,
+      handleDeleteClick: mockHandleDeleteClick,
+      currentGameId: null,
+      currentOperatorId: null,
+      setCurrentGameId: mockSetCurrentGameId,   
+      setCurrentOperatorId: mockSetCurrentOperatorId,
+    }
+
+    // Act
+    renderWithRouter(<GameIntegrationTable {...props} />)
+
+    // Assert
+    expect(screen.getByTestId('table')).toBeInTheDocument()
+    expect(screen.getByTestId('table-header')).toBeInTheDocument()
+    expect(screen.getByTestId('table-body')).toBeInTheDocument()
+  })
+
+  it('should call usePermission with correct path for upsert permission', () => {
     // Arrange
     const props = {
       data: mockData,
@@ -85,12 +155,79 @@ describe('GameIntegrationTable', () => {
     }
 
     // Act
-    render(<GameIntegrationTable {...props} />)
+    renderWithRouter(<GameIntegrationTable {...props} />)
 
     // Assert
-    expect(screen.getByTestId('table')).toBeInTheDocument()
-    expect(screen.getByTestId('table-header')).toBeInTheDocument()
-    expect(screen.getByTestId('table-body')).toBeInTheDocument()
+    expect(usePermission).toHaveBeenCalledWith({
+      path: ['/gameIntegration/upsert']
+    })
+  })
+
+  it('should render new game integration row when user has upsert permission', () => {
+    // Arrange
+    vi.mocked(usePermission).mockReturnValue({ isAllowed: true })
+    const props = {
+      data: mockData,
+      gameIds: mockGameIds,
+      operatorIds: mockOperatorIds,
+      handleConfigClick: mockHandleConfigClick,
+      handleDeleteClick: mockHandleDeleteClick,
+      currentGameId: null,
+      currentOperatorId: null,
+      setCurrentGameId: mockSetCurrentGameId,
+      setCurrentOperatorId: mockSetCurrentOperatorId,
+    }
+
+    // Act
+    renderWithRouter(<GameIntegrationTable {...props} />)
+
+    // Assert
+    expect(screen.getByText('New')).toBeInTheDocument()
+  })
+
+  it('should not render new game integration row when user lacks upsert permission', () => {
+    // Arrange
+    vi.mocked(usePermission).mockReturnValue({ isAllowed: false })
+    const props = {
+      data: mockData,
+      gameIds: mockGameIds,
+      operatorIds: mockOperatorIds,
+      handleConfigClick: mockHandleConfigClick,
+      handleDeleteClick: mockHandleDeleteClick,
+      currentGameId: null,
+      currentOperatorId: null,
+      setCurrentGameId: mockSetCurrentGameId,
+      setCurrentOperatorId: mockSetCurrentOperatorId,
+    }
+
+    // Act
+    renderWithRouter(<GameIntegrationTable {...props} />)
+
+    // Assert
+    expect(screen.queryByText('New')).not.toBeInTheDocument()
+  })
+
+  it('should not render new game integration row when readonly is true', () => {
+    // Arrange
+    vi.mocked(usePermission).mockReturnValue({ isAllowed: true })
+    const props = {
+      data: mockData,
+      gameIds: mockGameIds,
+      operatorIds: mockOperatorIds,
+      handleConfigClick: mockHandleConfigClick,
+      handleDeleteClick: mockHandleDeleteClick,
+      currentGameId: null,
+      currentOperatorId: null,
+      setCurrentGameId: mockSetCurrentGameId,
+      setCurrentOperatorId: mockSetCurrentOperatorId,
+      readonly: true,
+    }
+
+    // Act
+    renderWithRouter(<GameIntegrationTable {...props} />)
+
+    // Assert
+    expect(screen.queryByText('New')).not.toBeInTheDocument()
   })
 
   it('should render table headers correctly', () => {
@@ -108,7 +245,7 @@ describe('GameIntegrationTable', () => {
     }
 
     // Act
-    render(<GameIntegrationTable {...props} />)
+    renderWithRouter(<GameIntegrationTable {...props} />)
 
     // Assert
     expect(screen.getByText('Game ID')).toBeInTheDocument()
@@ -131,7 +268,7 @@ describe('GameIntegrationTable', () => {
     }
 
     // Act
-    render(<GameIntegrationTable {...props} />)
+    renderWithRouter(<GameIntegrationTable {...props} />)
 
     // Assert
     const tableRows = screen.getAllByTestId('table-row')
@@ -154,7 +291,7 @@ describe('GameIntegrationTable', () => {
     }
 
     // Act
-    render(<GameIntegrationTable {...props} />)
+    renderWithRouter(<GameIntegrationTable {...props} />)
 
     // Assert
     expect(screen.getByText('100')).toBeInTheDocument()
@@ -177,7 +314,7 @@ describe('GameIntegrationTable', () => {
     }
 
     // Act
-    render(<GameIntegrationTable {...props} />)
+    renderWithRouter(<GameIntegrationTable {...props} />)
 
     // Assert
     expect(screen.getByText('operator-1 (Operator One)')).toBeInTheDocument()
@@ -200,7 +337,7 @@ describe('GameIntegrationTable', () => {
     }
 
     // Act
-    render(<GameIntegrationTable {...props} />)
+    renderWithRouter(<GameIntegrationTable {...props} />)
 
     // Assert
     const settingsIcons = screen.getAllByTestId('settings-icon')
@@ -224,7 +361,7 @@ describe('GameIntegrationTable', () => {
     }
 
     // Act
-    render(<GameIntegrationTable {...props} />)
+    renderWithRouter(<GameIntegrationTable {...props} />)
 
     // Assert
     const container = screen.getByTestId('table').closest('.overflow-hidden')
@@ -246,7 +383,7 @@ describe('GameIntegrationTable', () => {
     }
 
     // Act
-    render(<GameIntegrationTable {...props} />)
+    renderWithRouter(<GameIntegrationTable {...props} />)
     const configButtons = screen.getAllByTestId('button')
     const configButton = configButtons.find(button => button.querySelector('[data-testid="settings-icon"]'))
     if (configButton) {
@@ -269,15 +406,16 @@ describe('GameIntegrationTable', () => {
       currentOperatorId: null,
       setCurrentGameId: mockSetCurrentGameId,
       setCurrentOperatorId: mockSetCurrentOperatorId,
+      allowDelete: true,
     }
 
     // Act
-    render(<GameIntegrationTable {...props} />)
+    renderWithRouter(<GameIntegrationTable {...props} />)
     const deleteButton = screen.getAllByTestId('button')
     const deleteButtonElement = deleteButton.find(button => button.querySelector('[data-testid="trash-icon"]'))
-    if (deleteButtonElement) {
-      fireEvent.click(deleteButtonElement)
-    }
+    expect(deleteButtonElement).toBeTruthy()
+    expect(deleteButtonElement).not.toBeDisabled()
+    fireEvent.click(deleteButtonElement!)
 
     // Assert
     expect(mockHandleDeleteClick).toHaveBeenCalledWith({ gameId: 100, operatorId: 'operator-1' })
@@ -298,13 +436,13 @@ describe('GameIntegrationTable', () => {
     }
 
     // Act
-    render(<GameIntegrationTable {...props} />)
+    renderWithRouter(<GameIntegrationTable {...props} />)
 
     // Assert
     expect(screen.getByTestId('table')).toBeInTheDocument()
     expect(screen.getByTestId('table-header')).toBeInTheDocument()
     expect(screen.getByTestId('table-body')).toBeInTheDocument()
-    // Should still render the new item row
+    // Should still render the new item row when permission is granted
     expect(screen.getByText('New')).toBeInTheDocument()
   })
 
@@ -323,7 +461,7 @@ describe('GameIntegrationTable', () => {
     }
 
     // Act
-    render(<GameIntegrationTable {...props} />)
+    renderWithRouter(<GameIntegrationTable {...props} />)
 
     // Assert
     const configButtons = screen.getAllByTestId('button')
@@ -347,7 +485,7 @@ describe('GameIntegrationTable', () => {
     }
 
     // Act
-    render(<GameIntegrationTable {...props} />)
+    renderWithRouter(<GameIntegrationTable {...props} />)
 
     // Assert
     const deleteButtons = screen.getAllByTestId('button')
@@ -361,7 +499,7 @@ describe('GameIntegrationTableHeader', () => {
   it('should render the table header with correct structure', () => {
     // Arrange
     // Act
-    render(<GameIntegrationTableHeader />)
+    renderWithRouter(<GameIntegrationTableHeader />)
 
     // Assert
     expect(screen.getByTestId('table-row')).toBeInTheDocument()
@@ -373,7 +511,7 @@ describe('GameIntegrationTableHeader', () => {
   it('should apply correct CSS classes to header cells', () => {
     // Arrange
     // Act
-    render(<GameIntegrationTableHeader />)
+    renderWithRouter(<GameIntegrationTableHeader />)
 
     // Assert
     const cells = screen.getAllByTestId('table-cell')
@@ -402,7 +540,7 @@ describe('GameIntegrationTableItem', () => {
     }
 
     // Act
-    render(<GameIntegrationTableItem {...props} />)
+    renderWithRouter(<GameIntegrationTableItem {...props} />)
 
     // Assert
     expect(screen.getByTestId('table-row')).toBeInTheDocument()
@@ -422,7 +560,7 @@ describe('GameIntegrationTableItem', () => {
     }
 
     // Act
-    render(<GameIntegrationTableItem {...props} />)
+    renderWithRouter(<GameIntegrationTableItem {...props} />)
 
     // Assert
     expect(screen.getByText('operator-123')).toBeInTheDocument()
@@ -438,7 +576,7 @@ describe('GameIntegrationTableItem', () => {
     }
 
     // Act
-    render(<GameIntegrationTableItem {...props} />)
+    renderWithRouter(<GameIntegrationTableItem {...props} />)
     const configButton = screen.getByTestId('settings-icon').closest('button')
     fireEvent.click(configButton!)
 
@@ -453,11 +591,13 @@ describe('GameIntegrationTableItem', () => {
       operatorId: 'operator-123',
       handleConfigClick: mockHandleConfigClick,
       handleDeleteClick: mockHandleDeleteClick,
+      allowDelete: true,
     }
 
     // Act
-    render(<GameIntegrationTableItem {...props} />)
+    renderWithRouter(<GameIntegrationTableItem {...props} />)
     const deleteButton = screen.getAllByTestId('button')[1]
+    expect(deleteButton).not.toBeDisabled()
     fireEvent.click(deleteButton)
 
     // Assert
@@ -474,11 +614,65 @@ describe('GameIntegrationTableItem', () => {
     }
 
     // Act
-    render(<GameIntegrationTableItem {...props} />)
+    renderWithRouter(<GameIntegrationTableItem {...props} />)
 
     // Assert
     const cells = screen.getAllByTestId('table-cell')
     expect(cells[2]).toHaveClass('flex', 'gap-2')
+  })
+
+  it('should not render action buttons when readonly is true', () => {
+    // Arrange
+    const props = {
+      gameId: 123,
+      operatorId: 'operator-123',
+      handleConfigClick: mockHandleConfigClick,
+      handleDeleteClick: mockHandleDeleteClick,
+      readonly: true,
+    }
+
+    // Act
+    renderWithRouter(<GameIntegrationTableItem {...props} />)
+
+    // Assert
+    expect(screen.queryByTestId('settings-icon')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('trash-icon')).not.toBeInTheDocument()
+  })
+
+  it('should disable delete button when allowDelete is false', () => {
+    // Arrange
+    const props = {
+      gameId: 123,
+      operatorId: 'operator-123',
+      handleConfigClick: mockHandleConfigClick,
+      handleDeleteClick: mockHandleDeleteClick,
+      allowDelete: false,
+    }
+
+    // Act
+    renderWithRouter(<GameIntegrationTableItem {...props} />)
+
+    // Assert
+    const deleteButton = screen.getAllByTestId('button')[1]
+    expect(deleteButton).toBeDisabled()
+  })
+
+  it('should enable delete button when allowDelete is true', () => {
+    // Arrange
+    const props = {
+      gameId: 123,
+      operatorId: 'operator-123',
+      handleConfigClick: mockHandleConfigClick,
+      handleDeleteClick: mockHandleDeleteClick,
+      allowDelete: true,
+    }
+
+    // Act
+    renderWithRouter(<GameIntegrationTableItem {...props} />)
+
+    // Assert
+    const deleteButton = screen.getAllByTestId('button')[1]
+    expect(deleteButton).not.toBeDisabled()
   })
 })
 
@@ -510,7 +704,7 @@ describe('NewGameIntegrationTableItem', () => {
     }
 
     // Act
-    render(<NewGameIntegrationTableItem {...props} />)
+    renderWithRouter(<NewGameIntegrationTableItem {...props} />)
 
     // Assert
     expect(screen.getByTestId('table-row')).toBeInTheDocument()
@@ -531,7 +725,7 @@ describe('NewGameIntegrationTableItem', () => {
     }
 
     // Act
-    render(<NewGameIntegrationTableItem {...props} />)
+    renderWithRouter(<NewGameIntegrationTableItem {...props} />)
     const newButton = screen.getByText('New')
     fireEvent.click(newButton)
 
@@ -552,7 +746,7 @@ describe('NewGameIntegrationTableItem', () => {
     }
 
     // Act
-    render(<NewGameIntegrationTableItem {...props} />)
+    renderWithRouter(<NewGameIntegrationTableItem {...props} />)
     const newButton = screen.getByText('New')
     fireEvent.click(newButton)
 
@@ -573,7 +767,7 @@ describe('NewGameIntegrationTableItem', () => {
     }
 
     // Act
-    render(<NewGameIntegrationTableItem {...props} />)
+    renderWithRouter(<NewGameIntegrationTableItem {...props} />)
 
     // Assert
     const newButton = screen.getByText('New')
@@ -599,7 +793,7 @@ describe('GameIdCombobox', () => {
     }
 
     // Act
-    render(<GameIdCombobox {...props} />)
+    renderWithRouter(<GameIdCombobox {...props} />)
 
     // Assert
     expect(screen.getByTestId('combobox')).toBeInTheDocument()
@@ -614,7 +808,7 @@ describe('GameIdCombobox', () => {
     }
 
     // Act
-    render(<GameIdCombobox {...props} />)
+    renderWithRouter(<GameIdCombobox {...props} />)
 
     // Assert
     const combobox = screen.getByTestId('combobox')
@@ -633,7 +827,7 @@ describe('GameIdCombobox', () => {
     }
 
     // Act
-    render(<GameIdCombobox {...props} />)
+    renderWithRouter(<GameIdCombobox {...props} />)
 
     // Assert
     const propsElement = screen.getByTestId('combobox-props')
@@ -654,7 +848,7 @@ describe('GameIdCombobox', () => {
     }
 
     // Act
-    render(<GameIdCombobox {...props} />)
+    renderWithRouter(<GameIdCombobox {...props} />)
 
     // Assert
     const combobox = screen.getByTestId('combobox')
@@ -683,7 +877,7 @@ describe('OperatorIdCombobox', () => {
     }
 
     // Act
-    render(<OperatorIdCombobox {...props} />)
+    renderWithRouter(<OperatorIdCombobox {...props} />)
 
     // Assert
     expect(screen.getByTestId('combobox')).toBeInTheDocument()
@@ -698,7 +892,7 @@ describe('OperatorIdCombobox', () => {
     }
 
     // Act
-    render(<OperatorIdCombobox {...props} />)
+    renderWithRouter(<OperatorIdCombobox {...props} />)
 
     // Assert
     const combobox = screen.getByTestId('combobox')
@@ -717,7 +911,7 @@ describe('OperatorIdCombobox', () => {
     }
 
     // Act
-    render(<OperatorIdCombobox {...props} />)
+    renderWithRouter(<OperatorIdCombobox {...props} />)
 
     // Assert
     const propsElement = screen.getByTestId('combobox-props')
@@ -738,7 +932,7 @@ describe('OperatorIdCombobox', () => {
     }
 
     // Act
-    render(<OperatorIdCombobox {...props} />)
+    renderWithRouter(<OperatorIdCombobox {...props} />)
 
     // Assert
     const combobox = screen.getByTestId('combobox')
@@ -754,7 +948,7 @@ describe('OperatorIdCombobox', () => {
     }
 
     // Act
-    render(<OperatorIdCombobox {...props} />)
+    renderWithRouter(<OperatorIdCombobox {...props} />)
 
     // Assert
     const propsElement = screen.getByTestId('combobox-props')
@@ -771,7 +965,7 @@ describe('OperatorIdCombobox', () => {
     }
 
     // Act
-    render(<OperatorIdCombobox {...props} />)
+    renderWithRouter(<OperatorIdCombobox {...props} />)
 
     // Assert
     const propsElement = screen.getByTestId('combobox-props')

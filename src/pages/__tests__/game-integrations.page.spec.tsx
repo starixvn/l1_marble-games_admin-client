@@ -6,8 +6,8 @@ vi.mock('@/components/layouts/admin.layout', () => ({
 }))
 
 vi.mock('@/components/game-integration-table', () => ({
-  GameIntegrationTable: vi.fn(({ data, handleConfigClick, handleDeleteClick }) => (
-    <div data-testid="game-integration-table">
+  GameIntegrationTable: vi.fn(({ data, handleConfigClick, handleDeleteClick, allowDelete }) => (
+    <div data-testid="game-integration-table" data-allow-delete={allowDelete}>
       <div>Game Integration Table with {data.length} items</div>
       <button data-testid="config-btn" onClick={() => handleConfigClick({ gameId: 1, operatorId: 1 })}>
         Config
@@ -51,6 +51,10 @@ vi.mock('@/hooks/useGameConfig', () => ({
   useGameConfig: vi.fn(),
 }))
 
+vi.mock('@/hooks/usePermission', () => ({
+  usePermission: vi.fn(),
+}))
+
 vi.mock('sonner', () => ({
   toast: {
     success: vi.fn(),
@@ -61,6 +65,7 @@ vi.mock('sonner', () => ({
 import * as useGameIntegrationModule from '@/hooks/useGameIntegration'
 import * as useOperatorModule from '@/hooks/useOperator'
 import * as useGameConfigModule from '@/hooks/useGameConfig'
+import * as usePermissionModule from '@/hooks/usePermission'
 import { toast } from 'sonner'
 import { GameIntegrationsPage } from '../game-integrations.page'
 
@@ -113,6 +118,9 @@ describe('Game Integrations Page', () => {
         mutate: vi.fn(),
       },
     })
+
+    // Default permission setup - both permissions granted
+    vi.spyOn(usePermissionModule, 'usePermission').mockReturnValue({ isAllowed: true })
   })
 
   it('should render the game integrations page with AdminLayout', () => {
@@ -497,4 +505,179 @@ describe('Game Integrations Page', () => {
     expect(screen.getByTestId('game-integration-table')).toBeInTheDocument()
     expect(screen.getByText('Game Integration Table with 1 items')).toBeInTheDocument()
   })
+
+  // Permission Tests
+  it('should pass delete permission to table when delete permission is granted', () => {
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // deletePermission
+
+    // Act
+    render(<GameIntegrationsPage />)
+
+    // Assert
+    expect(screen.getByTestId('game-integration-table')).toHaveAttribute('data-allow-delete', 'true')
+  })
+
+  it('should pass delete permission to table when delete permission is denied', () => {
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: false }) // deletePermission
+
+    // Act
+    render(<GameIntegrationsPage />)
+
+    // Assert
+    expect(screen.getByTestId('game-integration-table')).toHaveAttribute('data-allow-delete', 'false')
+  })
+
+  it('should render config dialog when get permission is granted', () => {
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // deletePermission
+
+    // Act
+    render(<GameIntegrationsPage />)
+
+    // Assert
+    expect(screen.getByTestId('game-integration-config-dialog')).toBeInTheDocument()
+  })
+
+  it('should not render config dialog when get permission is denied', () => {
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: false }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // deletePermission
+
+    // Act
+    render(<GameIntegrationsPage />)
+
+    // Assert
+    expect(screen.queryByTestId('game-integration-config-dialog')).not.toBeInTheDocument()
+  })
+
+  it('should handle delete click when delete permission is granted', async () => {
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // deletePermission
+
+    const mockDeleteMutation = vi.fn()
+    const mockRefetch = vi.fn()
+    
+    mockUseGameIntegrationDelete.mockReturnValue({
+      gameIntegrationDeleteMutation: {
+        mutate: mockDeleteMutation,
+      },
+    })
+
+    mockUseGameIntegrationList.mockReturnValue({
+      gameIntegrationListQuery: {
+        data: { data: [] },
+        isLoading: false,
+        isError: false,
+        refetch: mockRefetch,
+      },
+    })
+
+    // Act
+    render(<GameIntegrationsPage />)
+    const deleteBtn = screen.getByTestId('delete-btn')
+    fireEvent.click(deleteBtn)
+
+    // Assert
+    expect(mockDeleteMutation).toHaveBeenCalledWith(
+      { gameId: 1, operatorId: 1 },
+      {
+        onSuccess: expect.any(Function),
+        onError: expect.any(Function),
+      }
+    )
+
+    // Simulate success callback
+    const onSuccessCallback = mockDeleteMutation.mock.calls[0][1].onSuccess
+    onSuccessCallback()
+
+    await waitFor(() => {
+      expect(mockToastSuccess).toHaveBeenCalledWith('Game integration deleted successfully')
+      expect(mockRefetch).toHaveBeenCalled()
+    })
+  })
+
+  it('should handle config submit when get permission is granted', async () => {
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // deletePermission
+
+    const mockUpsertMutation = vi.fn()
+    const mockRefetch = vi.fn()
+    
+    mockUseGameIntegrationUpsert.mockReturnValue({
+      gameIntegrationUpsertMutation: {
+        mutate: mockUpsertMutation,
+      },
+    })
+
+    mockUseGameIntegrationList.mockReturnValue({
+      gameIntegrationListQuery: {
+        data: { data: [] },
+        isLoading: false,
+        isError: false,
+        refetch: mockRefetch,
+      },
+    })
+
+    // Act
+    render(<GameIntegrationsPage />)
+    
+    // Open dialog first
+    const configBtn = screen.getByTestId('config-btn')
+    fireEvent.click(configBtn)
+    
+    // Submit config
+    const submitBtn = screen.getByTestId('submit-btn')
+    fireEvent.click(submitBtn)
+
+    // Assert
+    expect(mockUpsertMutation).toHaveBeenCalledWith(
+      {
+        query: { gameId: 1, operatorId: 1 },
+        json: { test: 'data' },
+      },
+      {
+        onSuccess: expect.any(Function),
+        onError: expect.any(Function),
+      }
+    )
+
+    // Simulate success callback
+    const onSuccessCallback = mockUpsertMutation.mock.calls[0][1].onSuccess
+    onSuccessCallback()
+
+    await waitFor(() => {
+      expect(mockToastSuccess).toHaveBeenCalledWith('Game integration updated successfully')
+      expect(mockRefetch).toHaveBeenCalled()
+    })
+  })
+
+  it('should not allow config dialog to open when get permission is denied', () => {
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: false }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // deletePermission
+
+    // Act
+    render(<GameIntegrationsPage />)
+
+    // Assert
+    expect(screen.queryByTestId('game-integration-config-dialog')).not.toBeInTheDocument()
+    // The config button should still be there (it's in the table mock), but clicking it won't open the dialog
+    expect(screen.getByTestId('config-btn')).toBeInTheDocument()
+  })
+
+  
 })

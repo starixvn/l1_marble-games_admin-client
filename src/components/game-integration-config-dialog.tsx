@@ -11,6 +11,8 @@ import {
 import { JsonEditorWithDragDrop } from '@/components/json-editor-with-drag-drop'
 import { useEffect, useState } from 'react'
 import type { GameIntegrationListResponse } from '@/api/game-integration.api'
+import { usePermission } from '@/hooks/usePermission'
+import { API_ENDPOINTS } from '@/api/api-endpoints'
 
 export const GameIntegrationConfigDialog = ({
   isOpen,
@@ -30,6 +32,13 @@ export const GameIntegrationConfigDialog = ({
   const isExistingGameIntegration = existingGameIntegration.some(
     (gameIntegration) => gameIntegration.gameId === currentGameId && gameIntegration.operatorId === currentOperatorId,
   )
+
+  const { isAllowed: upsert } = usePermission({ 
+    path: [ 
+      API_ENDPOINTS.GAME_INTEGRATION.UPSERT,
+    ] 
+  })
+
   const { gameIntegrationWithIdQuery } = useGameIntegrationWithId({
     gameId: currentGameId!,
     operatorId: currentOperatorId!,
@@ -62,9 +71,10 @@ export const GameIntegrationConfigDialog = ({
           onChange={setJson}
           isLoading={gameIntegrationWithIdQuery.isLoading}
           isError={gameIntegrationWithIdQuery.isError}
+          readOnly={!upsert}
         />
         <DialogFooter>
-          <Button onClick={() => handleSubmit(json)}>Submit</Button>
+          <Button disabled={!upsert} onClick={() => handleSubmit(json)}>Submit</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

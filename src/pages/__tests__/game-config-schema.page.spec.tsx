@@ -14,8 +14,8 @@ vi.mock('@/components/ui/table', () => ({
 }))
 
 vi.mock('@/components/ui/button', () => ({
-  Button: vi.fn(({ children, onClick, variant, size, className }) => (
-    <button data-testid="button" onClick={onClick} data-variant={variant} data-size={size} className={className}>
+  Button: vi.fn(({ children, onClick, variant, size, className, disabled }) => (
+    <button data-testid="button" onClick={onClick} data-variant={variant} data-size={size} className={className} disabled={disabled}>
       {children}
     </button>
   )),
@@ -39,7 +39,7 @@ vi.mock('@/components/ui/dialog', () => ({
 }))
 
 vi.mock('@/components/json-editor-with-drag-drop', () => ({
-  JsonEditorWithDragDrop: vi.fn(({ value, onChange, isLoading, isError }) => (
+  JsonEditorWithDragDrop: vi.fn(({ value, onChange, isLoading, isError, readOnly }) => (
     <div data-testid="json-editor">
       <textarea
         data-testid="json-input"
@@ -47,6 +47,7 @@ vi.mock('@/components/json-editor-with-drag-drop', () => ({
         onChange={(e) => onChange(e.target.value)}
         data-loading={isLoading}
         data-error={isError}
+        data-readonly={readOnly}
         aria-label="JSON Editor"
         placeholder="Enter JSON content"
       />
@@ -55,8 +56,8 @@ vi.mock('@/components/json-editor-with-drag-drop', () => ({
 }))
 
 vi.mock('@/components/ui/input', () => ({
-  Input: vi.fn(({ id, value, onChange, placeholder, required }) => (
-    <input data-testid="input" id={id} value={value} onChange={onChange} placeholder={placeholder} required={required} />
+  Input: vi.fn(({ id, value, onChange, placeholder, required, disabled }) => (
+    <input data-custom={disabled} data-testid="input" id={id} value={value} onChange={onChange} placeholder={placeholder} required={required} disabled={disabled} />
   )),
 }))
 
@@ -79,6 +80,12 @@ vi.mock('@/hooks/useGameConfigSchema', () => ({
   useGameConfigSchemaUpsert: vi.fn(),
 }))
 
+vi.mock('@/hooks/usePermission', () => ({
+  usePermission: vi.fn(),
+}))
+
+
+
 vi.mock('sonner', () => ({
   toast: {
     success: vi.fn(),
@@ -87,6 +94,7 @@ vi.mock('sonner', () => ({
 }))
 
 import * as useGameConfigSchemaModule from '@/hooks/useGameConfigSchema'
+import * as usePermissionModule from '@/hooks/usePermission'
 import { toast } from 'sonner'
 import GameConfigSchemaPage from '../game-config-schema.page'
 
@@ -124,6 +132,9 @@ describe('Game Config Schema Page', () => {
         mutate: vi.fn(),
       },
     })
+
+    // Default permission setup - both permissions granted
+    vi.spyOn(usePermissionModule, 'usePermission').mockReturnValue({ isAllowed: true })
   })
 
   it('should render the game config schema page with AdminLayout', () => {
@@ -171,16 +182,63 @@ describe('Game Config Schema Page', () => {
     expect(screen.getByText('Test Schema 2')).toBeInTheDocument()
   })
 
-  it('should render new schema row', () => {
-    // Arrange & Act
+  it('should render new schema row when upsert permission is granted', () => {
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // upsertPermission
+
+    // Act
     render(<GameConfigSchemaPage />)
 
     // Assert
     expect(screen.getAllByText('New')).toHaveLength(2) // Schema Id and Name columns
   })
 
+  it('should not render new schema row when upsert permission is denied', () => {
+    // Arrange
+    vi.clearAllMocks()
+    
+    mockUseGameConfigSchemaList.mockReturnValue({
+      gameConfigSchemaListQuery: {
+        data: { data: [] },
+        isLoading: false,
+        isError: false,
+        refetch: vi.fn(),
+      },
+    })
+
+    mockUseGameConfigSchemaWithId.mockReturnValue({
+      gameConfigSchemaGetQuery: {
+        data: { data: null },
+        isLoading: false,
+        isError: false,
+        refetch: vi.fn(),
+      },
+    })
+
+    mockUseGameConfigSchemaUpsert.mockReturnValue({
+      gameConfigSchemaUpsertMutation: {
+        mutate: vi.fn(),
+      },
+    })
+
+    // Mock usePermission to return false for upsert permission
+    vi.spyOn(usePermissionModule, 'usePermission').mockReturnValue({ isAllowed: false })
+
+    // Act
+    render(<GameConfigSchemaPage />)
+
+    // Assert
+    expect(screen.queryAllByText('New')).toHaveLength(0)
+  })
+
   it('should render edit buttons for existing schemas', () => {
     // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // upsertPermission
+
     const mockSchemas = [
       { id: 'schema1', name: 'Test Schema 1' },
     ]
@@ -202,12 +260,43 @@ describe('Game Config Schema Page', () => {
     expect(screen.getByTestId('edit-icon')).toBeInTheDocument()
   })
 
-  it('should render plus button for new schema', () => {
-    // Arrange & Act
+  it('should render plus button for new schema when both permissions are granted', () => {
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // upsertPermission
+
+    // Act
     render(<GameConfigSchemaPage />)
 
     // Assert
     expect(screen.getByTestId('plus-icon')).toBeInTheDocument()
+  })
+
+  it('should not render plus button when get permission is denied', () => {
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: false }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // upsertPermission
+
+    // Act
+    render(<GameConfigSchemaPage />)
+
+    // Assert
+    expect(screen.queryByTestId('plus-icon')).not.toBeInTheDocument()
+  })
+
+  it('should not render plus button when upsert permission is denied', () => {
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: false }) // upsertPermission
+
+    // Act
+    render(<GameConfigSchemaPage />)
+
+    // Assert
+    expect(screen.queryByTestId('plus-icon')).not.toBeInTheDocument()
   })
 
   it('should open edit dialog when edit button is clicked', () => {
@@ -235,7 +324,12 @@ describe('Game Config Schema Page', () => {
   })
 
   it('should open new schema dialog when plus button is clicked', () => {
-    // Arrange & Act
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // upsertPermission
+
+    // Act
     render(<GameConfigSchemaPage />)
     const buttons = screen.getAllByTestId('button')
     fireEvent.click(buttons[0]) // Click plus button (only button in empty state)
@@ -425,6 +519,10 @@ describe('Game Config Schema Page', () => {
 
   it('should handle form submission with valid data', async () => {
     // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // upsertPermission
+
     const mockUpsertMutation = vi.fn()
     const mockRefetch = vi.fn()
     
@@ -484,6 +582,10 @@ describe('Game Config Schema Page', () => {
 
   it('should show error when name is empty', () => {
     // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // upsertPermission
+
     mockUseGameConfigSchemaList.mockReturnValue({
       gameConfigSchemaListQuery: {
         data: { data: [] },
@@ -507,6 +609,10 @@ describe('Game Config Schema Page', () => {
 
   it('should show error when JSON is invalid', () => {
     // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // upsertPermission
+
     mockUseGameConfigSchemaList.mockReturnValue({
       gameConfigSchemaListQuery: {
         data: { data: [] },
@@ -536,6 +642,10 @@ describe('Game Config Schema Page', () => {
 
   it('should handle submission error', async () => {
     // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // upsertPermission
+
     const mockUpsertMutation = vi.fn()
     
     mockUseGameConfigSchemaUpsert.mockReturnValue({
@@ -577,11 +687,84 @@ describe('Game Config Schema Page', () => {
   })
 
   it('should apply correct styling to table container', () => {
-    // Arrange & Act
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // upsertPermission
+
+    // Act
     render(<GameConfigSchemaPage />)
 
     // Assert
     const tableContainer = screen.getByTestId('table').parentElement
     expect(tableContainer).toHaveClass('overflow-hidden', 'rounded-lg', 'border', 'm-2')
+  })
+
+  it('should render dialog in read-only mode when upsert permission is denied', () => {
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) 
+      .mockReturnValueOnce({ isAllowed: false })
+      .mockReturnValueOnce({ isAllowed: true })
+      .mockReturnValueOnce({ isAllowed: false })
+
+    const mockSchemas = [
+      { id: 'schema1', name: 'Test Schema 1' },
+    ]
+    mockUseGameConfigSchemaList.mockReturnValue({
+      gameConfigSchemaListQuery: {
+        data: { data: mockSchemas },
+        isLoading: false,
+        isError: false,
+        refetch: vi.fn(),
+      },
+    })
+
+    // Act
+    render(<GameConfigSchemaPage />)
+    const editButtons = screen.getAllByTestId('button')
+    fireEvent.click(editButtons[0])
+
+    // Assert
+    const nameInput = screen.getByTestId('input')
+    const jsonInput = screen.getByTestId('json-input')
+    const submitButton = screen.getByText('Submit')
+    
+    expect(nameInput).toBeDisabled()
+    expect(jsonInput).toHaveAttribute('data-readonly', 'true')
+    expect(submitButton).toBeDisabled()
+  })
+
+  it('should render dialog in editable mode when upsert permission is granted', () => {
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: true }) // upsertPermission
+
+    const mockSchemas = [
+      { id: 'schema1', name: 'Test Schema 1' },
+    ]
+    mockUseGameConfigSchemaList.mockReturnValue({
+      gameConfigSchemaListQuery: {
+        data: { data: mockSchemas },
+        isLoading: false,
+        isError: false,
+        refetch: vi.fn(),
+      },
+    })
+
+    // Act
+    render(<GameConfigSchemaPage />)
+    const editButtons = screen.getAllByTestId('button')
+    fireEvent.click(editButtons[0])
+
+    // Assert
+    const nameInput = screen.getByTestId('input')
+    const jsonInput = screen.getByTestId('json-input')
+    const submitButton = screen.getByText('Submit')
+    
+    expect(nameInput).toBeEnabled()
+    expect(jsonInput).toHaveAttribute('data-readonly', 'false')
+    expect(submitButton).not.toBeDisabled()
   })
 })

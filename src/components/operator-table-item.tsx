@@ -13,10 +13,11 @@ export interface OperatorTableItemProps extends React.HTMLAttributes<HTMLTableRo
   operator: {
     id: string
     name: string
-  }
+  },
+  readonly?: boolean
 }
 
-export const OperatorTableItem = ({ operator }: OperatorTableItemProps) => {
+export const OperatorTableItem = ({ operator, readonly = false }: OperatorTableItemProps) => {
   const { updateOperatorNameMutation, generatePasswordMutation } = useOperator()
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false)
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false)
@@ -78,7 +79,7 @@ export const OperatorTableItem = ({ operator }: OperatorTableItemProps) => {
       <TableCell className="px-6">{operator.id}</TableCell>
       <TableCell className="px-6">{operator.name}</TableCell>
       <TableCell className="flex justify-end px-6">
-        <DropdownMenu>
+        {!readonly && <DropdownMenu >
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
@@ -93,7 +94,7 @@ export const OperatorTableItem = ({ operator }: OperatorTableItemProps) => {
             <DropdownMenuItem onClick={handleRename}>Rename</DropdownMenuItem>
             <DropdownMenuItem onClick={handleGeneratePassword}>Get new password</DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu>}
       </TableCell>
 
       <OperatorRenameDialog
