@@ -13,6 +13,7 @@ interface JsonEditorDialogProps {
   description?: string
   isLoading?: boolean
   isError?: boolean
+  readonly?: boolean
 }
 
 export function JsonEditorDialog({
@@ -24,6 +25,7 @@ export function JsonEditorDialog({
   description = 'Paste json below or drag and drop file',
   isLoading = false,
   isError = false,
+  readonly = false,
 }: Readonly<JsonEditorDialogProps>) {
   const [currentEditorValue, setCurrentEditorValue] = useState<string>(initialValue)
   useEffect(() => {
@@ -58,9 +60,10 @@ export function JsonEditorDialog({
           onChange={setCurrentEditorValue}
           isLoading={isLoading}
           isError={isError}
+          readOnly={readonly}
         />
         <div className="flex justify-end pt-4 gap-2">
-          <Button onClick={handleSubmit}>OK</Button>
+          <Button onClick={handleSubmit} disabled={readonly}>OK</Button>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>

@@ -316,4 +316,22 @@ describe('Combobox', () => {
     // Assert
     expect(mockSetCurrentValue).toHaveBeenCalledWith(null)
   })
+
+  it('should be disabled when disabled prop is true', () => {
+    // Arrange
+    const props = {
+      list: mockList,
+      keyProp: 'id',
+      valueProp: 'name',
+      valueFormatter: mockValueFormatter,
+      disabled: true,
+    }
+
+    // Act
+    render(<Combobox {...props} />)
+
+    // Assert
+    const button = screen.getByTestId('button')
+    expect(button).toBeDisabled()
+  })
 })

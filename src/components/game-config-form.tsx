@@ -14,8 +14,10 @@ import { apply } from 'json-merge-patch'
 
 export function GameConfigForm({
   gameId,
+  allowWrite = true,
 }: Readonly<{
   gameId: number
+  allowWrite?: boolean
 }>) {
   const { gameConfigWithIdQuery } = useGameConfigWithId({ gameId })
 
@@ -34,6 +36,7 @@ export function GameConfigForm({
         gameId={gameId}
         gameConfigSchemaId={gameConfigWithIdQuery.data?.data?.gameConfigSchema}
         gameConfig={gameConfigWithIdQuery.data?.data?.config}
+        allowWrite={allowWrite}
       />
     )
   }
@@ -45,10 +48,12 @@ function GameConfigSchemaForm({
   gameId,
   gameConfigSchemaId,
   gameConfig,
+  allowWrite = true,
 }: Readonly<{
   gameId: number
   gameConfigSchemaId: string
   gameConfig: object
+  allowWrite?: boolean
 }>) {
   const { gameConfigSchemaGetQuery, gameConfigSchemaListQuery, currentSchemaId, setCurrentSchemaId } =
     useGameConfigSchema({ id: gameConfigSchemaId })
@@ -68,6 +73,10 @@ function GameConfigSchemaForm({
   }
 
   const handleSubmit = (data: IChangeEvent<object>) => {
+    if (!allowWrite) {
+      return
+    }
+
     if (!currentSchemaId) {
       return
     }
@@ -91,6 +100,10 @@ function GameConfigSchemaForm({
   }
 
   const handleJsonEditorSubmit = (jsonString: string) => {
+    if (!allowWrite) {
+      return
+    }
+
     setCurrentFormData({ ...apply(currentFormData, JSON.parse(jsonString)) })
     setFormKey((prev) => prev + 1) // fix bug form data not updated when form data is changed, this is library bug
     setJson('{}')
@@ -118,6 +131,8 @@ function GameConfigSchemaForm({
           onSubmit={handleSubmit}
           onChange={handleFormChange}
           liveValidate
+          readonly={!allowWrite}
+          disabled={!allowWrite}
         />
         <JsonEditorDialog
           isOpen={isJsonEditorOpen}
@@ -128,6 +143,7 @@ function GameConfigSchemaForm({
           description="Paste json below or drag and drop file"
           isLoading={gameConfigSchemaGetQuery.isLoading}
           isError={gameConfigSchemaGetQuery.isError}
+          readonly={!allowWrite}
         />
       </div>
     )
@@ -141,11 +157,12 @@ function GameConfigSchemaForm({
     return (
       <div className="flex items-center gap-2">
         <GameConfigSchemaCombobox
+          disabled={!allowWrite}
           currentSchemaId={currentSchemaId as string}
           setCurrentSchemaId={setCurrentSchemaId as (id: string | null) => void}
           data={gameConfigSchemaListQuery.data?.data ?? []}
         />
-        <Button variant="outline" size="icon" onClick={() => setIsJsonEditorOpen(true)}>
+        <Button disabled={!allowWrite} variant="outline" size="icon" onClick={() => setIsJsonEditorOpen(true)}>
           <CodeXml
             className="h-4 w-4 text-blue-500 drop-shadow-lg"
             strokeWidth={3}

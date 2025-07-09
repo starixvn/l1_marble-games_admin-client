@@ -6,10 +6,12 @@ export function GameConfigSchemaCombobox({
   currentSchemaId,
   setCurrentSchemaId,
   data,
+  disabled = false,
 }: Readonly<{
   currentSchemaId?: string
   setCurrentSchemaId?: (id: string | null) => void
   data: GameConfigSchemaListResponse[] | undefined
+  disabled?: boolean
 }>) {
   return (
     <Combobox
@@ -27,6 +29,7 @@ export function GameConfigSchemaCombobox({
       nothingFoundMessage="No game config schema found."
       className="w-[300px]"
       valueFormatter={(item) => `${item?.name ?? 'Not found, please select another schema'}`}
+      disabled={disabled}
     />
   )
 }

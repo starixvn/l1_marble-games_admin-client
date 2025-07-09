@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 
 vi.mock('@/components/ui/button', () => ({
-  Button: vi.fn(({ children, variant, onClick }) => (
-    <button data-testid="button" data-variant={variant} onClick={onClick}>
+  Button: vi.fn(({ children, variant, onClick, disabled }) => (
+    <button data-testid="button" data-variant={variant} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   )),
@@ -25,13 +25,14 @@ vi.mock('@/components/ui/dialog', () => ({
 }))
 
 vi.mock('@/components/json-editor-with-drag-drop', () => ({
-  JsonEditorWithDragDrop: vi.fn(({ value, onChange, isLoading, isError }) => (
-    <div data-testid="json-editor-with-drag-drop" data-loading={isLoading} data-error={isError}>
+  JsonEditorWithDragDrop: vi.fn(({ value, onChange, isLoading, isError, readOnly }) => (
+    <div data-testid="json-editor-with-drag-drop" data-loading={isLoading} data-error={isError} data-readonly={readOnly}>
       <textarea
         data-testid="json-textarea"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Enter JSON here"
+        readOnly={readOnly}
       />
     </div>
   )),
@@ -470,5 +471,26 @@ describe('JsonEditorDialog', () => {
       />
     )
     expect(screen.getByTestId('dialog')).toHaveAttribute('data-open', 'false')
+  }) 
+
+  it('should handle readonly mode correctly', () => {
+    // Arrange
+    const props = {
+      isOpen: true,
+      onOpenChange: mockOnOpenChange,
+      onSubmit: mockOnSubmit,
+      initialValue: '{"test": "value"}',
+      readonly: true,
+    }
+
+    // Act
+    render(<JsonEditorDialog {...props} />)
+
+    // Assert
+    const jsonEditor = screen.getByTestId('json-editor-with-drag-drop')
+    expect(jsonEditor).toHaveAttribute('data-readonly', 'true')
+    
+    const okButton = screen.getByText('OK')
+    expect(okButton).toBeDisabled()
   })
 }) 

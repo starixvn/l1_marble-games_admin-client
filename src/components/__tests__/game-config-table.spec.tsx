@@ -22,8 +22,8 @@ vi.mock('@/components/ui/table', () => ({
 }))
 
 vi.mock('@/components/ui/button', () => ({
-  Button: vi.fn(({ children, className, variant, onClick }) => (
-    <button data-testid="button" className={className} data-variant={variant} onClick={onClick}>
+  Button: vi.fn(({ children, className, variant, onClick, disabled }) => (
+    <button data-testid="button" className={className} data-variant={variant} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   )),
@@ -197,6 +197,27 @@ describe('GameConfigTable', () => {
     expect(newButton).toHaveClass('w-[100px]', 'text-green-500')
     expect(newButton).toHaveAttribute('data-variant', 'outline')
   })
+
+  it('should disable config buttons when allowRead is false', () => {
+    // Arrange
+    // Act
+    render(<GameConfigTable data={mockData} allowRead={false} />)
+
+    // Assert
+    const configButtons = screen.getAllByText('Config')
+    configButtons.forEach(button => {
+      expect(button).toBeDisabled()
+    })
+  })
+
+  it('should not render new game button when allowWrite is false', () => {
+    // Arrange
+    // Act
+    render(<GameConfigTable data={mockData} allowWrite={false} />)
+
+    // Assert
+    expect(screen.queryByRole('button', { name: 'New' })).not.toBeInTheDocument()
+  })
 })
 
 describe('GameConfigTableItem', () => {
@@ -269,6 +290,26 @@ describe('GameConfigTableItem', () => {
       expect(screen.getByText(gameId.toString())).toBeInTheDocument()
       cleanup()
     })
+  })
+
+  it('should disable config button when allowRead is false', () => {
+    // Arrange
+    // Act
+    render(<GameConfigTableItem gameId={123} handleConfigClick={mockHandleConfigClick} allowRead={false} />)
+
+    // Assert
+    const configButton = screen.getByText('Config')
+    expect(configButton).toBeDisabled()
+  })
+
+  it('should enable config button when allowRead is true', () => {
+    // Arrange
+    // Act
+    render(<GameConfigTableItem gameId={123} handleConfigClick={mockHandleConfigClick} allowRead={true} />)
+
+    // Assert
+    const configButton = screen.getByText('Config')
+    expect(configButton).not.toBeDisabled()
   })
 })
 

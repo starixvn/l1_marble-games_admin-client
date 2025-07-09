@@ -12,11 +12,20 @@ import { API_ENDPOINTS } from '../api/api-endpoints'
 export default function GameConfigsPage() {
   const { gameConfigQuery } = useGameConfig()
   const { gameId } = useParams<{ gameId: string }>()
-  const { isAllowed } = usePermission({ 
+  
+  const { isAllowed: isReadAllowed } = usePermission({ 
+    path: [ 
+      API_ENDPOINTS.GAME_CONFIG.GET
+    ] 
+  })
+  
+  const { isAllowed: isWriteAllowed } = usePermission({ 
     path: [ 
       API_ENDPOINTS.GAME_CONFIG.UPSERT
     ] 
   })
+
+  
 
 
   function renderGameConfigTable() {
@@ -28,11 +37,11 @@ export default function GameConfigsPage() {
       return <ErrorTable onClick={() => gameConfigQuery.refetch()} />
     }
 
-    return <GameConfigTable data={gameConfigQuery.data?.data} readonly={!isAllowed} />
+    return <GameConfigTable data={gameConfigQuery.data?.data} allowRead={isReadAllowed} allowWrite={isWriteAllowed}/>
   }
 
   function renderGameConfigForm() {
-    if (!isAllowed) {
+    if (!isReadAllowed) {
       return null
     }
 
@@ -44,7 +53,7 @@ export default function GameConfigsPage() {
       return <NewGameForm />
     }
 
-    return <GameConfigForm gameId={Number(gameId)} />
+    return <GameConfigForm gameId={Number(gameId)} allowWrite={isWriteAllowed} />
   }
 
   return (

@@ -17,6 +17,7 @@ type ComboboxProps = {
   nothingFoundMessage?: string
   className?: string
   valueFormatter: (value: Record<string, number | string | null | undefined>) => string
+  disabled?: boolean
 }
 
 export function Combobox({
@@ -29,6 +30,7 @@ export function Combobox({
   nothingFoundMessage,
   className,
   valueFormatter,
+  disabled = false,
 }: Readonly<ComboboxProps>) {
   const [open, setOpen] = React.useState(false)
 
@@ -44,7 +46,7 @@ export function Combobox({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" aria-expanded={open} className={cn('justify-between', className)}>
+        <Button disabled={disabled} variant="outline" aria-expanded={open} className={cn('justify-between', className)}>
           {currentItem ? valueFormatter(currentItem) : (placeholder ?? 'Select...')}
           <div className="flex items-center gap-1">
             {currentItem && (

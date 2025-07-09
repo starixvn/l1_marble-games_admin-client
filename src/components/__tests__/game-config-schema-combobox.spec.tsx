@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 
 vi.mock('@/components/combobox', () => ({
-  Combobox: vi.fn(({ list, currentValue, setCurrentValue, keyProp, valueProp, placeholder, nothingFoundMessage, className, valueFormatter }) => (
-    <div data-testid="combobox" data-current-value={String(currentValue)} data-key-prop={keyProp} data-value-prop={valueProp} className={className}>
+  Combobox: vi.fn(({ list, currentValue, setCurrentValue, keyProp, valueProp, placeholder, nothingFoundMessage, className, valueFormatter, disabled }) => (
+    <div data-testid="combobox" data-current-value={String(currentValue)} data-key-prop={keyProp} data-value-prop={valueProp} className={className} data-disabled={String(disabled)}>
       <div data-testid="combobox-props">
         {JSON.stringify({ list, placeholder, nothingFoundMessage })}
       </div>
@@ -330,5 +330,22 @@ describe('GameConfigSchemaCombobox', () => {
     const propsElement = screen.getByTestId('combobox-props')
     const props = JSON.parse(propsElement.textContent ?? '{}')
     expect(props.list).toEqual(specialData)
+  })
+
+  it('should pass disabled prop to Combobox component', () => {
+    // Arrange
+    // Act
+    render(
+      <GameConfigSchemaCombobox
+        currentSchemaId="schema-1"
+        setCurrentSchemaId={mockSetCurrentSchemaId}
+        data={mockData}
+        disabled={true}
+      />
+    )
+
+    // Assert
+    const combobox = screen.getByTestId('combobox')
+    expect(combobox).toHaveAttribute('data-disabled', 'true')
   })
 }) 

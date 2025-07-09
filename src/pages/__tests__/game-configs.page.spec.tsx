@@ -14,8 +14,8 @@ vi.mock('@/hooks/usePermission', () => ({
 }))
 
 vi.mock('@/components/game-config-table', () => ({
-  GameConfigTable: vi.fn(({ data, readonly }) => (
-    <div data-testid="game-config-table" data-readonly={readonly}>
+  GameConfigTable: vi.fn(({ data, allowRead, allowWrite }) => (
+    <div data-testid="game-config-table" data-allow-read={allowRead} data-allow-write={allowWrite}>
       Game Config Table with {data?.length ?? 0} items
     </div>
   )),
@@ -26,7 +26,11 @@ vi.mock('@/components/layouts/admin.layout', () => ({
 }))
 
 vi.mock('@/components/game-config-form', () => ({
-  GameConfigForm: vi.fn(({ gameId }) => <div data-testid="game-config-form">Game Config Form for game {gameId}</div>),
+  GameConfigForm: vi.fn(({ gameId, allowWrite }) => (
+    <div data-testid="game-config-form" data-allow-write={allowWrite}>
+      Game Config Form for game {gameId}
+    </div>
+  )),
 }))
 
 vi.mock('@/components/new-game-form', () => ({
@@ -50,6 +54,7 @@ vi.mock('@/components/error-table', () => ({
 import { useParams } from 'react-router'
 import * as useGameConfigModule from '@/hooks/useGameConfig'
 import * as usePermissionModule from '@/hooks/usePermission'
+import { API_ENDPOINTS } from '@/api/api-endpoints'
 import GameConfigsPage from '../game-configs.page'
 
 describe('Game Configs Page', () => {
@@ -60,8 +65,16 @@ describe('Game Configs Page', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockUseParams.mockReturnValue({ gameId: undefined })
-    // Default permission setup - allow upsert permission
-    mockUsePermission.mockReturnValue({ isAllowed: true })
+    // Default permission setup - allow both read and write permissions
+    mockUsePermission.mockImplementation(({ path }) => {
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.GET)) {
+        return { isAllowed: true }
+      }
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.UPSERT)) {
+        return { isAllowed: true }
+      }
+      return { isAllowed: false }
+    })
   })
 
   it('should render the game configs page with AdminLayout', () => {
@@ -313,9 +326,17 @@ describe('Game Configs Page', () => {
     expect(screen.getByText('Game Config Form for game 456')).toBeInTheDocument()
   })
 
-  it('should render table in read-only mode when permission is denied', () => {
+  it('should render table with read-only mode when read permission is denied', () => {
     // Arrange
-    mockUsePermission.mockReturnValue({ isAllowed: false })
+    mockUsePermission.mockImplementation(({ path }) => {
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.GET)) {
+        return { isAllowed: false }
+      }
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.UPSERT)) {
+        return { isAllowed: true }
+      }
+      return { isAllowed: false }
+    })
     mockUseGameConfig.mockReturnValue({
       gameConfigQuery: {
         data: { data: [{ id: 1, name: 'Config 1' }] },
@@ -331,13 +352,21 @@ describe('Game Configs Page', () => {
     // Assert
     expect(screen.getByTestId('game-config-table')).toBeInTheDocument()
     expect(screen.getByText('Game Config Table with 1 items')).toBeInTheDocument()
-    // The table should be rendered with readonly=true when permission is denied
-    expect(screen.getByTestId('game-config-table')).toHaveAttribute('data-readonly', 'true')
+    expect(screen.getByTestId('game-config-table')).toHaveAttribute('data-allow-read', 'false')
+    expect(screen.getByTestId('game-config-table')).toHaveAttribute('data-allow-write', 'true')
   })
 
-  it('should render table in editable mode when permission is granted', () => {
+  it('should render table with write-only mode when write permission is denied', () => {
     // Arrange
-    mockUsePermission.mockReturnValue({ isAllowed: true })
+    mockUsePermission.mockImplementation(({ path }) => {
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.GET)) {
+        return { isAllowed: true }
+      }
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.UPSERT)) {
+        return { isAllowed: false }
+      }
+      return { isAllowed: false }
+    })
     mockUseGameConfig.mockReturnValue({
       gameConfigQuery: {
         data: { data: [{ id: 1, name: 'Config 1' }] },
@@ -353,13 +382,51 @@ describe('Game Configs Page', () => {
     // Assert
     expect(screen.getByTestId('game-config-table')).toBeInTheDocument()
     expect(screen.getByText('Game Config Table with 1 items')).toBeInTheDocument()
-    // The table should be rendered with readonly=false when permission is granted
-    expect(screen.getByTestId('game-config-table')).toHaveAttribute('data-readonly', 'false')
+    expect(screen.getByTestId('game-config-table')).toHaveAttribute('data-allow-read', 'true')
+    expect(screen.getByTestId('game-config-table')).toHaveAttribute('data-allow-write', 'false')
   })
 
-  it('should not render form when permission is denied', () => {
+  it('should render table with full permissions when both permissions are granted', () => {
     // Arrange
-    mockUsePermission.mockReturnValue({ isAllowed: false })
+    mockUsePermission.mockImplementation(({ path }) => {
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.GET)) {
+        return { isAllowed: true }
+      }
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.UPSERT)) {
+        return { isAllowed: true }
+      }
+      return { isAllowed: false }
+    })
+    mockUseGameConfig.mockReturnValue({
+      gameConfigQuery: {
+        data: { data: [{ id: 1, name: 'Config 1' }] },
+        isLoading: false,
+        isError: false,
+        refetch: vi.fn(),
+      },
+    })
+
+    // Act
+    render(<GameConfigsPage />)
+
+    // Assert
+    expect(screen.getByTestId('game-config-table')).toBeInTheDocument()
+    expect(screen.getByText('Game Config Table with 1 items')).toBeInTheDocument()
+    expect(screen.getByTestId('game-config-table')).toHaveAttribute('data-allow-read', 'true')
+    expect(screen.getByTestId('game-config-table')).toHaveAttribute('data-allow-write', 'true')
+  })
+
+  it('should not render form when read permission is denied', () => {
+    // Arrange
+    mockUsePermission.mockImplementation(({ path }) => {
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.GET)) {
+        return { isAllowed: false }
+      }
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.UPSERT)) {
+        return { isAllowed: false }
+      }
+      return { isAllowed: false }
+    })
     mockUseParams.mockReturnValue({ gameId: '123' })
     mockUseGameConfig.mockReturnValue({
       gameConfigQuery: {
@@ -378,9 +445,17 @@ describe('Game Configs Page', () => {
     expect(screen.queryByTestId('new-game-form')).not.toBeInTheDocument()
   })
 
-  it('should not render form when permission is denied even with valid gameId', () => {
+  it('should render form with readonly mode when write permission is denied but read is allowed', () => {
     // Arrange
-    mockUsePermission.mockReturnValue({ isAllowed: false })
+    mockUsePermission.mockImplementation(({ path }) => {
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.GET)) {
+        return { isAllowed: true }
+      }
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.UPSERT)) {
+        return { isAllowed: false }
+      }
+      return { isAllowed: false }
+    })
     mockUseParams.mockReturnValue({ gameId: '456' })
     mockUseGameConfig.mockReturnValue({
       gameConfigQuery: {
@@ -396,7 +471,90 @@ describe('Game Configs Page', () => {
 
     // Assert
     expect(screen.getByTestId('game-config-table')).toBeInTheDocument()
-    expect(screen.queryByTestId('game-config-form')).not.toBeInTheDocument()
+    expect(screen.getByTestId('game-config-form')).toBeInTheDocument()
+    expect(screen.getByTestId('game-config-form')).toHaveAttribute('data-allow-write', 'false')
     expect(screen.queryByTestId('new-game-form')).not.toBeInTheDocument()
+  })
+
+  it('should render form with write permission when write permission is granted', () => {
+    // Arrange
+    mockUsePermission.mockImplementation(({ path }) => {
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.GET)) {
+        return { isAllowed: true }
+      }
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.UPSERT)) {
+        return { isAllowed: true }
+      }
+      return { isAllowed: false }
+    })
+    mockUseParams.mockReturnValue({ gameId: '789' })
+    mockUseGameConfig.mockReturnValue({
+      gameConfigQuery: {
+        data: { data: [{ id: 1, name: 'Config 1' }] },
+        isLoading: false,
+        isError: false,
+        refetch: vi.fn(),
+      },
+    })
+
+    // Act
+    render(<GameConfigsPage />)
+
+    // Assert
+    expect(screen.getByTestId('game-config-form')).toBeInTheDocument()
+    expect(screen.getByTestId('game-config-form')).toHaveAttribute('data-allow-write', 'true')
+  })
+
+  it('should render form with readonly mode when write permission is denied', () => {
+    // Arrange
+    mockUsePermission.mockImplementation(({ path }) => {
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.GET)) {
+        return { isAllowed: true }
+      }
+      if (path.includes(API_ENDPOINTS.GAME_CONFIG.UPSERT)) {
+        return { isAllowed: false }
+      }
+      return { isAllowed: false }
+    })
+    mockUseParams.mockReturnValue({ gameId: '789' })
+    mockUseGameConfig.mockReturnValue({
+      gameConfigQuery: {
+        data: { data: [{ id: 1, name: 'Config 1' }] },
+        isLoading: false,
+        isError: false,
+        refetch: vi.fn(),
+      },
+    })
+
+    // Act
+    render(<GameConfigsPage />)
+
+    // Assert
+    expect(screen.getByTestId('game-config-form')).toBeInTheDocument()
+    expect(screen.getByTestId('game-config-form')).toHaveAttribute('data-allow-write', 'false')
+  })
+
+  it('should call usePermission with correct endpoints', () => {
+    // Arrange
+    mockUseGameConfig.mockReturnValue({
+      gameConfigQuery: {
+        data: { data: [] },
+        isLoading: false,
+        isError: false,
+        refetch: vi.fn(),
+      },
+    })
+
+    // Act
+    render(<GameConfigsPage />)
+
+    // Assert
+    expect(mockUsePermission).toHaveBeenCalledTimes(2)
+    expect(mockUsePermission).toHaveBeenCalledWith({
+      path: [API_ENDPOINTS.GAME_CONFIG.GET]
+    })
+    expect(mockUsePermission).toHaveBeenCalledWith({
+      path: [API_ENDPOINTS.GAME_CONFIG.UPSERT]
+    })
   })
 })
