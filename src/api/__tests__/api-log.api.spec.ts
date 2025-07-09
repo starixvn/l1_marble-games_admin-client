@@ -70,7 +70,7 @@ describe('api-log.api', () => {
       const result = await getApiLogs(mockQuery)
 
       // Assert
-      expect(mockGet).toHaveBeenCalledWith('/apiLog', {
+      expect(mockGet).toHaveBeenCalledWith('/apiLog/', {
         params: mockQuery,
       })
       expect(result).toEqual(mockResponse)
@@ -100,7 +100,7 @@ describe('api-log.api', () => {
       const result = await getApiLogs(mockQuery)
 
       // Assert
-      expect(mockGet).toHaveBeenCalledWith('/apiLog', {
+      expect(mockGet).toHaveBeenCalledWith('/apiLog/', {
         params: mockQuery,
       })
       expect(result.data).toEqual(mockApiLogs)
@@ -127,7 +127,7 @@ describe('api-log.api', () => {
       const result = await getApiLogs(mockQuery)
 
       // Assert
-      expect(mockGet).toHaveBeenCalledWith('/apiLog', {
+      expect(mockGet).toHaveBeenCalledWith('/apiLog/', {
         params: mockQuery,
       })
       expect(result.data).toEqual([])
@@ -145,7 +145,7 @@ describe('api-log.api', () => {
 
       // Act & Assert
       await expect(getApiLogs(mockQuery)).rejects.toThrow('API Error')
-      expect(mockGet).toHaveBeenCalledWith('/apiLog', {
+      expect(mockGet).toHaveBeenCalledWith('/apiLog/', {
         params: mockQuery,
       })
     })
@@ -207,7 +207,7 @@ describe('api-log.api', () => {
         
         const result = await getApiLogs(testCase.query)
         
-        expect(mockGet).toHaveBeenCalledWith('/apiLog', {
+        expect(mockGet).toHaveBeenCalledWith('/apiLog/', {
           params: testCase.query,
         })
         expect(result).toEqual(mockResponse)
@@ -239,7 +239,7 @@ describe('api-log.api', () => {
       await getApiLogs(mockQuery)
 
       // Assert
-      expect(mockGet).toHaveBeenCalledWith('/apiLog', {
+      expect(mockGet).toHaveBeenCalledWith('/apiLog/', {
         params: {
           startDate: '2024-01-01',
           endDate: '2024-01-31',

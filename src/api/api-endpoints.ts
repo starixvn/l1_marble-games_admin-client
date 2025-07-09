@@ -29,6 +29,6 @@ export const API_ENDPOINTS = {
     GET: '/gameConfigSchema/get',
     UPSERT: '/gameConfigSchema/upsert',
   },
-  API_LOG: '/apiLog',
-  ADMIN_LOG: '/adminLog',
+  API_LOG: '/apiLog/',
+  ADMIN_LOG: '/adminLog/',
 }

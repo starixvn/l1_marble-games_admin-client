@@ -61,7 +61,7 @@ describe('admin-log.api', () => {
       await getAdminLogs(mockQuery)
 
       // Assert
-      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog', { params: mockQuery })
+      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog/', { params: mockQuery })
     })
 
     it('should return the response from privateApiClient.get', async () => {
@@ -87,7 +87,7 @@ describe('admin-log.api', () => {
       await getAdminLogs(fullQuery)
 
       // Assert
-      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog', { params: fullQuery })
+      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog/', { params: fullQuery })
     })
 
     it('should handle query with only required parameters', async () => {
@@ -101,7 +101,7 @@ describe('admin-log.api', () => {
       await getAdminLogs(requiredOnlyQuery)
 
       // Assert
-      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog', { params: requiredOnlyQuery })
+      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog/', { params: requiredOnlyQuery })
     })
 
     it('should handle query with undefined optional parameters', async () => {
@@ -118,7 +118,7 @@ describe('admin-log.api', () => {
       await getAdminLogs(queryWithUndefined)
 
       // Assert
-      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog', { params: queryWithUndefined })
+      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog/', { params: queryWithUndefined })
     })
 
     it('should handle different date ranges', async () => {
@@ -135,7 +135,7 @@ describe('admin-log.api', () => {
       await getAdminLogs(differentDateQuery)
 
       // Assert
-      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog', { params: differentDateQuery })
+      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog/', { params: differentDateQuery })
     })
 
     it('should handle empty response', async () => {
@@ -148,7 +148,7 @@ describe('admin-log.api', () => {
 
       // Assert
       expect(result).toEqual(emptyResponse)
-      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog', { params: mockQuery })
+      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog/', { params: mockQuery })
     })
 
     it('should handle API error', async () => {
@@ -158,7 +158,7 @@ describe('admin-log.api', () => {
 
       // Act & Assert
       await expect(getAdminLogs(mockQuery)).rejects.toThrow('API Error')
-      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog', { params: mockQuery })
+      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog/', { params: mockQuery })
     })
 
     it('should handle network error', async () => {
@@ -168,7 +168,7 @@ describe('admin-log.api', () => {
 
       // Act & Assert
       await expect(getAdminLogs(mockQuery)).rejects.toThrow('Network Error')
-      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog', { params: mockQuery })
+      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog/', { params: mockQuery })
     })
 
     it('should handle different resource types', async () => {
@@ -189,7 +189,7 @@ describe('admin-log.api', () => {
         }
         
         await getAdminLogs(query)
-        expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog', { params: query })
+        expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog/', { params: query })
       }
     })
 
@@ -210,7 +210,7 @@ describe('admin-log.api', () => {
         }
         
         await getAdminLogs(query)
-        expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog', { params: query })
+        expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog/', { params: query })
       }
     })
 
@@ -228,7 +228,7 @@ describe('admin-log.api', () => {
       await getAdminLogs(complexQuery)
 
       // Assert
-      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog', { params: complexQuery })
+      expect(mockPrivateApiClient.get).toHaveBeenCalledWith('/adminLog/', { params: complexQuery })
     })
 
     it('should handle multiple calls with different parameters', async () => {
@@ -251,8 +251,8 @@ describe('admin-log.api', () => {
 
       // Assert
       expect(mockPrivateApiClient.get).toHaveBeenCalledTimes(2)
-      expect(mockPrivateApiClient.get).toHaveBeenNthCalledWith(1, '/adminLog', { params: query1 })
-      expect(mockPrivateApiClient.get).toHaveBeenNthCalledWith(2, '/adminLog', { params: query2 })
+      expect(mockPrivateApiClient.get).toHaveBeenNthCalledWith(1, '/adminLog/', { params: query1 })
+      expect(mockPrivateApiClient.get).toHaveBeenNthCalledWith(2, '/adminLog/', { params: query2 })
     })
   })
 
