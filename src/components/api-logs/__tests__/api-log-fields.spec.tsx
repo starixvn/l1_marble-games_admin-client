@@ -9,8 +9,13 @@ vi.mock('@/hooks/useOperator', () => ({
   useOperator: vi.fn(),
 }))
 
+vi.mock('@/hooks/useGameConfig', () => ({
+  useGameConfig: vi.fn(),
+}))
+
 vi.mock('@/components/game-integration-table', () => ({
   OperatorIdCombobox: vi.fn(),
+  GameIdCombobox: vi.fn(),
 }))
 
 vi.mock('@/components/datetime-picker', () => ({
@@ -22,12 +27,15 @@ vi.mock('@/components/combobox', () => ({
 }))
 
 import { useOperator } from '@/hooks/useOperator'
-import { OperatorIdCombobox } from '@/components/game-integration-table'
+import { useGameConfig } from '@/hooks/useGameConfig'
+import { OperatorIdCombobox, GameIdCombobox } from '@/components/game-integration-table'
 import { DateTimePicker24h } from '@/components/datetime-picker'
 import { Combobox } from '@/components/combobox'
 
 const mockUseOperator = vi.mocked(useOperator)
+const mockUseGameConfig = vi.mocked(useGameConfig)
 const mockOperatorIdCombobox = vi.mocked(OperatorIdCombobox)
+const mockGameIdCombobox = vi.mocked(GameIdCombobox)
 const mockDateTimePicker24h = vi.mocked(DateTimePicker24h)
 const mockCombobox = vi.mocked(Combobox)
 
@@ -68,6 +76,38 @@ describe('ApiLogFields', () => {
       isRefetching: false,
     }
 
+    const mockGameConfigQuery = {
+      data: { 
+        data: [
+          { gameId: 1, name: 'Game 1' },
+          { gameId: 2, name: 'Game 2' },
+          { gameId: 3, name: 'Game 3' },
+        ]
+      } as AxiosResponse<Array<{ gameId: number; name: string }>>,
+      isLoading: false,
+      isError: false,
+      isSuccess: true,
+      isFetching: false,
+      isPending: false,
+      isPlaceholderData: false,
+      isLoadingError: false,
+      isRefetchError: false,
+      isFetched: true,
+      isFetchedAfterMount: true,
+      failureCount: 0,
+      failureReason: null,
+      dataUpdatedAt: 0,
+      errorUpdatedAt: 0,
+      refetch: vi.fn(),
+      status: 'success' as const,
+      fetchStatus: 'idle' as const,
+      error: null,
+      errorUpdateCount: 0,
+      isInitialLoading: false,
+      isPaused: false,
+      isRefetching: false,
+    }
+
     mockUseOperator.mockReturnValue({
       operatorsQuery: mockOperatorsQuery as unknown as ReturnType<typeof useOperator>['operatorsQuery'],
       createOperatorMutation: {} as ReturnType<typeof useOperator>['createOperatorMutation'],
@@ -75,10 +115,25 @@ describe('ApiLogFields', () => {
       generatePasswordMutation: {} as ReturnType<typeof useOperator>['generatePasswordMutation'],
     })
 
+    mockUseGameConfig.mockReturnValue({
+      gameConfigQuery: mockGameConfigQuery as unknown as ReturnType<typeof useGameConfig>['gameConfigQuery'],
+      gameConfigUpsertMutation: {} as ReturnType<typeof useGameConfig>['gameConfigUpsertMutation'],
+      currentGameId: null,
+      setCurrentGameId: vi.fn(),
+      gameConfigWithIdQuery: {} as ReturnType<typeof useGameConfig>['gameConfigWithIdQuery'],
+    })
+
     mockOperatorIdCombobox.mockImplementation(({ currentOperatorId, setCurrentOperatorId }) => (
       <div data-testid="operator-combobox">
         <button onClick={() => setCurrentOperatorId('operator1')}>Select Operator</button>
         <span data-testid="current-operator">{currentOperatorId ?? 'none'}</span>
+      </div>
+    ))
+
+    mockGameIdCombobox.mockImplementation(({ currentGameId, setCurrentGameId }) => (
+      <div data-testid="game-id-combobox">
+        <button onClick={() => setCurrentGameId(1)}>Select Game</button>
+        <span data-testid="current-game-id">{currentGameId ?? 'none'}</span>
       </div>
     ))
 
@@ -171,6 +226,50 @@ describe('ApiLogFields', () => {
     )
   })
 
+  it('should not render Game ID and Event ID fields when endpoint is not events', () => {
+    // Arrange & Act
+    render(<ApiLogFields onSubmit={mockOnSubmit} />)
+
+    // Assert
+    expect(screen.queryByText('Game ID')).not.toBeInTheDocument()
+    expect(screen.queryByText('Event ID')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('game-id-combobox')).not.toBeInTheDocument()
+    expect(screen.queryByPlaceholderText('Event ID')).not.toBeInTheDocument()
+  })
+
+  it('should render Game ID and Event ID fields when endpoint is events', () => {
+    // Arrange
+    render(<ApiLogFields onSubmit={mockOnSubmit} />)
+
+    // Act
+    fireEvent.click(screen.getByText('Events'))
+
+    // Assert
+    expect(screen.getByText('Game ID')).toBeInTheDocument()
+    expect(screen.getByText('Event ID')).toBeInTheDocument()
+    expect(screen.getByTestId('game-id-combobox')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('Event ID')).toBeInTheDocument()
+  })
+
+  it('should render game ID combobox with data from useGameConfig', () => {
+    // Arrange
+    render(<ApiLogFields onSubmit={mockOnSubmit} />)
+
+    // Act
+    fireEvent.click(screen.getByText('Events'))
+
+    // Assert
+    expect(screen.getByTestId('game-id-combobox')).toBeInTheDocument()
+    expect(mockGameIdCombobox).toHaveBeenCalledWith(
+      expect.objectContaining({
+        gameIds: [1, 2, 3],
+        currentGameId: null,
+        setCurrentGameId: expect.any(Function),
+      }),
+      undefined
+    )
+  })
+
   it('should handle form submission with default values', async () => {
     // Arrange
     render(<ApiLogFields onSubmit={mockOnSubmit} />)
@@ -185,6 +284,8 @@ describe('ApiLogFields', () => {
         startDate: expect.any(String),
         endDate: expect.any(String),
         endpoint: undefined,
+        eventId: undefined,
+        gameId: undefined,
       })
     })
   })
@@ -245,6 +346,67 @@ describe('ApiLogFields', () => {
     })
   })
 
+  it('should handle game ID selection when endpoint is events', async () => {
+    // Arrange
+    render(<ApiLogFields onSubmit={mockOnSubmit} />)
+
+    // Act
+    fireEvent.click(screen.getByText('Events'))
+    fireEvent.click(screen.getByText('Select Game'))
+    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
+
+    // Assert
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          endpoint: '/api/events',
+          gameId: '1',
+        })
+      )
+    })
+  })
+
+  it('should handle event ID input when endpoint is events', async () => {
+    // Arrange
+    render(<ApiLogFields onSubmit={mockOnSubmit} />)
+
+    // Act
+    fireEvent.click(screen.getByText('Events'))
+    const eventIdInput = screen.getByPlaceholderText('Event ID')
+    fireEvent.change(eventIdInput, { target: { value: '12345' } })
+    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
+
+    // Assert
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          endpoint: '/api/events',
+          eventId: '12345',
+        })
+      )
+    })
+  })
+
+  it('should not include eventId and gameId when endpoint is not events', async () => {
+    // Arrange
+    render(<ApiLogFields onSubmit={mockOnSubmit} />)
+
+    // Act
+    fireEvent.click(screen.getByText('Schedule'))
+    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
+
+    // Assert
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          endpoint: '/api/schedule',
+          eventId: undefined,
+          gameId: undefined,
+        })
+      )
+    })
+  })
+
   it('should handle multiple field selections', async () => {
     // Arrange
     render(<ApiLogFields onSubmit={mockOnSubmit} />)
@@ -265,7 +427,34 @@ describe('ApiLogFields', () => {
     })
   })
 
-  it('should handle form submission with all fields populated', async () => {
+  it('should handle form submission with all fields populated for events endpoint', async () => {
+    // Arrange
+    render(<ApiLogFields onSubmit={mockOnSubmit} />)
+
+    // Act
+    fireEvent.click(screen.getByText('Select Operator'))
+    fireEvent.click(screen.getByText('Events'))
+    fireEvent.click(screen.getByText('Select Game'))
+    fireEvent.click(screen.getByText('Set Start Time (UTC)'))
+    fireEvent.click(screen.getByText('Set End Time (UTC)'))
+    const eventIdInput = screen.getByPlaceholderText('Event ID')
+    fireEvent.change(eventIdInput, { target: { value: '12345' } })
+    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
+
+    // Assert
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith({
+        operator: 'operator1',
+        startDate: '2024-01-01T12:00:00.000Z',
+        endDate: '2024-01-01T12:00:00.000Z',
+        endpoint: '/api/events',
+        eventId: '12345',
+        gameId: '1',
+      })
+    })
+  })
+
+  it('should handle form submission with all fields populated for schedule endpoint', async () => {
     // Arrange
     render(<ApiLogFields onSubmit={mockOnSubmit} />)
 
@@ -283,6 +472,8 @@ describe('ApiLogFields', () => {
         startDate: '2024-01-01T12:00:00.000Z',
         endDate: '2024-01-01T12:00:00.000Z',
         endpoint: '/api/schedule',
+        eventId: undefined,
+        gameId: undefined,
       })
     })
   })

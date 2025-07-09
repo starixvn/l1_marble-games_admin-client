@@ -1,4 +1,4 @@
-import { Check, ChevronsUpDown, X } from 'lucide-react'
+import { Check, ChevronsUpDown } from 'lucide-react'
 import React from 'react'
 import { cn } from '../lib/utils'
 import { Button } from './ui/button'
@@ -36,32 +36,12 @@ export function Combobox({
 
   const currentItem = currentValue ? list.find((item) => item[keyProp] === currentValue) : null
 
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (setCurrentValue) {
-      setCurrentValue(null)
-    }
-  }
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button disabled={disabled} variant="outline" aria-expanded={open} className={cn('justify-between', className)}>
           {currentItem ? valueFormatter(currentItem) : (placeholder ?? 'Select...')}
-          <div className="flex items-center gap-1">
-            {currentItem && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-4 w-4 p-0 hover:bg-transparent"
-                onClick={handleClear}
-                aria-label="Clear selection"
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            )}
-            <ChevronsUpDown className="opacity-50" />
-          </div>
+          <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className={cn('p-0', className)}>
@@ -78,7 +58,11 @@ export function Combobox({
                     const selectedItem = list.find((s) => s[valueProp]?.toString() === currentValue?.toString())
                     const selectedId = selectedItem?.[keyProp] as number | string | null
                     if (setCurrentValue) {
-                      setCurrentValue(selectedId)
+                      if (currentValue.toString() === currentItem?.[keyProp]?.toString()) {
+                        setCurrentValue(null)
+                      } else {
+                        setCurrentValue(selectedId)
+                      }
                     }
                     setOpen(false)
                   }}

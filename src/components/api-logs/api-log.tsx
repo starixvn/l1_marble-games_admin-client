@@ -13,7 +13,7 @@ export function ApiLog() {
   const { data: apiLogs, isLoading, isError } = useApiLog(apiQuery);
 
   function handleSubmit(data: ApiLogQuery) {
-    if (data.startDate > data.endDate) {
+    if (data.startDate >= data.endDate) {
       toast.error("Start date must be before end date")
       return
     }
