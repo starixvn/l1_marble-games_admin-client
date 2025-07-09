@@ -257,10 +257,8 @@ describe('Combobox', () => {
     fireEvent.click(commandItems[0])
 
     // Assert
-    // The current logic compares the selected value with the current item's key prop
-    // Since the selected value is "Game 1" and the current item's key prop is 1, they don't match
-    // So it will select the item instead of deselecting
-    expect(mockSetCurrentValue).toHaveBeenCalledWith(1)
+    // Now the logic compares selectedId (1) with currentValue (1), so it should deselect
+    expect(mockSetCurrentValue).toHaveBeenCalledWith(null)
   })
 
   it('should select different item when clicking on non-selected item', () => {
@@ -307,7 +305,7 @@ describe('Combobox', () => {
     expect(mockSetCurrentValue).toHaveBeenCalledWith(1)
   })
 
-  it('should close popover after selecting an item', () => {
+  it('should close popover after selecting or deselecting an item', () => {
     // Arrange
     const mockSetCurrentValue = vi.fn()
     const props = {
@@ -322,15 +320,15 @@ describe('Combobox', () => {
     // Act
     render(<Combobox {...props} />)
     const commandItems = screen.getAllByTestId('command-item')
-    // Click on the first item
+    // Click on the first item to deselect it
     fireEvent.click(commandItems[0])
 
     // Assert
-    expect(mockSetCurrentValue).toHaveBeenCalledWith(1)
+    expect(mockSetCurrentValue).toHaveBeenCalledWith(null)
     // The popover should be closed (this is handled by the component's internal state)
   })
 
-  it('should handle string values for selection', () => {
+  it('should handle string values for selection and deselection', () => {
     // Arrange
     const stringList = [
       { id: 'game1', name: 'Game 1', category: 'Action' },
@@ -349,14 +347,12 @@ describe('Combobox', () => {
     // Act
     render(<Combobox {...props} />)
     const commandItems = screen.getAllByTestId('command-item')
-    // Click on the first item
+    // Click on the first item to deselect it
     fireEvent.click(commandItems[0])
 
     // Assert
-    // The current logic compares the selected value with the current item's key prop
-    // Since the selected value is "Game 1" and the current item's key prop is "game1", they don't match
-    // So it will select the item instead of deselecting
-    expect(mockSetCurrentValue).toHaveBeenCalledWith('game1')
+    // Now the logic compares selectedId ('game1') with currentValue ('game1'), so it should deselect
+    expect(mockSetCurrentValue).toHaveBeenCalledWith(null)
   })
 
 

@@ -58,7 +58,7 @@ export function Combobox({
                     const selectedItem = list.find((s) => s[valueProp]?.toString() === currentValue?.toString())
                     const selectedId = selectedItem?.[keyProp] as number | string | null
                     if (setCurrentValue) {
-                      if (currentValue.toString() === currentItem?.[keyProp]?.toString()) {
+                      if (currentValue.toString() === currentItem?.[valueProp]?.toString()) {
                         setCurrentValue(null)
                       } else {
                         setCurrentValue(selectedId)
