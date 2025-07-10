@@ -10,6 +10,12 @@ const allMenus = [
     loader: [API_ENDPOINTS.AUTH.PROFILE],
   },
   {
+    title: 'Account',
+    url: '/accounts',
+    icon: IconUser,
+    loader: [API_ENDPOINTS.AUTH.GET_ALL_ACCOUNTS],
+  },
+  {
     title: 'Operators',
     url: '/operators',
     icon: IconUser,

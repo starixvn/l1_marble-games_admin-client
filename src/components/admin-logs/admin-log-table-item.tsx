@@ -12,7 +12,7 @@ export function AdminLogTableItem({ dataItem, handleDiffDialogOpen }: Readonly<A
   return (
     <TableRow>
       <TableCell>{format(dataItem.timestamp, 'MM/dd/yyyy HH:mm:ss')}</TableCell>
-      <TableCell>{dataItem.author}</TableCell>
+      <TableCell className={`${dataItem.author ? '' : 'text-red-400'}`}>{dataItem.author ?? 'Unknown'}</TableCell>
       <TableCell>{dataItem.resource}</TableCell>
       <TableCell>{dataItem.action}</TableCell>
       <TableCell>

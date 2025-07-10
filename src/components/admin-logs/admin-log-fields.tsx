@@ -4,22 +4,13 @@ import { DateTimePicker24h } from '@/components/datetime-picker'
 import { Label } from '@/components/ui/label'
 import { Combobox, type ComboboxGenericProp } from '@/components/combobox'
 import { Button } from '@/components/ui/button'
+import { useAccounts } from '@/hooks/useAccounts'
 
 export type AdminLogFieldsProps = {
   onSubmit: (data: AdminLogQuery) => void
 }
 
-const authorList = [
-  {
-    name: "admin"
-  }
-]
-
 const resourceList = [
-  {
-    name: "ALL",
-    value: undefined
-  },
   {
     name: "operator",
     value: "operator"
@@ -35,15 +26,15 @@ const resourceList = [
   {
     name: "game-integration",
     value: "game-integration",
+  },
+  {
+    name: "account",
+    value: "account",
   }
 ]
 
 
 const actionList = [
-  {
-    name: "ALL",
-    value: undefined
-  },
   {
     name: "insert",
     value: "insert"
@@ -59,11 +50,12 @@ const actionList = [
 ]
 
 export function AdminLogFields({ onSubmit }: Readonly<AdminLogFieldsProps>) {
-  const [startDate, setStartDate] = useState<Date>(new Date())
-  const [endDate, setEndDate] = useState<Date>(new Date(new Date().getTime() + 1000 * 60 * 60))
+  const [startDate, setStartDate] = useState<Date>(new Date(new Date().getTime() - 1000 * 60 * 60))
+  const [endDate, setEndDate] = useState<Date>(new Date())
   const [author, setAuthor] = useState<string | undefined>(undefined)
   const [resource, setResource] = useState<string | undefined>(undefined)
   const [action, setAction] = useState<string | undefined>(undefined)
+  const { data: accounts } = useAccounts()
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -77,12 +69,12 @@ export function AdminLogFields({ onSubmit }: Readonly<AdminLogFieldsProps>) {
   }
 
   return <form className="flex flex-col lg:flex-row lg:items-center gap-3" onSubmit={handleSubmit}>
-    <DateTimePicker24h label="Start Time (UTC)" date={startDate} setDate={(date) => setStartDate(date ?? new Date())} />
-    <DateTimePicker24h label="End Time (UTC)" date={endDate} setDate={(date) => setEndDate(date ?? new Date(new Date().getTime() + 1000 * 60 * 60))} />
+    <DateTimePicker24h label="Start Time (UTC)" date={startDate} setDate={(date) => setStartDate(date ?? new Date(new Date().getTime() - 1000 * 60 * 60))} />
+    <DateTimePicker24h label="End Time (UTC)" date={endDate} setDate={(date) => setEndDate(date ?? new Date())} />
     <div className="flex flex-col gap-3">
         <Label className="text-sm font-medium">Author</Label>
         <Combobox
-          list={authorList}
+          list={accounts?.map((account) => ({ name: account.username, value: account.username })) ?? []}
           currentValue={author}
           setCurrentValue={setAuthor as (value: ComboboxGenericProp) => void}
           keyProp="name"

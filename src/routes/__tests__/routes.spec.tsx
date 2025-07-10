@@ -32,6 +32,18 @@ vi.mock('@/pages/game-config-schema.page', () => ({
   default: vi.fn(() => <div data-testid="game-config-schema-page">Game Config Schema Page</div>),
 }))
 
+vi.mock('@/pages/api-log.page', () => ({
+  ApiLogsPage: vi.fn(() => <div data-testid="api-logs-page">API Logs Page</div>),
+}))
+
+vi.mock('@/pages/admin-log.page', () => ({
+  AdminLogPage: vi.fn(() => <div data-testid="admin-log-page">Admin Log Page</div>),
+}))
+
+vi.mock('@/pages/account.page', () => ({
+  AccountPage: vi.fn(() => <div data-testid="account-page">Account Page</div>),
+}))
+
 // Mock PrivateRoute
 vi.mock('@/routes/private-route', () => ({
   PrivateRoute: vi.fn(({ children }) => <div data-testid="private-route">{children}</div>),
@@ -138,6 +150,48 @@ describe('RouteHandler', () => {
     expect(screen.getByTestId('private-route')).toBeInTheDocument()
     expect(screen.getByTestId('game-integrations-page')).toBeInTheDocument()
     expect(screen.getByText('Game Integrations Page')).toBeInTheDocument()
+  })
+
+  it('should render API logs page for /logs-api path', () => {
+    // Arrange & Act
+    render(
+      <MemoryRouter initialEntries={['/logs-api']}>
+        <RouteHandler />
+      </MemoryRouter>
+    )
+
+    // Assert
+    expect(screen.getByTestId('private-route')).toBeInTheDocument()
+    expect(screen.getByTestId('api-logs-page')).toBeInTheDocument()
+    expect(screen.getByText('API Logs Page')).toBeInTheDocument()
+  })
+
+  it('should render admin log page for /admin-log path', () => {
+    // Arrange & Act
+    render(
+      <MemoryRouter initialEntries={['/admin-log']}>
+        <RouteHandler />
+      </MemoryRouter>
+    )
+
+    // Assert
+    expect(screen.getByTestId('private-route')).toBeInTheDocument()
+    expect(screen.getByTestId('admin-log-page')).toBeInTheDocument()
+    expect(screen.getByText('Admin Log Page')).toBeInTheDocument()
+  })
+
+  it('should render account page for /accounts path', () => {
+    // Arrange & Act
+    render(
+      <MemoryRouter initialEntries={['/accounts']}>
+        <RouteHandler />
+      </MemoryRouter>
+    )
+
+    // Assert
+    expect(screen.getByTestId('private-route')).toBeInTheDocument()
+    expect(screen.getByTestId('account-page')).toBeInTheDocument()
+    expect(screen.getByText('Account Page')).toBeInTheDocument()
   })
 
   it('should render not found page for unknown paths', () => {
@@ -252,6 +306,9 @@ describe('RouteHandler', () => {
       { path: '/game-configs', testId: 'game-configs-page' },
       { path: '/game-config-schemas', testId: 'game-config-schema-page' },
       { path: '/game-integrations', testId: 'game-integrations-page' },
+      { path: '/logs-api', testId: 'api-logs-page' },
+      { path: '/admin-log', testId: 'admin-log-page' },
+      { path: '/accounts', testId: 'account-page' },
     ]
 
     routes.forEach(({ path, testId }) => {

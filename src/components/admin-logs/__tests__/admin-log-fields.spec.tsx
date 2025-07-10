@@ -1,6 +1,19 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { vi } from 'vitest'
 
+// Mock the useAccounts hook
+vi.mock('@/hooks/useAccounts', () => ({
+  useAccounts: vi.fn(() => ({
+    data: [
+      { username: 'admin', email: 'admin@example.com' },
+      { username: 'operator1', email: 'operator1@example.com' },
+      { username: 'operator2', email: 'operator2@example.com' }
+    ],
+    isLoading: false,
+    error: null
+  }))
+}))
+
 vi.mock('@/components/datetime-picker', () => ({
   DateTimePicker24h: vi.fn(({ label, date, setDate }) => (
     <div data-testid="datetime-picker" data-label={label}>
@@ -46,9 +59,11 @@ vi.mock('@/components/ui/button', () => ({
 }))
 
 import { AdminLogFields } from '../admin-log-fields'
+import { useAccounts } from '@/hooks/useAccounts'
 
 describe('AdminLogFields', () => {
   const mockOnSubmit = vi.fn()
+  const mockUseAccounts = useAccounts as ReturnType<typeof vi.fn>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -207,7 +222,7 @@ describe('AdminLogFields', () => {
     })
   })
 
-  it('should render author combobox with correct options', () => {
+  it('should render author combobox with mocked accounts data', () => {
     // Arrange
     // Act
     render(<AdminLogFields onSubmit={mockOnSubmit} />)
@@ -218,9 +233,13 @@ describe('AdminLogFields', () => {
     expect(authorSelect).toBeInTheDocument()
     
     const options = Array.from(authorSelect.querySelectorAll('option'))
-    expect(options).toHaveLength(1)
+    expect(options).toHaveLength(3)
     expect(options[0]).toHaveTextContent('admin')
     expect(options[0]).toHaveValue('admin')
+    expect(options[1]).toHaveTextContent('operator1')
+    expect(options[1]).toHaveValue('operator1')
+    expect(options[2]).toHaveTextContent('operator2')
+    expect(options[2]).toHaveValue('operator2')
   })
 
   it('should render resource combobox with correct options', () => {
@@ -235,16 +254,16 @@ describe('AdminLogFields', () => {
     
     const options = Array.from(resourceSelect.querySelectorAll('option'))
     expect(options).toHaveLength(5)
-    expect(options[0]).toHaveTextContent('ALL')
-    expect(options[0]).toHaveValue('ALL')
-    expect(options[1]).toHaveTextContent('operator')
-    expect(options[1]).toHaveValue('operator')
-    expect(options[2]).toHaveTextContent('game-config')
-    expect(options[2]).toHaveValue('game-config')
-    expect(options[3]).toHaveTextContent('game-config-schema')
-    expect(options[3]).toHaveValue('game-config-schema')
-    expect(options[4]).toHaveTextContent('game-integration')
-    expect(options[4]).toHaveValue('game-integration')
+    expect(options[0]).toHaveTextContent('operator')
+    expect(options[0]).toHaveValue('operator')
+    expect(options[1]).toHaveTextContent('game-config')
+    expect(options[1]).toHaveValue('game-config')
+    expect(options[2]).toHaveTextContent('game-config-schema')
+    expect(options[2]).toHaveValue('game-config-schema')
+    expect(options[3]).toHaveTextContent('game-integration')
+    expect(options[3]).toHaveValue('game-integration')
+    expect(options[4]).toHaveTextContent('account')
+    expect(options[4]).toHaveValue('account')
   })
 
   it('should render action combobox with correct options', () => {
@@ -258,15 +277,13 @@ describe('AdminLogFields', () => {
     expect(actionSelect).toBeInTheDocument()
     
     const options = Array.from(actionSelect.querySelectorAll('option'))
-    expect(options).toHaveLength(4)
-    expect(options[0]).toHaveTextContent('ALL')
-    expect(options[0]).toHaveValue('ALL')
-    expect(options[1]).toHaveTextContent('insert')
-    expect(options[1]).toHaveValue('insert')
-    expect(options[2]).toHaveTextContent('update')
-    expect(options[2]).toHaveValue('update')
-    expect(options[3]).toHaveTextContent('delete')
-    expect(options[3]).toHaveValue('delete')
+    expect(options).toHaveLength(3)
+    expect(options[0]).toHaveTextContent('insert')
+    expect(options[0]).toHaveValue('insert')
+    expect(options[1]).toHaveTextContent('update')
+    expect(options[1]).toHaveValue('update')
+    expect(options[2]).toHaveTextContent('delete')
+    expect(options[2]).toHaveValue('delete')
   })
 
   it('should handle empty space label for button alignment', () => {
@@ -278,5 +295,50 @@ describe('AdminLogFields', () => {
     const labels = screen.getAllByTestId('label')
     const lastLabel = labels[labels.length - 1]
     expect(lastLabel).toHaveTextContent('')
+  })
+
+  it('should handle useAccounts hook being called', () => {
+    // Arrange
+    // Act
+    render(<AdminLogFields onSubmit={mockOnSubmit} />)
+
+    // Assert
+    expect(mockUseAccounts).toHaveBeenCalledTimes(1)
+  })
+
+  it('should handle empty accounts data', () => {
+    // Arrange
+    mockUseAccounts.mockReturnValueOnce({
+      data: [],
+      isLoading: false,
+      error: null
+    })
+
+    // Act
+    render(<AdminLogFields onSubmit={mockOnSubmit} />)
+
+    // Assert
+    const comboboxSelects = screen.getAllByTestId('combobox-select')
+    const authorSelect = comboboxSelects[0]
+    const options = Array.from(authorSelect.querySelectorAll('option'))
+    expect(options).toHaveLength(0)
+  })
+
+  it('should handle loading state from useAccounts', () => {
+    // Arrange
+    mockUseAccounts.mockReturnValueOnce({
+      data: undefined,
+      isLoading: true,
+      error: null
+    })
+
+    // Act
+    render(<AdminLogFields onSubmit={mockOnSubmit} />)
+
+    // Assert
+    const comboboxSelects = screen.getAllByTestId('combobox-select')
+    const authorSelect = comboboxSelects[0]
+    const options = Array.from(authorSelect.querySelectorAll('option'))
+    expect(options).toHaveLength(0)
   })
 })

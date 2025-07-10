@@ -19,7 +19,7 @@ vi.mock('@/components/ui/button', () => ({
 }))
 
 vi.mock('@/components/ui/table', () => ({
-  TableCell: vi.fn(({ children }) => <td data-testid="table-cell">{children}</td>),
+  TableCell: vi.fn(({ children, className }) => <td data-testid="table-cell" className={className}>{children}</td>),
   TableRow: vi.fn(({ children }) => <tr data-testid="table-row">{children}</tr>),
 }))
 
@@ -219,5 +219,85 @@ describe('AdminLogTableItem', () => {
 
     // Assert
     expect(mockHandleDiffDialogOpen).toHaveBeenCalledWith(dataItemWithoutDiff)
+  })
+
+  it('should render author cell with red text when author is null', () => {
+    // Arrange
+    const dataItemWithNullAuthor: AdminLogResponseItem = {
+      id: '4',
+      author: undefined,
+      resource: 'operator',
+      action: 'insert',
+      timestamp: '2024-01-04T00:00:00.000Z'
+    }
+
+    // Act
+    render(<AdminLogTableItem dataItem={dataItemWithNullAuthor} handleDiffDialogOpen={mockHandleDiffDialogOpen} />)
+
+    // Assert
+    const cells = screen.getAllByTestId('table-cell')
+    const authorCell = cells[1]
+    expect(authorCell).toHaveTextContent('Unknown')
+    expect(authorCell).toHaveClass('text-red-400')
+  })
+
+  it('should render author cell with red text when author is undefined', () => {
+    // Arrange
+    const dataItemWithUndefinedAuthor: AdminLogResponseItem = {
+      id: '5',
+      author: undefined,
+      resource: 'operator',
+      action: 'insert',
+      timestamp: '2024-01-05T00:00:00.000Z'
+    }
+
+    // Act
+    render(<AdminLogTableItem dataItem={dataItemWithUndefinedAuthor} handleDiffDialogOpen={mockHandleDiffDialogOpen} />)
+
+    // Assert
+    const cells = screen.getAllByTestId('table-cell')
+    const authorCell = cells[1]
+    expect(authorCell).toHaveTextContent('Unknown')
+    expect(authorCell).toHaveClass('text-red-400')
+  })
+
+  it('should render author cell with red text when author is empty string', () => {
+    // Arrange
+    const dataItemWithEmptyAuthor: AdminLogResponseItem = {
+      id: '6',
+      author: '',
+      resource: 'operator',
+      action: 'insert',
+      timestamp: '2024-01-06T00:00:00.000Z'
+    }
+
+    // Act
+    render(<AdminLogTableItem dataItem={dataItemWithEmptyAuthor} handleDiffDialogOpen={mockHandleDiffDialogOpen} />)
+
+    // Assert
+    const cells = screen.getAllByTestId('table-cell')
+    const authorCell = cells[1]
+    expect(authorCell).toHaveTextContent('')
+    expect(authorCell).toHaveClass('text-red-400')
+  })
+
+  it('should render author cell without red text when author is provided', () => {
+    // Arrange
+    const dataItemWithAuthor: AdminLogResponseItem = {
+      id: '7',
+      author: 'valid-user',
+      resource: 'operator',
+      action: 'insert',
+      timestamp: '2024-01-07T00:00:00.000Z'
+    }
+
+    // Act
+    render(<AdminLogTableItem dataItem={dataItemWithAuthor} handleDiffDialogOpen={mockHandleDiffDialogOpen} />)
+
+    // Assert
+    const cells = screen.getAllByTestId('table-cell')
+    const authorCell = cells[1]
+    expect(authorCell).toHaveTextContent('valid-user')
+    expect(authorCell).not.toHaveClass('text-red-400')
   })
 })

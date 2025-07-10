@@ -11,7 +11,7 @@ export type AdminLogQuery = {
 
 export type AdminLogResponseItem = {
     id: string;
-    author: string;
+    author?: string;
     resource: string;
     action: string;
     diff?: {
