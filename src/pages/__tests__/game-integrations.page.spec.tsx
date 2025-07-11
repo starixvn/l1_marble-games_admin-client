@@ -37,6 +37,27 @@ vi.mock('@/components/game-integration-config-dialog', () => ({
   )),
 }))
 
+vi.mock('@/components/confirmation-popup', () => ({
+  ConfirmationPopup: vi.fn(({ open, onConfirm, onCancel, onOpenChange }) => (
+    <div data-testid="confirmation-popup">
+      {open && (
+        <div>
+          <div>Confirmation Popup</div>
+          <button data-testid="confirm-btn" onClick={onConfirm}>
+            Confirm
+          </button>
+          <button data-testid="cancel-btn" onClick={onCancel}>
+            Cancel
+          </button>
+          <button data-testid="close-popup-btn" onClick={() => onOpenChange(false)}>
+            Close
+          </button>
+        </div>
+      )}
+    </div>
+  )),
+}))
+
 vi.mock('@/hooks/useGameIntegration', () => ({
   useGameIntegrationList: vi.fn(),
   useGameIntegrationUpsert: vi.fn(),
@@ -242,7 +263,7 @@ describe('Game Integrations Page', () => {
     expect(screen.queryByText('Config Dialog')).not.toBeInTheDocument()
   })
 
-  it('should handle delete click and show success toast', async () => {
+  it('should open confirmation popup when delete button is clicked', () => {
     // Arrange
     const mockDeleteMutation = vi.fn()
     const mockRefetch = vi.fn()
@@ -268,6 +289,41 @@ describe('Game Integrations Page', () => {
     fireEvent.click(deleteBtn)
 
     // Assert
+    expect(screen.getByTestId('confirmation-popup')).toBeInTheDocument()
+    expect(screen.getByText('Confirmation Popup')).toBeInTheDocument()
+    expect(mockDeleteMutation).not.toHaveBeenCalled()
+  })
+
+  it('should handle delete confirmation and show success toast', async () => {
+    // Arrange
+    const mockDeleteMutation = vi.fn()
+    const mockRefetch = vi.fn()
+    
+    mockUseGameIntegrationDelete.mockReturnValue({
+      gameIntegrationDeleteMutation: {
+        mutate: mockDeleteMutation,
+      },
+    })
+
+    mockUseGameIntegrationList.mockReturnValue({
+      gameIntegrationListQuery: {
+        data: { data: [] },
+        isLoading: false,
+        isError: false,
+        refetch: mockRefetch,
+      },
+    })
+
+    // Act
+    render(<GameIntegrationsPage />)
+    const deleteBtn = screen.getByTestId('delete-btn')
+    fireEvent.click(deleteBtn)
+
+    // Confirm the deletion
+    const confirmBtn = screen.getByTestId('confirm-btn')
+    fireEvent.click(confirmBtn)
+
+    // Assert
     expect(mockDeleteMutation).toHaveBeenCalledWith(
       { gameId: 1, operatorId: 1 },
       {
@@ -286,7 +342,7 @@ describe('Game Integrations Page', () => {
     })
   })
 
-  it('should handle delete error and show error toast', async () => {
+  it('should handle delete confirmation error and show error toast', async () => {
     // Arrange
     const mockDeleteMutation = vi.fn()
     
@@ -300,6 +356,10 @@ describe('Game Integrations Page', () => {
     render(<GameIntegrationsPage />)
     const deleteBtn = screen.getByTestId('delete-btn')
     fireEvent.click(deleteBtn)
+
+    // Confirm the deletion
+    const confirmBtn = screen.getByTestId('confirm-btn')
+    fireEvent.click(confirmBtn)
 
     // Simulate error callback
     const onErrorCallback = mockDeleteMutation.mock.calls[0][1].onError
@@ -426,6 +486,54 @@ describe('Game Integrations Page', () => {
     await waitFor(() => {
       expect(mockToastError).toHaveBeenCalledWith('Failed to update game integration')
     })
+  })
+
+  it('should close confirmation popup when cancel button is clicked', () => {
+    // Arrange
+    const mockDeleteMutation = vi.fn()
+    
+    mockUseGameIntegrationDelete.mockReturnValue({
+      gameIntegrationDeleteMutation: {
+        mutate: mockDeleteMutation,
+      },
+    })
+
+    // Act
+    render(<GameIntegrationsPage />)
+    const deleteBtn = screen.getByTestId('delete-btn')
+    fireEvent.click(deleteBtn)
+
+    // Cancel the deletion
+    const cancelBtn = screen.getByTestId('cancel-btn')
+    fireEvent.click(cancelBtn)
+
+    // Assert
+    expect(screen.queryByText('Confirmation Popup')).not.toBeInTheDocument()
+    expect(mockDeleteMutation).not.toHaveBeenCalled()
+  })
+
+  it('should close confirmation popup when close button is clicked', () => {
+    // Arrange
+    const mockDeleteMutation = vi.fn()
+    
+    mockUseGameIntegrationDelete.mockReturnValue({
+      gameIntegrationDeleteMutation: {
+        mutate: mockDeleteMutation,
+      },
+    })
+
+    // Act
+    render(<GameIntegrationsPage />)
+    const deleteBtn = screen.getByTestId('delete-btn')
+    fireEvent.click(deleteBtn)
+
+    // Close the popup
+    const closeBtn = screen.getByTestId('close-popup-btn')
+    fireEvent.click(closeBtn)
+
+    // Assert
+    expect(screen.queryByText('Confirmation Popup')).not.toBeInTheDocument()
+    expect(mockDeleteMutation).not.toHaveBeenCalled()
   })
 
   it('should not submit when currentDialogParam is missing required fields', () => {
@@ -588,6 +696,10 @@ describe('Game Integrations Page', () => {
     const deleteBtn = screen.getByTestId('delete-btn')
     fireEvent.click(deleteBtn)
 
+    // Confirm the deletion
+    const confirmBtn = screen.getByTestId('confirm-btn')
+    fireEvent.click(confirmBtn)
+
     // Assert
     expect(mockDeleteMutation).toHaveBeenCalledWith(
       { gameId: 1, operatorId: 1 },
@@ -677,6 +789,19 @@ describe('Game Integrations Page', () => {
     expect(screen.queryByTestId('game-integration-config-dialog')).not.toBeInTheDocument()
     // The config button should still be there (it's in the table mock), but clicking it won't open the dialog
     expect(screen.getByTestId('config-btn')).toBeInTheDocument()
+  })
+
+  it('should not render confirmation popup when delete permission is denied', () => {
+    // Arrange
+    vi.spyOn(usePermissionModule, 'usePermission')
+      .mockReturnValueOnce({ isAllowed: true }) // getPermission
+      .mockReturnValueOnce({ isAllowed: false }) // deletePermission
+
+    // Act
+    render(<GameIntegrationsPage />)
+
+    // Assert
+    expect(screen.queryByTestId('confirmation-popup')).not.toBeInTheDocument()
   })
 
   

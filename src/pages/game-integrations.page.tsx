@@ -8,8 +8,9 @@ import { useOperator } from '@/hooks/useOperator'
 import { useGameConfig } from '@/hooks/useGameConfig'
 import type { GameIntegrationListResponse } from '@/api/game-integration.api'
 import type { OperatorListResponse } from '@/api/operator.api'
-import { API_ENDPOINTS } from '../api/api-endpoints'
-import { usePermission } from '../hooks/usePermission'
+import { API_ENDPOINTS } from '@/api/api-endpoints'
+import { usePermission } from '@/hooks/usePermission'
+import { ConfirmationPopup } from '@/components/confirmation-popup'
 
 export function GameIntegrationsPage() {
   const { gameIntegrationListQuery } = useGameIntegrationList()
@@ -21,6 +22,7 @@ export function GameIntegrationsPage() {
   const [currentDialogParam, setCurrentDialogParam] = useState<GameIntegrationConfigParam | null>(null)
   const { gameIntegrationUpsertMutation } = useGameIntegrationUpsert()
   const { gameIntegrationDeleteMutation } = useGameIntegrationDelete()
+  const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false)
   const { isAllowed: getPermission } = usePermission({ 
     path: [ 
       API_ENDPOINTS.GAME_INTEGRATION.GET,
@@ -52,7 +54,7 @@ export function GameIntegrationsPage() {
     setIsConfigDialogOpen(true)
   }
 
-  const handleDeleteClick = (param: GameIntegrationConfigParam) => {
+  function handleDelete(param: GameIntegrationConfigParam) {
     gameIntegrationDeleteMutation.mutate(
       {
         gameId: param.gameId,
@@ -68,6 +70,12 @@ export function GameIntegrationsPage() {
         },
       },
     )
+  }
+
+  const handleDeleteClick = (param: GameIntegrationConfigParam) => {
+    console.log('handleDeleteClick', param)
+    setCurrentDialogParam(param)
+    setIsConfirmationPopupOpen(true)
   }
 
   const handleSubmit = async (json: string) => {
@@ -141,6 +149,20 @@ export function GameIntegrationsPage() {
         currentGameId={currentDialogParam?.gameId ?? null}
         currentOperatorId={currentDialogParam?.operatorId ?? null}
         existingGameIntegration={gameIntegrationListQuery.data?.data ?? []}
+      />}
+      {deletePermission && <ConfirmationPopup
+        title={`Delete game integration for operator ${currentDialogParam?.operatorId ?? ''} and game id ${currentDialogParam?.gameId ?? ''}?`}
+        description="This action cannot be undone. Operator can no longer get game data from this game unless you add it back"
+        onConfirm={() => {
+          if (currentDialogParam) {
+            handleDelete(currentDialogParam)
+          }
+        }}
+        onCancel={() => {
+          setIsConfirmationPopupOpen(false)
+        }}
+        open={isConfirmationPopupOpen}
+        onOpenChange={setIsConfirmationPopupOpen}
       />}
     </AdminLayout>
   )
