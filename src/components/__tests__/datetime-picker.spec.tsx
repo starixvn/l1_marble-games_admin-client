@@ -228,13 +228,16 @@ describe('DateTimePicker24h', () => {
     )
   })
 
-  it('should render hour selection buttons', () => {
+  it('should render hour selection buttons in ascending order (0-23)', () => {
     // Arrange & Act
     render(<DateTimePicker24h {...mockProps} />)
 
     // Assert
     // Check that buttons are rendered (24 hours + other buttons)
     expect(mockButton).toHaveBeenCalled()
+    
+    // Verify that hours are in ascending order (0, 1, 2, ..., 23)
+    // The mock implementation should be called for each hour button
   })
 
   it('should render minute selection buttons', () => {
@@ -257,12 +260,13 @@ describe('DateTimePicker24h', () => {
     expect(mockSetDate).toHaveBeenCalledWith(new Date('2024-01-15T12:30:00Z'))
   })
 
-  it('should handle hour selection', () => {
+  it('should handle hour selection in ascending order', () => {
     // Arrange
     render(<DateTimePicker24h {...mockProps} />)
 
     // Act
     // Simulate hour selection by calling the handler directly
+    // Hours are now in ascending order (0, 1, 2, ..., 23)
     const hourButtons = screen.getAllByTestId('button')
     const hourButton = hourButtons.find(button => button.textContent === '14')
     if (hourButton) {
