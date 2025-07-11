@@ -50,6 +50,10 @@ const mockApiLogTableItem = vi.mocked(ApiLogTableItem)
 const mockEmptyApiLogTableBody = vi.mocked(EmptyApiLogTableBody)
 
 describe('ApiLogTable', () => {
+  const defaultApiQuery = {
+    startDate: '2024-01-01T00:00:00Z',
+    endDate: '2024-01-01T23:59:59Z',
+  }
   beforeEach(() => {
     vi.clearAllMocks()
     
@@ -85,7 +89,7 @@ describe('ApiLogTable', () => {
     const mockData: ApiLogResponseItem[] = []
 
     // Act
-    render(<ApiLogTable data={mockData} isLoading={true} isError={false} />)
+    render(<ApiLogTable apiQuery={defaultApiQuery} data={mockData} isLoading={true} isError={false} />)
 
     // Assert
     expect(screen.getByTestId('fullpage-skeleton')).toBeInTheDocument()
@@ -97,7 +101,7 @@ describe('ApiLogTable', () => {
     const mockData: ApiLogResponseItem[] = []
 
     // Act
-    render(<ApiLogTable data={mockData} isLoading={false} isError={true} />)
+    render(<ApiLogTable apiQuery={defaultApiQuery} data={mockData} isLoading={false} isError={true} />)
 
     // Assert
     expect(screen.getByTestId('error-table')).toBeInTheDocument()
@@ -109,7 +113,7 @@ describe('ApiLogTable', () => {
     const mockData: ApiLogResponseItem[] = []
 
     // Act
-    render(<ApiLogTable data={mockData} isLoading={false} isError={false} />)
+    render(<ApiLogTable apiQuery={defaultApiQuery} data={mockData} isLoading={false} isError={false} />)
 
     // Assert
     expect(screen.getByTestId('table-header')).toBeInTheDocument()
@@ -158,7 +162,7 @@ describe('ApiLogTable', () => {
     ]
 
     // Act
-    render(<ApiLogTable data={mockData} isLoading={false} isError={false} />)
+    render(<ApiLogTable apiQuery={defaultApiQuery} data={mockData} isLoading={false} isError={false} />)
 
     // Assert
     expect(screen.getByTestId('table-header')).toBeInTheDocument()
@@ -192,7 +196,7 @@ describe('ApiLogTable', () => {
     ]
 
     // Act
-    render(<ApiLogTable data={mockData} isLoading={false} isError={false} />)
+    render(<ApiLogTable apiQuery={defaultApiQuery} data={mockData} isLoading={false} isError={false} />)
     fireEvent.click(screen.getByText('View Request'))
 
     // Assert
@@ -225,7 +229,7 @@ describe('ApiLogTable', () => {
     ]
 
     // Act
-    render(<ApiLogTable data={mockData} isLoading={false} isError={false} />)
+    render(<ApiLogTable apiQuery={defaultApiQuery} data={mockData} isLoading={false} isError={false} />)
     fireEvent.click(screen.getByText('View Response'))
 
     // Assert
@@ -257,7 +261,7 @@ describe('ApiLogTable', () => {
     ]
 
     // Act
-    render(<ApiLogTable data={mockData} isLoading={false} isError={false} />)
+    render(<ApiLogTable apiQuery={defaultApiQuery} data={mockData} isLoading={false} isError={false} />)
     fireEvent.click(screen.getByText('View Request'))
     fireEvent.click(screen.getByText('Close Request'))
 
@@ -305,7 +309,7 @@ describe('ApiLogTable', () => {
     ]
 
     // Act
-    render(<ApiLogTable data={mockData} isLoading={false} isError={false} />)
+    render(<ApiLogTable apiQuery={defaultApiQuery} data={mockData} isLoading={false} isError={false} />)
 
     // Assert
     expect(screen.getByTestId('table-item-1')).toBeInTheDocument()
@@ -358,7 +362,7 @@ describe('ApiLogTable', () => {
     ]
 
     // Act
-    render(<ApiLogTable data={mockData} isLoading={false} isError={false} />)
+    render(<ApiLogTable apiQuery={defaultApiQuery} data={mockData} isLoading={false} isError={false} />)
 
     // Assert
     expect(screen.getByTestId('table-item-1')).toBeInTheDocument()
@@ -366,6 +370,39 @@ describe('ApiLogTable', () => {
       expect.objectContaining({
         dataItem: mockData[0],
       }),
+      undefined
+    )
+  })
+
+  it('should pass /api/events endpoint to header and items for event/game ID columns', () => {
+    // Arrange
+    const mockData: ApiLogResponseItem[] = [
+      {
+        id: '1',
+        request: {
+          method: 'GET',
+          path: '/api/events',
+          query: {},
+          additionalInfo: { eventId: 123, gameId: 456 },
+        },
+        response: {
+          statusCode: 200,
+          responseBody: {},
+          responseTime: '2024-01-01T10:00:00Z',
+        },
+        user: { userId: 'user-1' },
+        timestamp: '2024-01-01T10:00:00Z',
+      },
+    ]
+    const apiQuery = { ...defaultApiQuery, endpoint: '/api/events' }
+    render(<ApiLogTable apiQuery={apiQuery} data={mockData} isLoading={false} isError={false} />)
+    // Assert
+    expect(mockApiLogTableHeader).toHaveBeenCalledWith(
+      expect.objectContaining({ apiQuery }),
+      undefined
+    )
+    expect(mockApiLogTableItem).toHaveBeenCalledWith(
+      expect.objectContaining({ apiQuery, dataItem: mockData[0] }),
       undefined
     )
   })

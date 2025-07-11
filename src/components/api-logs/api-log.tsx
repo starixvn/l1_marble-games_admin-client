@@ -11,7 +11,6 @@ export function ApiLog() {
     endDate: new Date(new Date().getTime() + 1000 * 60 * 60).toISOString(),
   })
   const { data: apiLogs, isLoading, isError } = useApiLog(apiQuery);
-
   function handleSubmit(data: ApiLogQuery) {
     if (data.startDate >= data.endDate) {
       toast.error("Start date must be before end date")
@@ -35,6 +34,7 @@ export function ApiLog() {
         <ApiLogFields onSubmit={handleSubmit} />
       </div>
       <ApiLogTable
+        apiQuery={apiQuery}
         data={apiLogs?.data ?? []} 
         isLoading={isLoading} 
         isError={isError} 

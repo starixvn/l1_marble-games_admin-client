@@ -7,15 +7,17 @@ import { ApiLogResponseDialog } from "@/components/api-logs/api-log-response-dia
 import { ApiLogTableHeader } from "@/components/api-logs/api-log-table-header"
 import { ApiLogTableItem } from "@/components/api-logs/api-log-table-item"
 import { EmptyApiLogTableBody } from "@/components/api-logs/empty-log-table-body"
-import type { ApiLogResponseItem } from "@/api/api-log.api"
+import type { ApiLogQuery, ApiLogResponseItem } from "@/api/api-log.api"
 
 export type ApiLogTableProps = {
+  apiQuery: ApiLogQuery,
   data: ApiLogResponseItem[],
   isLoading: boolean,
   isError: boolean,
 }
 
 export function ApiLogTable({
+  apiQuery,
   data,
   isLoading,
   isError,
@@ -42,10 +44,10 @@ export function ApiLogTable({
       <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-2">
         <div className="overflow-hidden rounded-lg border m-2">
           <Table className="w-full">
-            <ApiLogTableHeader />
+            <ApiLogTableHeader apiQuery={apiQuery} />
             <TableBody>
               {data.length === 0 ? <EmptyApiLogTableBody /> : data.map((item) => (
-                <ApiLogTableItem key={item.id} dataItem={item} handleRequestDialogOpen={handleRequestDialogOpen} handleResponseDialogOpen={handleResponseDialogOpen} />
+                <ApiLogTableItem apiQuery={apiQuery} key={item.id} dataItem={item} handleRequestDialogOpen={handleRequestDialogOpen} handleResponseDialogOpen={handleResponseDialogOpen} />
               ))}
             </TableBody>
           </Table>

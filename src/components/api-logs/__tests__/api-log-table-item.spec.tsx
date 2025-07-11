@@ -13,6 +13,11 @@ import { format } from 'date-fns'
 
 const mockFormat = vi.mocked(format)
 
+const defaultApiQuery = {
+  startDate: '2024-01-01T00:00:00Z',
+  endDate: '2024-01-01T23:59:59Z',
+}
+
 describe('ApiLogTableItem', () => {
   const mockDataItem: ApiLogResponseItem = {
     id: '1',
@@ -44,6 +49,7 @@ describe('ApiLogTableItem', () => {
     // Arrange & Act
     render(
       <ApiLogTableItem
+        apiQuery={defaultApiQuery}
         dataItem={mockDataItem}
         handleRequestDialogOpen={mockHandleRequestDialogOpen}
         handleResponseDialogOpen={mockHandleResponseDialogOpen}
@@ -62,6 +68,7 @@ describe('ApiLogTableItem', () => {
     // Arrange & Act
     render(
       <ApiLogTableItem
+        apiQuery={defaultApiQuery}
         dataItem={mockDataItem}
         handleRequestDialogOpen={mockHandleRequestDialogOpen}
         handleResponseDialogOpen={mockHandleResponseDialogOpen}
@@ -82,6 +89,7 @@ describe('ApiLogTableItem', () => {
     // Act
     render(
       <ApiLogTableItem
+        apiQuery={defaultApiQuery}
         dataItem={dataItemWithoutUser}
         handleRequestDialogOpen={mockHandleRequestDialogOpen}
         handleResponseDialogOpen={mockHandleResponseDialogOpen}
@@ -96,6 +104,7 @@ describe('ApiLogTableItem', () => {
     // Arrange
     render(
       <ApiLogTableItem
+        apiQuery={defaultApiQuery}
         dataItem={mockDataItem}
         handleRequestDialogOpen={mockHandleRequestDialogOpen}
         handleResponseDialogOpen={mockHandleResponseDialogOpen}
@@ -113,6 +122,7 @@ describe('ApiLogTableItem', () => {
     // Arrange
     render(
       <ApiLogTableItem
+        apiQuery={defaultApiQuery}
         dataItem={mockDataItem}
         handleRequestDialogOpen={mockHandleRequestDialogOpen}
         handleResponseDialogOpen={mockHandleResponseDialogOpen}
@@ -130,6 +140,7 @@ describe('ApiLogTableItem', () => {
     // Arrange & Act
     render(
       <ApiLogTableItem
+        apiQuery={defaultApiQuery}
         dataItem={mockDataItem}
         handleRequestDialogOpen={mockHandleRequestDialogOpen}
         handleResponseDialogOpen={mockHandleResponseDialogOpen}
@@ -145,6 +156,7 @@ describe('ApiLogTableItem', () => {
     // Arrange & Act
     render(
       <ApiLogTableItem
+        apiQuery={defaultApiQuery}
         dataItem={mockDataItem}
         handleRequestDialogOpen={mockHandleRequestDialogOpen}
         handleResponseDialogOpen={mockHandleResponseDialogOpen}
@@ -173,6 +185,7 @@ describe('ApiLogTableItem', () => {
     // Act
     render(
       <ApiLogTableItem
+        apiQuery={defaultApiQuery}
         dataItem={postDataItem}
         handleRequestDialogOpen={mockHandleRequestDialogOpen}
         handleResponseDialogOpen={mockHandleResponseDialogOpen}
@@ -197,6 +210,7 @@ describe('ApiLogTableItem', () => {
     // Act
     render(
       <ApiLogTableItem
+        apiQuery={defaultApiQuery}
         dataItem={errorDataItem}
         handleRequestDialogOpen={mockHandleRequestDialogOpen}
         handleResponseDialogOpen={mockHandleResponseDialogOpen}
@@ -225,6 +239,7 @@ describe('ApiLogTableItem', () => {
     // Act
     render(
       <ApiLogTableItem
+        apiQuery={defaultApiQuery}
         dataItem={dataItemWithAdditionalInfo}
         handleRequestDialogOpen={mockHandleRequestDialogOpen}
         handleResponseDialogOpen={mockHandleResponseDialogOpen}
@@ -250,6 +265,7 @@ describe('ApiLogTableItem', () => {
     // Act
     render(
       <ApiLogTableItem
+        apiQuery={defaultApiQuery}
         dataItem={dataItemWithEmptyQuery}
         handleRequestDialogOpen={mockHandleRequestDialogOpen}
         handleResponseDialogOpen={mockHandleResponseDialogOpen}
@@ -278,6 +294,7 @@ describe('ApiLogTableItem', () => {
     // Act
     render(
       <ApiLogTableItem
+        apiQuery={defaultApiQuery}
         dataItem={dataItemWithComplexQuery}
         handleRequestDialogOpen={mockHandleRequestDialogOpen}
         handleResponseDialogOpen={mockHandleResponseDialogOpen}
@@ -286,5 +303,88 @@ describe('ApiLogTableItem', () => {
 
     // Assert
     expect(screen.getByText('View full request')).toBeInTheDocument()
+  })
+
+  it('should render Event ID and Game ID columns with correct values when endpoint is /api/events', () => {
+    // Arrange
+    const dataItemWithAdditionalInfo: ApiLogResponseItem = {
+      ...mockDataItem,
+      request: {
+        ...mockDataItem.request,
+        path: '/api/events',
+        additionalInfo: {
+          eventId: 123,
+          gameId: 456,
+        },
+      },
+    }
+    // Act
+    render(
+      <table><tbody>
+        <ApiLogTableItem
+          apiQuery={{ ...defaultApiQuery, endpoint: '/api/events' }}
+          dataItem={dataItemWithAdditionalInfo}
+          handleRequestDialogOpen={mockHandleRequestDialogOpen}
+          handleResponseDialogOpen={mockHandleResponseDialogOpen}
+        />
+      </tbody></table>
+    )
+    // Assert
+    expect(screen.getByText('123')).toBeInTheDocument()
+    expect(screen.getByText('456')).toBeInTheDocument()
+  })
+
+  it('should render N/A for Event ID and Game ID if missing in additionalInfo when endpoint is /api/events', () => {
+    // Arrange
+    const dataItemWithNoAdditionalInfo: ApiLogResponseItem = {
+      ...mockDataItem,
+      request: {
+        ...mockDataItem.request,
+        path: '/api/events',
+        additionalInfo: {},
+      },
+    }
+    // Act
+    render(
+      <table><tbody>
+        <ApiLogTableItem
+          apiQuery={{ ...defaultApiQuery, endpoint: '/api/events' }}
+          dataItem={dataItemWithNoAdditionalInfo}
+          handleRequestDialogOpen={mockHandleRequestDialogOpen}
+          handleResponseDialogOpen={mockHandleResponseDialogOpen}
+        />
+      </tbody></table>
+    )
+    // Assert
+    expect(screen.getAllByText('N/A').length).toBeGreaterThanOrEqual(2)
+  })
+
+  it('should not render Event ID and Game ID columns when endpoint is not /api/events', () => {
+    // Arrange
+    const dataItemWithAdditionalInfo: ApiLogResponseItem = {
+      ...mockDataItem,
+      request: {
+        ...mockDataItem.request,
+        additionalInfo: {
+          eventId: 123,
+          gameId: 456,
+        },
+      },
+    }
+    // Act
+    render(
+      <table><tbody>
+        <ApiLogTableItem
+          apiQuery={{ ...defaultApiQuery, endpoint: '/api/other' }}
+          dataItem={dataItemWithAdditionalInfo}
+          handleRequestDialogOpen={mockHandleRequestDialogOpen}
+          handleResponseDialogOpen={mockHandleResponseDialogOpen}
+        />
+      </tbody></table>
+    )
+    // Assert
+    expect(screen.queryByText('123')).not.toBeInTheDocument()
+    expect(screen.queryByText('456')).not.toBeInTheDocument()
+    expect(screen.queryByText('N/A')).not.toBeInTheDocument()
   })
 })

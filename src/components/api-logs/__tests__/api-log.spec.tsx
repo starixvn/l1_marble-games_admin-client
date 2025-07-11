@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ApiLog } from '../api-log'
-import type { ApiLogResponseItem } from '@/api/api-log.api'
+import type { ApiLogResponseItem, ApiLogQuery } from '@/api/api-log.api'
 import type { AxiosResponse } from 'axios'
 
 // Mock external dependencies
@@ -35,8 +35,11 @@ const mockApiLogFields = vi.mocked(ApiLogFields)
 const mockApiLogTable = vi.mocked(ApiLogTable)
 
 describe('ApiLog', () => {
+  let capturedApiQuery: ApiLogQuery | null
+
   beforeEach(() => {
     vi.clearAllMocks()
+    capturedApiQuery = null
     
     // Default mock implementations
     mockApiLogFields.mockImplementation(({ onSubmit }) => (
@@ -48,13 +51,19 @@ describe('ApiLog', () => {
       </div>
     ))
     
-    mockApiLogTable.mockImplementation(({ data, isLoading, isError }) => (
-      <div data-testid="api-log-table">
-        <span data-testid="data-length">{data.length}</span>
-        <span data-testid="is-loading">{isLoading.toString()}</span>
-        <span data-testid="is-error">{isError.toString()}</span>
-      </div>
-    ))
+    mockApiLogTable.mockImplementation(({ apiQuery, data, isLoading, isError }) => {
+      capturedApiQuery = apiQuery
+      return (
+        <div data-testid="api-log-table">
+          <span data-testid="data-length">{data.length}</span>
+          <span data-testid="is-loading">{isLoading.toString()}</span>
+          <span data-testid="is-error">{isError.toString()}</span>
+          <span data-testid="api-query-endpoint">{apiQuery?.endpoint || 'no-endpoint'}</span>
+          <span data-testid="api-query-game-id">{apiQuery?.gameId || 'no-game-id'}</span>
+          <span data-testid="api-query-event-id">{apiQuery?.eventId || 'no-event-id'}</span>
+        </div>
+      )
+    })
   })
 
   it('should render ApiLogFields and ApiLogTable with default state', () => {
@@ -293,5 +302,125 @@ describe('ApiLog', () => {
     const endDate = new Date(callArgs.endDate)
     const timeDiff = endDate.getTime() - startDate.getTime()
     expect(timeDiff).toBeCloseTo(1000 * 60 * 60, -2) // Within 100ms of 1 hour
+  })
+
+  it('should handle form submission with /api/events endpoint and game/event IDs', async () => {
+    // Arrange
+    const mockApiLogs: ApiLogResponseItem[] = []
+    mockUseApiLog.mockReturnValue({
+      data: { data: mockApiLogs } as AxiosResponse<ApiLogResponseItem[]>,
+      isLoading: false,
+      isError: false,
+      isSuccess: true,
+      error: null,
+    })
+
+    mockApiLogFields.mockImplementation(({ onSubmit }) => (
+      <div data-testid="api-log-fields">
+        <button onClick={() => onSubmit({
+          startDate: '2024-01-01T10:00:00Z',
+          endDate: '2024-01-01T11:00:00Z',
+          endpoint: '/api/events',
+          gameId: '123',
+          eventId: '456',
+        })}>Submit Events</button>
+      </div>
+    ))
+
+    // Act
+    render(<ApiLog />)
+    fireEvent.click(screen.getByText('Submit Events'))
+
+    // Assert
+    await waitFor(() => {
+      expect(mockUseApiLog).toHaveBeenCalledWith({
+        startDate: '2024-01-01T10:00:00Z',
+        endDate: '2024-01-01T11:00:00Z',
+        endpoint: '/api/events',
+        gameId: '123',
+        eventId: '456',
+      })
+    })
+
+    expect(screen.getByTestId('api-query-endpoint')).toHaveTextContent('/api/events')
+    expect(screen.getByTestId('api-query-game-id')).toHaveTextContent('123')
+    expect(screen.getByTestId('api-query-event-id')).toHaveTextContent('456')
+  })
+
+  it('should pass correct apiQuery to ApiLogTable with event endpoint', () => {
+    // Arrange
+    const mockApiLogs: ApiLogResponseItem[] = []
+    mockUseApiLog.mockReturnValue({
+      data: { data: mockApiLogs } as AxiosResponse<ApiLogResponseItem[]>,
+      isLoading: false,
+      isError: false,
+      isSuccess: true,
+      error: null,
+    })
+
+    // Act
+    render(<ApiLog />)
+
+    // Assert
+    expect(capturedApiQuery).toEqual({
+      startDate: expect.any(String),
+      endDate: expect.any(String),
+    })
+    expect(mockApiLogTable).toHaveBeenCalledWith(
+      expect.objectContaining({
+        apiQuery: capturedApiQuery,
+        data: mockApiLogs,
+        isLoading: false,
+        isError: false,
+      }),
+      undefined
+    )
+  })
+
+  it('should handle data with event logs containing additional info', () => {
+    // Arrange
+    const mockApiLogs: ApiLogResponseItem[] = [
+      {
+        id: '1',
+        request: {
+          method: 'GET',
+          path: '/api/events',
+          query: { eventId: '123' },
+          additionalInfo: {
+            eventId: 123,
+            gameId: 456,
+          },
+        },
+        response: {
+          statusCode: 200,
+          responseBody: { success: true },
+          responseTime: '2024-01-01T10:00:00Z',
+        },
+        user: {
+          userId: 'user-1',
+        },
+        timestamp: '2024-01-01T10:00:00Z',
+      },
+    ]
+
+    mockUseApiLog.mockReturnValue({
+      data: { data: mockApiLogs } as AxiosResponse<ApiLogResponseItem[]>,
+      isLoading: false,
+      isError: false,
+      isSuccess: true,
+      error: null,
+    })
+
+    // Act
+    render(<ApiLog />)
+
+    // Assert
+    expect(screen.getByTestId('data-length')).toHaveTextContent('1')
+    expect(mockApiLogTable).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: mockApiLogs,
+      }),
+      undefined
+    )
   })
 }) 
