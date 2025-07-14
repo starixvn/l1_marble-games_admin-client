@@ -124,9 +124,9 @@ describe('Combobox', () => {
     // Assert
     const commandItems = screen.getAllByTestId('command-item')
     expect(commandItems).toHaveLength(3)
-    expect(commandItems[0]).toHaveAttribute('data-value', 'Game 1')
-    expect(commandItems[1]).toHaveAttribute('data-value', 'Game 2')
-    expect(commandItems[2]).toHaveAttribute('data-value', 'Game 3')
+    expect(commandItems[0]).toHaveAttribute('data-value', '1')
+    expect(commandItems[1]).toHaveAttribute('data-value', '2')
+    expect(commandItems[2]).toHaveAttribute('data-value', '3')
   })
 
   it('should show check icon for selected item', () => {

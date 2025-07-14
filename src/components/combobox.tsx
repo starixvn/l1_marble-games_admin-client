@@ -25,7 +25,6 @@ export function Combobox({
   currentValue,
   setCurrentValue,
   keyProp,
-  valueProp,
   placeholder,
   nothingFoundMessage,
   className,
@@ -53,12 +52,12 @@ export function Combobox({
               {list.map((item) => (
                 <CommandItem
                   key={item[keyProp] as string}
-                  value={item[valueProp] as string}
+                  value={item[keyProp] as string}
                   onSelect={(currentValue) => {
-                    const selectedItem = list.find((s) => s[valueProp]?.toString() === currentValue?.toString())
+                    const selectedItem = list.find((s) => s[keyProp]?.toString() === currentValue?.toString())
                     const selectedId = selectedItem?.[keyProp] as number | string | null
                     if (setCurrentValue) {
-                      if (currentValue.toString() === currentItem?.[valueProp]?.toString()) {
+                      if (currentValue.toString() === currentItem?.[keyProp]?.toString()) {
                         setCurrentValue(null)
                       } else {
                         setCurrentValue(selectedId)
