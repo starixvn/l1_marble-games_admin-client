@@ -20,7 +20,15 @@ export type DateTimePickerProps = {
     const hours = Array.from({ length: 24 }, (_, i) => i);
     const handleDateSelect = (selectedDate: Date | undefined) => {
       if (selectedDate) {
-        setDate(selectedDate);
+        // Create a new UTC date from the selected date
+        const utcDate = new Date(Date.UTC(
+          selectedDate.getFullYear(),
+          selectedDate.getMonth(),
+          selectedDate.getDate(),
+          date ? date.getUTCHours() : 0,
+          date ? date.getUTCMinutes() : 0
+        ));
+        setDate(utcDate);
       }
     };
    
@@ -29,12 +37,13 @@ export type DateTimePickerProps = {
       value: string
     ) => {
       if (date) {
-        const newDate = new Date(date);
-        if (type === "hour") {
-          newDate.setHours(parseInt(value));
-        } else if (type === "minute") {
-          newDate.setMinutes(parseInt(value));
-        }
+        const newDate = new Date(Date.UTC(
+          date.getUTCFullYear(),
+          date.getUTCMonth(),
+          date.getUTCDate(),
+          type === "hour" ? parseInt(value) : date.getUTCHours(),
+          type === "minute" ? parseInt(value) : date.getUTCMinutes()
+        ));
         setDate(newDate);
       }
     };
@@ -75,7 +84,7 @@ export type DateTimePickerProps = {
                     <Button
                       key={hour}
                       size="icon"
-                      variant={date && date.getHours() === hour ? "default" : "ghost"}
+                      variant={date && date.getUTCHours() === hour ? "default" : "ghost"}
                       className="sm:w-full shrink-0 aspect-square"
                       onClick={() => handleTimeChange("hour", hour.toString())}
                     >
@@ -91,7 +100,7 @@ export type DateTimePickerProps = {
                     <Button
                       key={minute}
                       size="icon"
-                      variant={date && date.getMinutes() === minute ? "default" : "ghost"}
+                      variant={date && date.getUTCMinutes() === minute ? "default" : "ghost"}
                       className="sm:w-full shrink-0 aspect-square"
                       onClick={() => handleTimeChange("minute", minute.toString())}
                     >

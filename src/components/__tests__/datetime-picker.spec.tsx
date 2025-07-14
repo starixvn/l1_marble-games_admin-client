@@ -117,7 +117,9 @@ describe('DateTimePicker24h', () => {
       <div data-testid="calendar" data-mode={mode}>
         <button onClick={() => {
           const calendarProps = props as { onSelect?: (date: Date | undefined) => void; selected?: Date }
-          calendarProps.onSelect?.(new Date('2024-01-15T12:30:00Z'))
+          // Create a local date for the calendar selection (2024-01-15)
+          const selectedLocalDate = new Date(2024, 0, 15) // January 15, 2024
+          calendarProps.onSelect?.(selectedLocalDate)
         }}>
           Select Date
         </button>
@@ -260,7 +262,9 @@ describe('DateTimePicker24h', () => {
     fireEvent.click(screen.getByText('Select Date'))
 
     // Assert
-    expect(mockSetDate).toHaveBeenCalledWith(new Date('2024-01-15T12:30:00Z'))
+    // Should create a UTC date with the selected date and current UTC time
+    const expectedDate = new Date(Date.UTC(2024, 0, 15, 12, 30)) // January 15, 2024 12:30 UTC
+    expect(mockSetDate).toHaveBeenCalledWith(expectedDate)
   })
 
   it('should handle hour selection in ascending order', () => {
@@ -296,6 +300,87 @@ describe('DateTimePicker24h', () => {
     // Assert
     // The mock implementation should handle the click
     expect(mockButton).toHaveBeenCalled()
+  })
+
+  it('should handle hour selection with UTC time', () => {
+    // Arrange
+    const testDate = new Date('2024-01-01T12:30:00Z')
+    const propsWithDate: DateTimePickerProps = {
+      ...mockProps,
+      date: testDate,
+    }
+    render(<DateTimePicker24h {...propsWithDate} />)
+
+    // Act
+    // Simulate clicking hour 14 (2 PM)
+    const hourButtons = screen.getAllByTestId('button')
+    const hourButton = hourButtons.find(button => button.textContent === '14')
+    if (hourButton) {
+      fireEvent.click(hourButton)
+    }
+
+    // Assert
+    // Should create a new UTC date with hour 14 and keep the same minutes
+    const expectedDate = new Date(Date.UTC(2024, 0, 1, 14, 30))
+    expect(mockSetDate).toHaveBeenCalledWith(expectedDate)
+  })
+
+  it('should handle minute selection with UTC time', () => {
+    // Arrange
+    const testDate = new Date('2024-01-01T12:30:00Z')
+    const propsWithDate: DateTimePickerProps = {
+      ...mockProps,
+      date: testDate,
+    }
+    render(<DateTimePicker24h {...propsWithDate} />)
+
+    // Act
+    // Simulate clicking minute 45
+    const minuteButtons = screen.getAllByTestId('button')
+    const minuteButton = minuteButtons.find(button => button.textContent === '45')
+    if (minuteButton) {
+      fireEvent.click(minuteButton)
+    }
+
+    // Assert
+    // Should create a new UTC date with minute 45 and keep the same hours
+    const expectedDate = new Date(Date.UTC(2024, 0, 1, 12, 45))
+    expect(mockSetDate).toHaveBeenCalledWith(expectedDate)
+  })
+
+  it('should handle date selection with existing UTC time', () => {
+    // Arrange
+    const testDate = new Date('2024-01-01T12:30:00Z')
+    const propsWithDate: DateTimePickerProps = {
+      ...mockProps,
+      date: testDate,
+    }
+    render(<DateTimePicker24h {...propsWithDate} />)
+
+    // Act
+    fireEvent.click(screen.getByText('Select Date'))
+
+    // Assert
+    // Should create a UTC date with the new date (2024-01-15) but keep the existing UTC time (12:30)
+    const expectedDate = new Date(Date.UTC(2024, 0, 15, 12, 30))
+    expect(mockSetDate).toHaveBeenCalledWith(expectedDate)
+  })
+
+  it('should handle date selection without existing date', () => {
+    // Arrange
+    const propsWithoutDate: DateTimePickerProps = {
+      ...mockProps,
+      date: undefined,
+    }
+    render(<DateTimePicker24h {...propsWithoutDate} />)
+
+    // Act
+    fireEvent.click(screen.getByText('Select Date'))
+
+    // Assert
+    // Should create a UTC date with the new date and default time (00:00)
+    const expectedDate = new Date(Date.UTC(2024, 0, 15, 0, 0))
+    expect(mockSetDate).toHaveBeenCalledWith(expectedDate)
   })
 
   it('should render scroll areas for time selection', () => {
@@ -419,5 +504,28 @@ describe('DateTimePicker24h', () => {
       }),
       undefined
     )
+  })
+
+  it('should highlight correct UTC time buttons', () => {
+    // Arrange
+    const testDate = new Date('2024-01-01T14:45:00Z') // 2:45 PM UTC
+    const propsWithDate: DateTimePickerProps = {
+      ...mockProps,
+      date: testDate,
+    }
+    render(<DateTimePicker24h {...propsWithDate} />)
+
+    // Assert
+    // Check that the hour 14 button has "default" variant (highlighted)
+    const hour14Call = mockButton.mock.calls.find(call => 
+      call[0].children === 14 && call[0].variant === 'default'
+    )
+    expect(hour14Call).toBeDefined()
+    
+    // Check that the minute 45 button has "default" variant (highlighted)
+    const minute45Call = mockButton.mock.calls.find(call => 
+      call[0].children === '45' && call[0].variant === 'default'
+    )
+    expect(minute45Call).toBeDefined()
   })
 })
