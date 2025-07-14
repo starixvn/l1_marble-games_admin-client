@@ -10,8 +10,8 @@ import { cn } from "@/lib/utils";
 
 export type DateTimePickerProps = {
     label: string
-    date: Date | undefined
-    setDate: (date: Date | undefined) => void
+    date?: Date 
+    setDate: (date: Date) => void
   }
   
   export function DateTimePicker24h({ label, date, setDate }: Readonly<DateTimePickerProps>) {
@@ -55,7 +55,7 @@ export type DateTimePickerProps = {
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {date ? (
-              format(date, "MM/dd/yyyy HH:mm")
+              format(new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes()), "MM/dd/yyyy HH:mm")
             ) : (
               <span>MM/DD/YYYY HH:mm</span>
             )}

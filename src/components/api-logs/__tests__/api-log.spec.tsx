@@ -155,7 +155,7 @@ describe('ApiLog', () => {
       <div data-testid="api-log-fields">
         <button onClick={() => onSubmit({
           startDate: '2024-01-01T00:00:00Z',
-          endDate: '2024-01-03T00:00:00Z', // 48 hours later
+          endDate: '2024-01-19T00:00:00Z', // 7 days later
         })}>Submit Long Range</button>
       </div>
     ))
@@ -165,7 +165,7 @@ describe('ApiLog', () => {
     fireEvent.click(screen.getByText('Submit Long Range'))
 
     // Assert
-    expect(mockToast.error).toHaveBeenCalledWith('Query time range must be within 24 hours')
+    expect(mockToast.error).toHaveBeenCalledWith('Query time range must be within 7 days')
   })
 
   it('should handle loading state', () => {

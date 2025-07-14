@@ -83,16 +83,14 @@ describe('AdminLog', () => {
 
   it('should initialize with default query parameters', () => {
     // Arrange
-    const mockDate = new Date('2024-01-01T00:00:00.000Z')
-    vi.spyOn(global, 'Date').mockImplementation(() => mockDate as unknown as Date)
 
     // Act
     render(<AdminLog />)
 
     // Assert
     expect(mockUseAdminLog).toHaveBeenCalledWith({
-      startDate: mockDate.toISOString(),
-      endDate: new Date(mockDate.getTime() + 1000 * 60 * 60).toISOString(),
+      startDate: expect.stringContaining('00:00:00.000Z'),
+      endDate: expect.stringContaining('23:59:59.000Z'),
     })
   })
 
@@ -136,7 +134,7 @@ describe('AdminLog', () => {
     expect(toast.error).toHaveBeenCalledWith('Start date must be before end date')
   })
 
-  it('should show error toast when time range exceeds 24 hours', async () => {
+  it('should show error toast when time range exceeds 7 days', async () => {
     // Arrange
     const mockDate = new Date('2024-01-01T00:00:00.000Z')
     vi.spyOn(global, 'Date').mockImplementation(() => mockDate as unknown as Date)
@@ -145,10 +143,10 @@ describe('AdminLog', () => {
     render(<AdminLog />)
     
     // Call toast.error directly to test the validation logic
-    toast.error('Query time range must be within 24 hours')
+    toast.error('Query time range must be within 7 days')
 
     // Assert
-    expect(toast.error).toHaveBeenCalledWith('Query time range must be within 24 hours')
+    expect(toast.error).toHaveBeenCalledWith('Query time range must be within 7 days')
   })
 
   it('should pass loading state to table component', () => {

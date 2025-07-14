@@ -50,8 +50,14 @@ const actionList = [
 ]
 
 export function AdminLogFields({ onSubmit }: Readonly<AdminLogFieldsProps>) {
-  const [startDate, setStartDate] = useState<Date>(new Date(new Date().getTime() - 1000 * 60 * 60))
-  const [endDate, setEndDate] = useState<Date>(new Date())
+  const [startDate, setStartDate] = useState<Date>(() => {
+    const now = new Date()
+    return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0))
+  })
+  const [endDate, setEndDate] = useState<Date>(() => {
+    const now = new Date()
+    return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 0))
+  })
   const [author, setAuthor] = useState<string | undefined>(undefined)
   const [resource, setResource] = useState<string | undefined>(undefined)
   const [action, setAction] = useState<string | undefined>(undefined)
@@ -69,8 +75,8 @@ export function AdminLogFields({ onSubmit }: Readonly<AdminLogFieldsProps>) {
   }
 
   return <form className="flex flex-col lg:flex-row lg:items-center gap-3" onSubmit={handleSubmit}>
-    <DateTimePicker24h label="Start Time (UTC)" date={startDate} setDate={(date) => setStartDate(date ?? new Date(new Date().getTime() - 1000 * 60 * 60))} />
-    <DateTimePicker24h label="End Time (UTC)" date={endDate} setDate={(date) => setEndDate(date ?? new Date())} />
+    <DateTimePicker24h label="Start Time (UTC)" date={startDate} setDate={(date) => setStartDate(date)} />
+    <DateTimePicker24h label="End Time (UTC)" date={endDate} setDate={(date) => setEndDate(date)} />
     <div className="flex flex-col gap-3">
         <Label className="text-sm font-medium">Author</Label>
         <Combobox

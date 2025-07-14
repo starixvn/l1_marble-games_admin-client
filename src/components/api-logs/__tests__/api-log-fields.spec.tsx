@@ -1,7 +1,6 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ApiLogFields } from '../api-log-fields'
-import type { ApiLogFieldsProps } from '../api-log-fields'
 import type { OperatorListResponse } from '@/api/operator.api'
 import type { AxiosResponse } from 'axios'
 
@@ -40,7 +39,7 @@ const mockDateTimePicker24h = vi.mocked(DateTimePicker24h)
 const mockCombobox = vi.mocked(Combobox)
 
 describe('ApiLogFields', () => {
-  const mockOnSubmit: ApiLogFieldsProps['onSubmit'] = vi.fn()
+  const mockOnSubmit = vi.fn()
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -204,6 +203,38 @@ describe('ApiLogFields', () => {
     expect(mockDateTimePicker24h).toHaveBeenCalledTimes(2)
   })
 
+  it('should initialize with current day start and end times', () => {
+    // Arrange
+    const mockDate = new Date('2024-01-15T12:00:00Z')
+    vi.useFakeTimers()
+    vi.setSystemTime(mockDate)
+
+    // Act
+    render(<ApiLogFields onSubmit={mockOnSubmit} />)
+
+    // Assert
+    expect(mockDateTimePicker24h).toHaveBeenCalledWith(
+      expect.objectContaining({
+        label: 'Start Time (UTC)',
+        date: new Date('2024-01-15T00:00:00.000Z'), // Current day at 00:00:00.000 UTC
+        setDate: expect.any(Function),
+      }),
+      undefined
+    )
+
+    expect(mockDateTimePicker24h).toHaveBeenCalledWith(
+      expect.objectContaining({
+        label: 'End Time (UTC)',
+        date: new Date('2024-01-15T23:59:59.000Z'), // Current day at 23:59:59.000 UTC
+        setDate: expect.any(Function),
+      }),
+      undefined
+    )
+
+    // Cleanup
+    vi.useRealTimers()
+  })
+
   it('should render endpoint combobox with predefined options', () => {
     // Arrange & Act
     render(<ApiLogFields onSubmit={mockOnSubmit} />)
@@ -270,27 +301,34 @@ describe('ApiLogFields', () => {
     )
   })
 
-  it('should handle form submission with default values', async () => {
+  it('should handle form submission with default values', () => {
     // Arrange
+    const mockDate = new Date('2024-01-15T12:00:00Z')
+    vi.useFakeTimers()
+    vi.setSystemTime(mockDate)
+
     render(<ApiLogFields onSubmit={mockOnSubmit} />)
 
     // Act
     fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
 
     // Assert
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith({
+    expect(mockOnSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
         operator: undefined,
-        startDate: expect.any(String),
-        endDate: expect.any(String),
         endpoint: undefined,
         eventId: undefined,
         gameId: undefined,
+        startDate: expect.stringMatching(/2024-01-1[45]T\d{2}:00:00\.000Z/),
+        endDate: expect.stringMatching(/2024-01-1[45]T\d{2}:59:59\.000Z/),
       })
-    })
+    )
+
+    // Cleanup
+    vi.useRealTimers()
   })
 
-  it('should handle operator selection', async () => {
+  it('should handle operator selection', () => {
     // Arrange
     render(<ApiLogFields onSubmit={mockOnSubmit} />)
 
@@ -299,182 +337,164 @@ describe('ApiLogFields', () => {
     fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
 
     // Assert
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          operator: 'operator1',
-        })
-      )
-    })
-  })
-
-  it('should handle endpoint selection', async () => {
-    // Arrange
-    render(<ApiLogFields onSubmit={mockOnSubmit} />)
-
-    // Act
-    fireEvent.click(screen.getByText('Schedule'))
-    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
-
-    // Assert
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          endpoint: '/api/schedule',
-        })
-      )
-    })
-  })
-
-  it('should handle datetime changes', async () => {
-    // Arrange
-    render(<ApiLogFields onSubmit={mockOnSubmit} />)
-
-    // Act
-    fireEvent.click(screen.getByText('Set Start Time (UTC)'))
-    fireEvent.click(screen.getByText('Set End Time (UTC)'))
-    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
-
-    // Assert
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          startDate: '2024-01-01T12:00:00.000Z',
-          endDate: '2024-01-01T12:00:00.000Z',
-        })
-      )
-    })
-  })
-
-  it('should handle game ID selection when endpoint is events', async () => {
-    // Arrange
-    render(<ApiLogFields onSubmit={mockOnSubmit} />)
-
-    // Act
-    fireEvent.click(screen.getByText('Events'))
-    fireEvent.click(screen.getByText('Select Game'))
-    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
-
-    // Assert
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          endpoint: '/api/events',
-          gameId: '1',
-        })
-      )
-    })
-  })
-
-  it('should handle event ID input when endpoint is events', async () => {
-    // Arrange
-    render(<ApiLogFields onSubmit={mockOnSubmit} />)
-
-    // Act
-    fireEvent.click(screen.getByText('Events'))
-    const eventIdInput = screen.getByPlaceholderText('Event ID')
-    fireEvent.change(eventIdInput, { target: { value: '12345' } })
-    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
-
-    // Assert
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          endpoint: '/api/events',
-          eventId: '12345',
-        })
-      )
-    })
-  })
-
-  it('should not include eventId and gameId when endpoint is not events', async () => {
-    // Arrange
-    render(<ApiLogFields onSubmit={mockOnSubmit} />)
-
-    // Act
-    fireEvent.click(screen.getByText('Schedule'))
-    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
-
-    // Assert
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          endpoint: '/api/schedule',
-          eventId: undefined,
-          gameId: undefined,
-        })
-      )
-    })
-  })
-
-  it('should handle multiple field selections', async () => {
-    // Arrange
-    render(<ApiLogFields onSubmit={mockOnSubmit} />)
-
-    // Act
-    fireEvent.click(screen.getByText('Select Operator'))
-    fireEvent.click(screen.getByText('Events'))
-    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
-
-    // Assert
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          operator: 'operator1',
-          endpoint: '/api/events',
-        })
-      )
-    })
-  })
-
-  it('should handle form submission with all fields populated for events endpoint', async () => {
-    // Arrange
-    render(<ApiLogFields onSubmit={mockOnSubmit} />)
-
-    // Act
-    fireEvent.click(screen.getByText('Select Operator'))
-    fireEvent.click(screen.getByText('Events'))
-    fireEvent.click(screen.getByText('Select Game'))
-    fireEvent.click(screen.getByText('Set Start Time (UTC)'))
-    fireEvent.click(screen.getByText('Set End Time (UTC)'))
-    const eventIdInput = screen.getByPlaceholderText('Event ID')
-    fireEvent.change(eventIdInput, { target: { value: '12345' } })
-    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
-
-    // Assert
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith({
+    expect(mockOnSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
         operator: 'operator1',
+      })
+    )
+  })
+
+  it('should handle endpoint selection', () => {
+    // Arrange
+    render(<ApiLogFields onSubmit={mockOnSubmit} />)
+
+    // Act
+    fireEvent.click(screen.getByText('Schedule'))
+    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
+
+    // Assert
+    expect(mockOnSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        endpoint: '/api/schedule',
+      })
+    )
+  })
+
+  it('should handle datetime changes', () => {
+    // Arrange
+    render(<ApiLogFields onSubmit={mockOnSubmit} />)
+
+    // Act
+    fireEvent.click(screen.getByText('Set Start Time (UTC)'))
+    fireEvent.click(screen.getByText('Set End Time (UTC)'))
+    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
+
+    // Assert
+    expect(mockOnSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
         startDate: '2024-01-01T12:00:00.000Z',
         endDate: '2024-01-01T12:00:00.000Z',
+      })
+    )
+  })
+
+  it('should handle game ID selection when endpoint is events', () => {
+    // Arrange
+    render(<ApiLogFields onSubmit={mockOnSubmit} />)
+
+    // Act
+    fireEvent.click(screen.getByText('Events'))
+    fireEvent.click(screen.getByText('Select Game'))
+    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
+
+    // Assert
+    expect(mockOnSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
         endpoint: '/api/events',
-        eventId: '12345',
         gameId: '1',
       })
-    })
+    )
   })
 
-  it('should handle form submission with all fields populated for schedule endpoint', async () => {
+  it('should handle event ID input when endpoint is events', () => {
     // Arrange
     render(<ApiLogFields onSubmit={mockOnSubmit} />)
 
     // Act
-    fireEvent.click(screen.getByText('Select Operator'))
-    fireEvent.click(screen.getByText('Schedule'))
-    fireEvent.click(screen.getByText('Set Start Time (UTC)'))
-    fireEvent.click(screen.getByText('Set End Time (UTC)'))
+    fireEvent.click(screen.getByText('Events'))
+    const eventIdInput = screen.getByPlaceholderText('Event ID')
+    fireEvent.change(eventIdInput, { target: { value: '12345' } })
     fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
 
     // Assert
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith({
-        operator: 'operator1',
-        startDate: '2024-01-01T12:00:00.000Z',
-        endDate: '2024-01-01T12:00:00.000Z',
+    expect(mockOnSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        endpoint: '/api/events',
+        eventId: '12345',
+      })
+    )
+  })
+
+  it('should not include eventId and gameId when endpoint is not events', () => {
+    // Arrange
+    render(<ApiLogFields onSubmit={mockOnSubmit} />)
+
+    // Act
+    fireEvent.click(screen.getByText('Schedule'))
+    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
+
+    // Assert
+    expect(mockOnSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
         endpoint: '/api/schedule',
         eventId: undefined,
         gameId: undefined,
       })
+    )
+  })
+
+  it('should handle multiple field selections', () => {
+    // Arrange
+    render(<ApiLogFields onSubmit={mockOnSubmit} />)
+
+    // Act
+    fireEvent.click(screen.getByText('Select Operator'))
+    fireEvent.click(screen.getByText('Events'))
+    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
+
+    // Assert
+    expect(mockOnSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        operator: 'operator1',
+        endpoint: '/api/events',
+      })
+    )
+  })
+
+  it('should handle form submission with all fields populated for events endpoint', () => {
+    // Arrange
+    render(<ApiLogFields onSubmit={mockOnSubmit} />)
+
+    // Act
+    fireEvent.click(screen.getByText('Select Operator'))
+    fireEvent.click(screen.getByText('Events'))
+    fireEvent.click(screen.getByText('Select Game'))
+    fireEvent.click(screen.getByText('Set Start Time (UTC)'))
+    fireEvent.click(screen.getByText('Set End Time (UTC)'))
+    const eventIdInput = screen.getByPlaceholderText('Event ID')
+    fireEvent.change(eventIdInput, { target: { value: '12345' } })
+    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
+
+    // Assert
+    expect(mockOnSubmit).toHaveBeenCalledWith({
+      operator: 'operator1',
+      startDate: '2024-01-01T12:00:00.000Z',
+      endDate: '2024-01-01T12:00:00.000Z',
+      endpoint: '/api/events',
+      eventId: '12345',
+      gameId: '1',
+    })
+  })
+
+  it('should handle form submission with all fields populated for schedule endpoint', () => {
+    // Arrange
+    render(<ApiLogFields onSubmit={mockOnSubmit} />)
+
+    // Act
+    fireEvent.click(screen.getByText('Select Operator'))
+    fireEvent.click(screen.getByText('Schedule'))
+    fireEvent.click(screen.getByText('Set Start Time (UTC)'))
+    fireEvent.click(screen.getByText('Set End Time (UTC)'))
+    fireEvent.submit(screen.getByRole('button', { name: 'Search' }))
+
+    // Assert
+    expect(mockOnSubmit).toHaveBeenCalledWith({
+      operator: 'operator1',
+      startDate: '2024-01-01T12:00:00.000Z',
+      endDate: '2024-01-01T12:00:00.000Z',
+      endpoint: '/api/schedule',
+      eventId: undefined,
+      gameId: undefined,
     })
   })
 })

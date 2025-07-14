@@ -17,8 +17,8 @@ export function ApiLog() {
       return
     }
 
-    if (Math.abs(new Date(data.endDate).getTime() - new Date(data.startDate).getTime()) > 1000 * 60 * 60 * 24) {
-      toast.error("Query time range must be within 24 hours")
+    if (Math.abs(new Date(data.endDate).getTime() - new Date(data.startDate).getTime()) > 1000 * 60 * 60 * 24*7) {
+      toast.error("Query time range must be within 7 days")
       return
     }
 

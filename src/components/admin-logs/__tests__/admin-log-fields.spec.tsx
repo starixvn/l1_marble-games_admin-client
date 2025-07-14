@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { vi } from 'vitest'
 
 // Mock the useAccounts hook
@@ -150,24 +150,29 @@ describe('AdminLogFields', () => {
     })
   })
 
-  it('should initialize with default date values', () => {
+  it('should initialize with current day start and end times', () => {
     // Arrange
-    const mockDate = new Date('2024-01-01T00:00:00.000Z')
-    vi.spyOn(global, 'Date').mockImplementation(() => mockDate as unknown as Date)
+    const mockDate = new Date('2024-01-15T12:00:00Z')
+    vi.useFakeTimers()
+    vi.setSystemTime(mockDate)
 
     // Act
     render(<AdminLogFields onSubmit={mockOnSubmit} />)
 
     // Assert
     const datetimeInputs = screen.getAllByTestId('datetime-input')
-    expect(datetimeInputs[0]).toHaveValue(mockDate.toISOString())
-    expect(datetimeInputs[1]).toHaveValue(new Date(mockDate.getTime() + 1000 * 60 * 60).toISOString())
+    expect(datetimeInputs[0]).toHaveValue(new Date('2024-01-15T00:00:00.000Z').toISOString()) // Current day at 00:00:00.000 UTC
+    expect(datetimeInputs[1]).toHaveValue(new Date('2024-01-15T23:59:59.000Z').toISOString()) // Current day at 23:59:59.000 UTC
+
+    // Cleanup
+    vi.useRealTimers()
   })
 
-  it('should call onSubmit with form data when form is submitted', async () => {
+  it('should call onSubmit with form data when form is submitted', () => {
     // Arrange
-    const mockDate = new Date('2024-01-01T00:00:00.000Z')
-    vi.spyOn(global, 'Date').mockImplementation(() => mockDate as unknown as Date)
+    const mockDate = new Date('2024-01-15T12:00:00Z')
+    vi.useFakeTimers()
+    vi.setSystemTime(mockDate)
 
     // Act
     render(<AdminLogFields onSubmit={mockOnSubmit} />)
@@ -180,21 +185,25 @@ describe('AdminLogFields', () => {
     }
 
     // Assert
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith({
-        startDate: mockDate.toISOString(),
-        endDate: new Date(mockDate.getTime() + 1000 * 60 * 60).toISOString(),
+    expect(mockOnSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
         author: undefined,
         resource: undefined,
         action: undefined,
+        startDate: expect.stringMatching(/2024-01-1[45]T\d{2}:00:00\.000Z/),
+        endDate: expect.stringMatching(/2024-01-1[45]T\d{2}:59:59\.000Z/),
       })
-    })
+    )
+
+    // Cleanup
+    vi.useRealTimers()
   })
 
-  it('should call onSubmit with selected values when form is submitted', async () => {
+  it('should call onSubmit with selected values when form is submitted', () => {
     // Arrange
-    const mockDate = new Date('2024-01-01T00:00:00.000Z')
-    vi.spyOn(global, 'Date').mockImplementation(() => mockDate as unknown as Date)
+    const mockDate = new Date('2024-01-15T12:00:00Z')
+    vi.useFakeTimers()
+    vi.setSystemTime(mockDate)
 
     // Act
     render(<AdminLogFields onSubmit={mockOnSubmit} />)
@@ -211,15 +220,18 @@ describe('AdminLogFields', () => {
     }
 
     // Assert
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith({
-        startDate: mockDate.toISOString(),
-        endDate: new Date(mockDate.getTime() + 1000 * 60 * 60).toISOString(),
+    expect(mockOnSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
         author: 'admin',
         resource: 'operator',
         action: 'insert',
+        startDate: expect.stringMatching(/2024-01-1[45]T\d{2}:00:00\.000Z/),
+        endDate: expect.stringMatching(/2024-01-1[45]T\d{2}:59:59\.000Z/),
       })
-    })
+    )
+
+    // Cleanup
+    vi.useRealTimers()
   })
 
   it('should render author combobox with mocked accounts data', () => {

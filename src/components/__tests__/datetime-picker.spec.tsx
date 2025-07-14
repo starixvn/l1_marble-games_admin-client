@@ -158,7 +158,10 @@ describe('DateTimePicker24h', () => {
 
     // Assert
     expect(screen.getByText('01/01/2024 12:30')).toBeInTheDocument()
-    expect(mockFormat).toHaveBeenCalledWith(mockProps.date, 'MM/dd/yyyy HH:mm')
+    expect(mockFormat).toHaveBeenCalledWith(
+      expect.any(Date), // The UTC date object created from UTC components
+      'MM/dd/yyyy HH:mm'
+    )
     expect(mockButton).toHaveBeenCalledWith(
       expect.objectContaining({
         variant: 'outline',

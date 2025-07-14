@@ -6,9 +6,15 @@ import { useAdminLog } from "@/hooks/useAdminLog"
 import { useState } from "react"
 
 export function AdminLog() {
-  const [adminLogQuery, setAdminLogQuery] = useState<AdminLogQuery>({
-    startDate: new Date().toISOString(),
-    endDate: new Date(new Date().getTime() + 1000 * 60 * 60).toISOString(),
+  const [adminLogQuery, setAdminLogQuery] = useState<AdminLogQuery>(() => {
+    const now = new Date()
+    const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0))
+    const endOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 0))
+    
+    return {
+      startDate: startOfDay.toISOString(),
+      endDate: endOfDay.toISOString(),
+    }
   })
 
   const { data: adminLogs, isLoading, isError } = useAdminLog(adminLogQuery)
@@ -19,8 +25,8 @@ export function AdminLog() {
       return
     }
 
-    if (Math.abs(new Date(data.endDate).getTime() - new Date(data.startDate).getTime()) > 1000 * 60 * 60 * 24) {
-      toast.error('Query time range must be within 24 hours')
+    if (Math.abs(new Date(data.endDate).getTime() - new Date(data.startDate).getTime()) > 1000 * 60 * 60 * 24 * 7) {
+      toast.error('Query time range must be within 7 days')
       return
     }
 
