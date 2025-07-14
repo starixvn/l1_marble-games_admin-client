@@ -1,4 +1,4 @@
-import { format } from "date-fns"
+import { formatInTimeZone } from "date-fns-tz"
 import { Button } from "@/components/ui/button"
 import { TableCell, TableRow } from "@/components/ui/table"
 import type { ApiLogQuery, ApiLogResponseItem } from "@/api/api-log.api"
@@ -15,7 +15,7 @@ export function ApiLogTableItem({ apiQuery, dataItem, handleRequestDialogOpen, h
 
   return (
     <TableRow>
-      <TableCell>{format(dataItem.timestamp, "MM/dd/yyyy HH:mm:ss")}</TableCell>
+      <TableCell>{formatInTimeZone(dataItem.timestamp, "UTC", "MM/dd/yyyy HH:mm:ss")}</TableCell>
       <TableCell>{dataItem.user?.userId ?? "Unauthenticated"}</TableCell>
       <TableCell className="text-amber-600">{dataItem.request.path}</TableCell>
       {apiQuery?.endpoint === "/api/events" && (

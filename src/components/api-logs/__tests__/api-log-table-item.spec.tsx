@@ -4,14 +4,14 @@ import { ApiLogTableItem } from '../api-log-table-item'
 import type { ApiLogResponseItem } from '@/api/api-log.api'
 
 // Mock external dependencies
-vi.mock('date-fns', () => ({
-  format: vi.fn(),
+vi.mock('date-fns-tz', () => ({
+  formatInTimeZone: vi.fn(),
 }))
 
 // Import mocked functions
-import { format } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 
-const mockFormat = vi.mocked(format)
+const mockFormatInTimeZone = vi.mocked(formatInTimeZone)
 
 const defaultApiQuery = {
   startDate: '2024-01-01T00:00:00Z',
@@ -42,7 +42,7 @@ describe('ApiLogTableItem', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    mockFormat.mockReturnValue('01/01/2024 10:00:00')
+    mockFormatInTimeZone.mockReturnValue('01/01/2024 10:00:00')
   })
 
   it('should render all table cells with correct data', () => {
@@ -76,7 +76,7 @@ describe('ApiLogTableItem', () => {
     )
 
     // Assert
-    expect(mockFormat).toHaveBeenCalledWith('2024-01-01T10:00:00Z', 'MM/dd/yyyy HH:mm:ss')
+    expect(mockFormatInTimeZone).toHaveBeenCalledWith('2024-01-01T10:00:00Z', 'UTC', 'MM/dd/yyyy HH:mm:ss')
   })
 
   it('should display "Unauthenticated" when user is not available', () => {

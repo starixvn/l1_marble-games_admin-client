@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { vi } from 'vitest'
 
-vi.mock('date-fns', () => ({
-  format: vi.fn((date, formatString) => {
+vi.mock('date-fns-tz', () => ({
+  formatInTimeZone: vi.fn((date, timezone, formatString) => {
     if (formatString === 'MM/dd/yyyy HH:mm:ss') {
       return '01/01/2024 00:00:00'
     }
