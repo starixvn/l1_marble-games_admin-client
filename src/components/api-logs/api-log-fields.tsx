@@ -18,11 +18,11 @@ export function ApiLogFields({ onSubmit }: Readonly<ApiLogFieldsProps>) {
   const [operatorId, setOperatorId] = useState<string | null>(null)
   const [startDate, setStartDate] = useState<Date>(() => {
     const now = new Date()
-    return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0))
+    return new Date(now.getTime() - 60 * 60 * 1000)
   })
   const [endDate, setEndDate] = useState<Date>(() => {
     const now = new Date()
-    return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 0))
+    return new Date(now.getTime() + 60 * 60 * 1000)
   })
   const [endpoint, setEndpoint] = useState<string | null>(null)
   const [eventId, setEventId] = useState<string | null>(null)
@@ -54,11 +54,11 @@ export function ApiLogFields({ onSubmit }: Readonly<ApiLogFieldsProps>) {
       </div>
       <DateTimePicker24h label="Start Time (UTC)" date={startDate} setDate={(date) => setStartDate(date ?? (() => {
         const now = new Date()
-        return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0))
+        return new Date(now.getTime() - 60 * 60 * 1000) // 1 hour ago
       })())} />
       <DateTimePicker24h label="End Time (UTC)" date={endDate} setDate={(date) => setEndDate(date ?? (() => {
         const now = new Date()
-        return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 0))
+        return new Date(now.getTime() + 60 * 60 * 1000) // 1 hour from now
       })())} />
       <div className="flex flex-col gap-3">
         <Label className="text-sm font-medium">Type</Label>

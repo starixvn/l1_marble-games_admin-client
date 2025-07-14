@@ -203,7 +203,7 @@ describe('ApiLogFields', () => {
     expect(mockDateTimePicker24h).toHaveBeenCalledTimes(2)
   })
 
-  it('should initialize with current day start and end times', () => {
+  it('should initialize with 1 hour ago and 1 hour from now', () => {
     // Arrange
     const mockDate = new Date('2024-01-15T12:00:00Z')
     vi.useFakeTimers()
@@ -216,7 +216,7 @@ describe('ApiLogFields', () => {
     expect(mockDateTimePicker24h).toHaveBeenCalledWith(
       expect.objectContaining({
         label: 'Start Time (UTC)',
-        date: new Date('2024-01-15T00:00:00.000Z'), // Current day at 00:00:00.000 UTC
+        date: new Date('2024-01-15T11:00:00.000Z'), // 1 hour ago
         setDate: expect.any(Function),
       }),
       undefined
@@ -225,7 +225,7 @@ describe('ApiLogFields', () => {
     expect(mockDateTimePicker24h).toHaveBeenCalledWith(
       expect.objectContaining({
         label: 'End Time (UTC)',
-        date: new Date('2024-01-15T23:59:59.000Z'), // Current day at 23:59:59.000 UTC
+        date: new Date('2024-01-15T13:00:00.000Z'), // 1 hour from now
         setDate: expect.any(Function),
       }),
       undefined
@@ -319,8 +319,8 @@ describe('ApiLogFields', () => {
         endpoint: undefined,
         eventId: undefined,
         gameId: undefined,
-        startDate: expect.stringMatching(/2024-01-1[45]T\d{2}:00:00\.000Z/),
-        endDate: expect.stringMatching(/2024-01-1[45]T\d{2}:59:59\.000Z/),
+        startDate: '2024-01-15T11:00:00.000Z', // 1 hour ago
+        endDate: '2024-01-15T13:00:00.000Z', // 1 hour from now
       })
     )
 
