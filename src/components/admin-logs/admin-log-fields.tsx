@@ -1,0 +1,118 @@
+import type { AdminLogQuery } from '@/api/admin-log.api'
+import { useState } from 'react'
+import { DateTimePicker24h } from '@/components/datetime-picker'
+import { Label } from '@/components/ui/label'
+import { Combobox, type ComboboxGenericProp } from '@/components/combobox'
+import { Button } from '@/components/ui/button'
+import { useAccounts } from '@/hooks/useAccounts'
+
+export type AdminLogFieldsProps = {
+  onSubmit: (data: AdminLogQuery) => void
+}
+
+const resourceList = [
+  {
+    name: "operator",
+    value: "operator"
+  },
+  {
+    name: "game-config",
+    value: "game-config"
+  },
+  {
+    name: "game-config-schema",
+    value: "game-config-schema"
+  },
+  {
+    name: "game-integration",
+    value: "game-integration",
+  },
+  {
+    name: "account",
+    value: "account",
+  }
+]
+
+
+const actionList = [
+  {
+    name: "insert",
+    value: "insert"
+  },
+  {
+    name: "update",
+    value: "update"
+  },
+  {
+    name: "delete",
+    value: "delete"
+  }
+]
+
+export function AdminLogFields({ onSubmit }: Readonly<AdminLogFieldsProps>) {
+  const [startDate, setStartDate] = useState<Date>(() => {
+    const now = new Date()
+    return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0))
+  })
+  const [endDate, setEndDate] = useState<Date>(() => {
+    const now = new Date()
+    return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 0))
+  })
+  const [author, setAuthor] = useState<string | undefined>(undefined)
+  const [resource, setResource] = useState<string | undefined>(undefined)
+  const [action, setAction] = useState<string | undefined>(undefined)
+  const { data: accounts } = useAccounts()
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    onSubmit({
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      author,
+      resource,
+      action,
+    })
+  }
+
+  return <form className="flex flex-col lg:flex-row lg:items-center gap-3" onSubmit={handleSubmit}>
+    <DateTimePicker24h label="Start Time (UTC)" date={startDate} setDate={(date) => setStartDate(date)} />
+    <DateTimePicker24h label="End Time (UTC)" date={endDate} setDate={(date) => setEndDate(date)} />
+    <div className="flex flex-col gap-3">
+        <Label className="text-sm font-medium">Author</Label>
+        <Combobox
+          list={accounts?.map((account) => ({ name: account.username, value: account.username })) ?? []}
+          currentValue={author}
+          setCurrentValue={setAuthor as (value: ComboboxGenericProp) => void}
+          keyProp="name"
+          valueProp="value"
+          valueFormatter={(item) => `${item.name}`}
+        />
+      </div>
+      <div className="flex flex-col gap-3">
+        <Label className="text-sm font-medium">Resource</Label>
+        <Combobox
+          list={resourceList}
+          currentValue={resource}
+          setCurrentValue={setResource as (value: ComboboxGenericProp) => void}
+          keyProp="name"
+          valueProp="value"
+          valueFormatter={(item) => `${item.name}`}
+        />
+      </div>
+      <div className="flex flex-col gap-3">
+        <Label className="text-sm font-medium">Action</Label>
+        <Combobox
+          list={actionList}
+          currentValue={action}
+          setCurrentValue={setAction as (value: ComboboxGenericProp) => void}
+          keyProp="name"
+          valueProp="value"
+          valueFormatter={(item) => `${item.name}`}
+        />
+      </div>
+      <div className="flex flex-col gap-3">
+        <Label className="text-sm font-medium">&nbsp;</Label>
+        <Button className="w-24" variant="outline" type="submit">Search</Button>
+      </div>
+  </form>
+}
