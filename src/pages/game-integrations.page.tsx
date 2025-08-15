@@ -73,7 +73,6 @@ export function GameIntegrationsPage() {
   }
 
   const handleDeleteClick = (param: GameIntegrationConfigParam) => {
-    console.log('handleDeleteClick', param)
     setCurrentDialogParam(param)
     setIsConfirmationPopupOpen(true)
   }
@@ -98,8 +97,9 @@ export function GameIntegrationsPage() {
         },
         {
           onSuccess: () => {
-            toast.success('Game integration updated successfully')
-            gameIntegrationListQuery.refetch()
+            toast.success('Game integration updated successfully');
+            gameIntegrationListQuery.refetch();
+            setIsConfigDialogOpen(false);
           },
           onError: () => {
             toast.error('Failed to update game integration')
