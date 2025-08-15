@@ -10,7 +10,7 @@
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "test": "vitest",
-    "test:cov": "vitest run --coverage",
+    "test-coverage": "vitest run --coverage",
     "prepare": "husky"
   },
   "dependencies": {
