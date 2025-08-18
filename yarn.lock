@@ -40,21 +40,21 @@
   resolved "http://npm.lumigame.com/@babel/compat-data/-/compat-data-7.27.5.tgz#7d0658ec1a8420fc866d1df1b03bea0e79934c82"
   integrity sha512-KiRAp/VoJaWkkte84TvUd9qjdbZAdiqyvMxrGl1N6vzFogKmaLgoM3L1kgtLicp2HP5fBJS8JrZKLVIZGVJAVg==
 
-"@babel/core@^7.26.10":
-  version "7.27.4"
-  resolved "http://npm.lumigame.com/@babel/core/-/core-7.27.4.tgz#cc1fc55d0ce140a1828d1dd2a2eba285adbfb3ce"
-  integrity sha512-bXYxrXFubeYdvB0NhD/NBB3Qi6aZeV20GOWVI47t2dkecCEoneR4NPVcb7abpXDEvejgrUfFtG6vG/zxAKmg+g==
+"@babel/core@^7.28.0":
+  version "7.28.3"
+  resolved "http://npm.lumigame.com/@babel/core/-/core-7.28.3.tgz#aceddde69c5d1def69b839d09efa3e3ff59c97cb"
+  integrity sha512-yDBHV9kQNcr2/sUr9jghVyz9C3Y5G2zUM2H2lo+9mKv4sFgbA8s8Z9t8D1jiTkGoO/NoIfKMyKWr4s6CN23ZwQ==
   dependencies:
     "@ampproject/remapping" "^2.2.0"
     "@babel/code-frame" "^7.27.1"
-    "@babel/generator" "^7.27.3"
+    "@babel/generator" "^7.28.3"
     "@babel/helper-compilation-targets" "^7.27.2"
-    "@babel/helper-module-transforms" "^7.27.3"
-    "@babel/helpers" "^7.27.4"
-    "@babel/parser" "^7.27.4"
+    "@babel/helper-module-transforms" "^7.28.3"
+    "@babel/helpers" "^7.28.3"
+    "@babel/parser" "^7.28.3"
     "@babel/template" "^7.27.2"
-    "@babel/traverse" "^7.27.4"
-    "@babel/types" "^7.27.3"
+    "@babel/traverse" "^7.28.3"
+    "@babel/types" "^7.28.2"
     convert-source-map "^2.0.0"
     debug "^4.1.0"
     gensync "^1.0.0-beta.2"
@@ -72,6 +72,17 @@
     "@jridgewell/trace-mapping" "^0.3.25"
     jsesc "^3.0.2"
 
+"@babel/generator@^7.28.3":
+  version "7.28.3"
+  resolved "http://npm.lumigame.com/@babel/generator/-/generator-7.28.3.tgz#9626c1741c650cbac39121694a0f2d7451b8ef3e"
+  integrity sha512-3lSpxGgvnmZznmBkCRnVREPUFJv2wrv9iAoFDvADJc0ypmdOxdUtcLeBgBJ6zE0PMeTKnxeQzyk0xTBq4Ep7zw==
+  dependencies:
+    "@babel/parser" "^7.28.3"
+    "@babel/types" "^7.28.2"
+    "@jridgewell/gen-mapping" "^0.3.12"
+    "@jridgewell/trace-mapping" "^0.3.28"
+    jsesc "^3.0.2"
+
 "@babel/helper-compilation-targets@^7.27.2":
   version "7.27.2"
   resolved "http://npm.lumigame.com/@babel/helper-compilation-targets/-/helper-compilation-targets-7.27.2.tgz#46a0f6efab808d51d29ce96858dd10ce8732733d"
@@ -83,6 +94,11 @@
     lru-cache "^5.1.1"
     semver "^6.3.1"
 
+"@babel/helper-globals@^7.28.0":
+  version "7.28.0"
+  resolved "http://npm.lumigame.com/@babel/helper-globals/-/helper-globals-7.28.0.tgz#b9430df2aa4e17bc28665eadeae8aa1d985e6674"
+  integrity sha512-+W6cISkXFa1jXsDEdYA8HeevQT/FULhxzR99pxphltZcVaugps53THCeiWA8SguxxpSp3gKPiuYfSWopkLQ4hw==
+
 "@babel/helper-module-imports@^7.27.1":
   version "7.27.1"
   resolved "http://npm.lumigame.com/@babel/helper-module-imports/-/helper-module-imports-7.27.1.tgz#7ef769a323e2655e126673bb6d2d6913bbead204"
@@ -91,14 +107,14 @@
     "@babel/traverse" "^7.27.1"
     "@babel/types" "^7.27.1"
 
-"@babel/helper-module-transforms@^7.27.3":
-  version "7.27.3"
-  resolved "http://npm.lumigame.com/@babel/helper-module-transforms/-/helper-module-transforms-7.27.3.tgz#db0bbcfba5802f9ef7870705a7ef8788508ede02"
-  integrity sha512-dSOvYwvyLsWBeIRyOeHXp5vPj5l1I011r52FM1+r1jCERv+aFXYk4whgQccYEGYxK2H3ZAIA8nuPkQ0HaUo3qg==
+"@babel/helper-module-transforms@^7.28.3":
+  version "7.28.3"
+  resolved "http://npm.lumigame.com/@babel/helper-module-transforms/-/helper-module-transforms-7.28.3.tgz#a2b37d3da3b2344fe085dab234426f2b9a2fa5f6"
+  integrity sha512-gytXUbs8k2sXS9PnQptz5o0QnpLL51SwASIORY6XaBKF88nsOT0Zw9szLqlSGQDP/4TljBAD5y98p2U1fqkdsw==
   dependencies:
     "@babel/helper-module-imports" "^7.27.1"
     "@babel/helper-validator-identifier" "^7.27.1"
-    "@babel/traverse" "^7.27.3"
+    "@babel/traverse" "^7.28.3"
 
 "@babel/helper-plugin-utils@^7.27.1":
   version "7.27.1"
@@ -120,13 +136,13 @@
   resolved "http://npm.lumigame.com/@babel/helper-validator-option/-/helper-validator-option-7.27.1.tgz#fa52f5b1e7db1ab049445b421c4471303897702f"
   integrity sha512-YvjJow9FxbhFFKDSuFnVCe2WxXk1zWc22fFePVNEaWJEu8IrZVlda6N0uHwzZrUM1il7NC9Mlp4MaJYbYd9JSg==
 
-"@babel/helpers@^7.27.4":
-  version "7.27.4"
-  resolved "http://npm.lumigame.com/@babel/helpers/-/helpers-7.27.4.tgz#c79050c6a0e41e095bfc96d469c85431e9ed7fe7"
-  integrity sha512-Y+bO6U+I7ZKaM5G5rDUZiYfUvQPUibYmAFe7EnKdnKBbVXDZxvp+MWOH5gYciY0EPk4EScsuFMQBbEfpdRKSCQ==
+"@babel/helpers@^7.28.3":
+  version "7.28.3"
+  resolved "http://npm.lumigame.com/@babel/helpers/-/helpers-7.28.3.tgz#b83156c0a2232c133d1b535dd5d3452119c7e441"
+  integrity sha512-PTNtvUQihsAsDHMOP5pfobP8C6CM4JWXmP8DrEIt46c3r2bf87Ua1zoqevsMo9g+tWDwgWrFP5EIxuBx5RudAw==
   dependencies:
     "@babel/template" "^7.27.2"
-    "@babel/types" "^7.27.3"
+    "@babel/types" "^7.28.2"
 
 "@babel/parser@^7.1.0", "@babel/parser@^7.20.7", "@babel/parser@^7.27.2", "@babel/parser@^7.27.4", "@babel/parser@^7.27.5":
   version "7.27.5"
@@ -142,14 +158,21 @@
   dependencies:
     "@babel/types" "^7.28.0"
 
-"@babel/plugin-transform-react-jsx-self@^7.25.9":
+"@babel/parser@^7.28.3":
+  version "7.28.3"
+  resolved "http://npm.lumigame.com/@babel/parser/-/parser-7.28.3.tgz#d2d25b814621bca5fe9d172bc93792547e7a2a71"
+  integrity sha512-7+Ey1mAgYqFAx2h0RuoxcQT5+MlG3GTV0TQrgr7/ZliKsm/MNDxVVutlWaziMq7wJNAz8MTqz55XLpWvva6StA==
+  dependencies:
+    "@babel/types" "^7.28.2"
+
+"@babel/plugin-transform-react-jsx-self@^7.27.1":
   version "7.27.1"
   resolved "http://npm.lumigame.com/@babel/plugin-transform-react-jsx-self/-/plugin-transform-react-jsx-self-7.27.1.tgz#af678d8506acf52c577cac73ff7fe6615c85fc92"
   integrity sha512-6UzkCs+ejGdZ5mFFC/OCUrv028ab2fp1znZmCZjAOBKiBK2jXD1O+BPSfX8X2qjJ75fZBMSnQn3Rq2mrBJK2mw==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-react-jsx-source@^7.25.9":
+"@babel/plugin-transform-react-jsx-source@^7.27.1":
   version "7.27.1"
   resolved "http://npm.lumigame.com/@babel/plugin-transform-react-jsx-source/-/plugin-transform-react-jsx-source-7.27.1.tgz#dcfe2c24094bb757bf73960374e7c55e434f19f0"
   integrity sha512-zbwoTsBruTeKB9hSq73ha66iFeJHuaFkUbwvqElnygoNbj/jHRsSeokowZFN3CZ64IvEqcmmkVe89OPXc7ldAw==
@@ -170,7 +193,7 @@
     "@babel/parser" "^7.27.2"
     "@babel/types" "^7.27.1"
 
-"@babel/traverse@^7.27.1", "@babel/traverse@^7.27.3", "@babel/traverse@^7.27.4":
+"@babel/traverse@^7.27.1":
   version "7.27.4"
   resolved "http://npm.lumigame.com/@babel/traverse/-/traverse-7.27.4.tgz#b0045ac7023c8472c3d35effd7cc9ebd638da6ea"
   integrity sha512-oNcu2QbHqts9BtOWJosOVJapWjBDSxGCpFvikNR5TGDYDQf3JwpIoMzIKrvfoti93cLfPJEG4tH9SPVeyCGgdA==
@@ -182,6 +205,19 @@
     "@babel/types" "^7.27.3"
     debug "^4.3.1"
     globals "^11.1.0"
+
+"@babel/traverse@^7.28.3":
+  version "7.28.3"
+  resolved "http://npm.lumigame.com/@babel/traverse/-/traverse-7.28.3.tgz#6911a10795d2cce43ec6a28cffc440cca2593434"
+  integrity sha512-7w4kZYHneL3A6NP2nxzHvT3HCZ7puDZZjFMqDpBPECub79sTtSO5CGXDkKrTQq8ksAwfD/XI2MRFX23njdDaIQ==
+  dependencies:
+    "@babel/code-frame" "^7.27.1"
+    "@babel/generator" "^7.28.3"
+    "@babel/helper-globals" "^7.28.0"
+    "@babel/parser" "^7.28.3"
+    "@babel/template" "^7.27.2"
+    "@babel/types" "^7.28.2"
+    debug "^4.3.1"
 
 "@babel/types@^7.0.0", "@babel/types@^7.20.7", "@babel/types@^7.27.1", "@babel/types@^7.27.3":
   version "7.27.3"
@@ -195,6 +231,14 @@
   version "7.28.0"
   resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.28.0.tgz#2fd0159a6dc7353933920c43136335a9b264d950"
   integrity sha512-jYnje+JyZG5YThjHiF28oT4SIZLnYOcSBb6+SDaFIyzDVSkXQmQQYclJ2R+YxcdmK0AX6x1E5OQNtuh3jHDrUg==
+  dependencies:
+    "@babel/helper-string-parser" "^7.27.1"
+    "@babel/helper-validator-identifier" "^7.27.1"
+
+"@babel/types@^7.28.2":
+  version "7.28.2"
+  resolved "http://npm.lumigame.com/@babel/types/-/types-7.28.2.tgz#da9db0856a9a88e0a13b019881d7513588cf712b"
+  integrity sha512-ruv7Ae4J5dUYULmeXw1gmb7rYRz57OWCPM57pHojnLq/3Z1CK2lNSLTCVjxVk1F/TZHwOZZrOWi0ur95BbLxNQ==
   dependencies:
     "@babel/helper-string-parser" "^7.27.1"
     "@babel/helper-validator-identifier" "^7.27.1"
@@ -568,6 +612,14 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.3.tgz#e45e384e4b8ec16bce2fd903af78450f6bf7ec98"
   integrity sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==
 
+"@jridgewell/gen-mapping@^0.3.12":
+  version "0.3.13"
+  resolved "http://npm.lumigame.com/@jridgewell/gen-mapping/-/gen-mapping-0.3.13.tgz#6342a19f44347518c93e43b1ac69deb3c4656a1f"
+  integrity sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==
+  dependencies:
+    "@jridgewell/sourcemap-codec" "^1.5.0"
+    "@jridgewell/trace-mapping" "^0.3.24"
+
 "@jridgewell/gen-mapping@^0.3.5":
   version "0.3.8"
   resolved "http://npm.lumigame.com/@jridgewell/gen-mapping/-/gen-mapping-0.3.8.tgz#4f0e06362e01362f823d348f1872b08f666d8142"
@@ -604,6 +656,14 @@
   version "0.3.25"
   resolved "http://npm.lumigame.com/@jridgewell/trace-mapping/-/trace-mapping-0.3.25.tgz#15f190e98895f3fc23276ee14bc76b675c2e50f0"
   integrity sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==
+  dependencies:
+    "@jridgewell/resolve-uri" "^3.1.0"
+    "@jridgewell/sourcemap-codec" "^1.4.14"
+
+"@jridgewell/trace-mapping@^0.3.28":
+  version "0.3.30"
+  resolved "http://npm.lumigame.com/@jridgewell/trace-mapping/-/trace-mapping-0.3.30.tgz#4a76c4daeee5df09f5d3940e087442fb36ce2b99"
+  integrity sha512-GQ7Nw5G2lTu/BtHTKfXhKHok2WGetd4XYcVKGx00SjAk8GMwgJM3zr6zORiPGuOE+/vkc90KtTosSSvaCjKb2Q==
   dependencies:
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
@@ -1189,6 +1249,11 @@
     ajv-formats "^2.1.1"
     lodash "^4.17.21"
     lodash-es "^4.17.21"
+
+"@rolldown/pluginutils@1.0.0-beta.30":
+  version "1.0.0-beta.30"
+  resolved "http://npm.lumigame.com/@rolldown/pluginutils/-/pluginutils-1.0.0-beta.30.tgz#ac55a2215c78a54ba67276524ac3dc8c195316d0"
+  integrity sha512-whXaSoNUFiyDAjkUF8OBpOm77Szdbk5lGNqFe6CbVbJFrhCCPinCbRA3NjawwlNHla1No7xvXXh+CpSxnPfUEw==
 
 "@rolldown/pluginutils@1.0.0-beta.9":
   version "1.0.0-beta.9"
@@ -1796,12 +1861,12 @@
   resolved "http://npm.lumigame.com/@types/json-schema/-/json-schema-7.0.15.tgz#596a1747233694d50f6ad8a7869fcb6f56cf5841"
   integrity sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==
 
-"@types/node@^22.15.29":
-  version "22.15.29"
-  resolved "http://npm.lumigame.com/@types/node/-/node-22.15.29.tgz#c75999124a8224a3f79dd8b6ccfb37d74098f678"
-  integrity sha512-LNdjOkUDlU1RZb8e1kOIUpN1qQUlzGkEtbVNo53vbrwDg5om6oduhm4SiUaPW5ASTXhAiP0jInWG8Qx9fVlOeQ==
+"@types/node@^24.0.0":
+  version "24.3.0"
+  resolved "http://npm.lumigame.com/@types/node/-/node-24.3.0.tgz#89b09f45cb9a8ee69466f18ee5864e4c3eb84dec"
+  integrity sha512-aPTXCrfwnDLj4VvXrm+UUCQjNEvJgNA8s5F1cvwQU+3KNltTOkBm1j30uNLyqqPNe7gE3KFzImYoZEfLhp4Yow==
   dependencies:
-    undici-types "~6.21.0"
+    undici-types "~7.10.0"
 
 "@types/react-dom@^19.1.2":
   version "19.1.6"
@@ -1920,15 +1985,15 @@
     "@rolldown/pluginutils" "1.0.0-beta.9"
     "@swc/core" "^1.11.22"
 
-"@vitejs/plugin-react@^4.5.1":
-  version "4.5.1"
-  resolved "http://npm.lumigame.com/@vitejs/plugin-react/-/plugin-react-4.5.1.tgz#19432712467ad3b81f24c85d695a6febf8d4cc11"
-  integrity sha512-uPZBqSI0YD4lpkIru6M35sIfylLGTyhGHvDZbNLuMA73lMlwJKz5xweH7FajfcCAc2HnINciejA9qTz0dr0M7A==
+"@vitejs/plugin-react@^5.0.0":
+  version "5.0.0"
+  resolved "http://npm.lumigame.com/@vitejs/plugin-react/-/plugin-react-5.0.0.tgz#5cfe3d3665d3d04b0df7a8356ffd59359f5d0220"
+  integrity sha512-Jx9JfsTa05bYkS9xo0hkofp2dCmp1blrKjw9JONs5BTHOvJCgLbaPSuZLGSVJW6u2qe0tc4eevY0+gSNNi0YCw==
   dependencies:
-    "@babel/core" "^7.26.10"
-    "@babel/plugin-transform-react-jsx-self" "^7.25.9"
-    "@babel/plugin-transform-react-jsx-source" "^7.25.9"
-    "@rolldown/pluginutils" "1.0.0-beta.9"
+    "@babel/core" "^7.28.0"
+    "@babel/plugin-transform-react-jsx-self" "^7.27.1"
+    "@babel/plugin-transform-react-jsx-source" "^7.27.1"
+    "@rolldown/pluginutils" "1.0.0-beta.30"
     "@types/babel__core" "^7.20.5"
     react-refresh "^0.17.0"
 
@@ -3345,10 +3410,10 @@ lucide-react@^0.503.0:
   resolved "http://npm.lumigame.com/lucide-react/-/lucide-react-0.503.0.tgz#4ac55b262fa613f9497531c9df50ea0e883d2de2"
   integrity sha512-HGGkdlPWQ0vTF8jJ5TdIqhQXZi6uh3LnNgfZ8MHiuxFfX3RZeA79r2MW2tHAZKlAVfoNE8esm3p+O6VkIvpj6w==
 
-lucide-react@^0.517.0:
-  version "0.517.0"
-  resolved "http://npm.lumigame.com/lucide-react/-/lucide-react-0.517.0.tgz#195ed8bd18e72462b012ba4e36d4474e480ff44c"
-  integrity sha512-TQCwwbwIuVG6SSutUC2Ol6PRXcuZndqoVAnDa7S7xb/RWPaiKTvLwX7byUKeh0pUgvtFh0NZZwFIDuMSeB7Iwg==
+lucide-react@^0.539.0:
+  version "0.539.0"
+  resolved "http://npm.lumigame.com/lucide-react/-/lucide-react-0.539.0.tgz#0d0fcd53ed7042c603d201035d9315171ed7654c"
+  integrity sha512-VVISr+VF2krO91FeuCrm1rSOLACQUYVy7NQkzrOty52Y8TlTPcXcMdQFj9bYzBgXbWCiywlwSZ3Z8u6a+6bMlg==
 
 lz-string@^1.5.0:
   version "1.5.0"
@@ -4160,15 +4225,15 @@ typescript-eslint@^8.30.1:
     "@typescript-eslint/parser" "8.33.1"
     "@typescript-eslint/utils" "8.33.1"
 
-typescript@~5.8.3:
-  version "5.8.3"
-  resolved "http://npm.lumigame.com/typescript/-/typescript-5.8.3.tgz#92f8a3e5e3cf497356f4178c34cd65a7f5e8440e"
-  integrity sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==
+typescript@~5.9.0:
+  version "5.9.2"
+  resolved "http://npm.lumigame.com/typescript/-/typescript-5.9.2.tgz#d93450cddec5154a2d5cabe3b8102b83316fb2a6"
+  integrity sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A==
 
-undici-types@~6.21.0:
-  version "6.21.0"
-  resolved "http://npm.lumigame.com/undici-types/-/undici-types-6.21.0.tgz#691d00af3909be93a7faa13be61b3a5b50ef12cb"
-  integrity sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==
+undici-types@~7.10.0:
+  version "7.10.0"
+  resolved "http://npm.lumigame.com/undici-types/-/undici-types-7.10.0.tgz#4ac2e058ce56b462b056e629cc6a02393d3ff350"
+  integrity sha512-t5Fy/nfn+14LuOc2KNYg75vZqClpAiqscVvMygNnlsHBFpSXdJaYtXMcdNLpl/Qvc3P2cB3s6lOV51nqsFq4ag==
 
 update-browserslist-db@^1.1.3:
   version "1.1.3"

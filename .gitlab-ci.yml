@@ -1,5 +1,5 @@
 variables:
-  NODEJS_IMAGE: hub.lumigame.com/base/node:20.9.0-alpine-24h1.1
+  NODEJS_IMAGE: hub.lumigame.com/docker-hub/library/node:24-alpine
 
 include:
   - project: 'ci/core-cicd'
