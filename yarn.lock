@@ -1472,6 +1472,16 @@
   resolved "http://npm.lumigame.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.48.0.tgz#808cefb05558e05d1a7865b4ff25ccd1aef18f42"
   integrity sha512-sq0hHLTgdtwOPDB5SJOuaoHyiP1qSwg+71TQWk8iDS04bW1wIE0oQ6otPiRj2ZvLYNASLMaTp8QRGUVZ+5OL5A==
 
+"@standard-schema/spec@^1.0.0":
+  version "1.0.0"
+  resolved "http://npm.lumigame.com/@standard-schema/spec/-/spec-1.0.0.tgz#f193b73dc316c4170f2e82a881da0f550d551b9c"
+  integrity sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==
+
+"@standard-schema/utils@^0.3.0":
+  version "0.3.0"
+  resolved "http://npm.lumigame.com/@standard-schema/utils/-/utils-0.3.0.tgz#3d5e608f16c2390c10528e98e59aef6bf73cae7b"
+  integrity sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==
+
 "@swc/core-darwin-arm64@1.11.31":
   version "1.11.31"
   resolved "http://npm.lumigame.com/@swc/core-darwin-arm64/-/core-darwin-arm64-1.11.31.tgz#840ec54a7757b26ea7a085122ed2d4f370cd41d9"
