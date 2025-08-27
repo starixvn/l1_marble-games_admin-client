@@ -1467,7 +1467,6 @@
   resolved "http://npm.lumigame.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.44.1.tgz#1c982f6a5044ffc2a35cd754a0951bdcb44d5ba0"
   integrity sha512-J8o22LuF0kTe7m+8PvW9wk3/bRq5+mRo5Dqo6+vXb7otCm3TPhYOJqOaQtGU9YMWQSL3krMnoOxMr0+9E6F3Ug==
 
-<<<<<<< HEAD
 "@rollup/rollup-win32-x64-msvc@4.48.0":
   version "4.48.0"
   resolved "http://npm.lumigame.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.48.0.tgz#808cefb05558e05d1a7865b4ff25ccd1aef18f42"
@@ -1483,16 +1482,10 @@
   resolved "http://npm.lumigame.com/@standard-schema/utils/-/utils-0.3.0.tgz#3d5e608f16c2390c10528e98e59aef6bf73cae7b"
   integrity sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==
 
-"@swc/core-darwin-arm64@1.11.31":
-  version "1.11.31"
-  resolved "http://npm.lumigame.com/@swc/core-darwin-arm64/-/core-darwin-arm64-1.11.31.tgz#840ec54a7757b26ea7a085122ed2d4f370cd41d9"
-  integrity sha512-NTEaYOts0OGSbJZc0O74xsji+64JrF1stmBii6D5EevWEtrY4wlZhm8SiP/qPrOB+HqtAihxWIukWkP2aSdGSQ==
-=======
 "@swc/core-darwin-arm64@1.13.4":
   version "1.13.4"
   resolved "http://npm.lumigame.com/@swc/core-darwin-arm64/-/core-darwin-arm64-1.13.4.tgz#2a9430ab5feba5e58554ff264bf4dbfb3a18b09b"
   integrity sha512-CGbTu9dGBwgklUj+NAQAYyPjBuoHaNRWK4QXJRv1QNIkhtE27aY7QA9uEON14SODxsio3t8+Pjjl2Mzx1Pxf+g==
->>>>>>> ffe3c01 (chore(deps): update dependency @vitejs/plugin-react-swc to v4)
 
 "@swc/core-darwin-x64@1.13.4":
   version "1.13.4"
