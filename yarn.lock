@@ -1419,10 +1419,17 @@
   resolved "http://npm.lumigame.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.48.0.tgz#808cefb05558e05d1a7865b4ff25ccd1aef18f42"
   integrity sha512-sq0hHLTgdtwOPDB5SJOuaoHyiP1qSwg+71TQWk8iDS04bW1wIE0oQ6otPiRj2ZvLYNASLMaTp8QRGUVZ+5OL5A==
 
+<<<<<<< HEAD
 "@standard-schema/spec@^1.0.0":
   version "1.0.0"
   resolved "http://npm.lumigame.com/@standard-schema/spec/-/spec-1.0.0.tgz#f193b73dc316c4170f2e82a881da0f550d551b9c"
   integrity sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==
+=======
+"@swc/core-darwin-arm64@1.13.5":
+  version "1.13.5"
+  resolved "http://npm.lumigame.com/@swc/core-darwin-arm64/-/core-darwin-arm64-1.13.5.tgz#7638c073946f9297753ed9a2eb198d07b2336a24"
+  integrity sha512-lKNv7SujeXvKn16gvQqUQI5DdyY8v7xcoO3k06/FJbHJS90zEwZdQiMNRiqpYw/orU543tPaWgz7cIYWhbopiQ==
+>>>>>>> 31b55b8 (chore: bump yarnlock)
 
 <<<<<<< HEAD
 "@standard-schema/utils@^0.3.0":
