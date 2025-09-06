@@ -1272,9 +1272,9 @@
     react-is "^18.2.0"
 
 "@rjsf/validator-ajv8@^6.0.0-beta.8":
-  version "6.0.0-beta.14"
-  resolved "http://npm.lumigame.com/@rjsf/validator-ajv8/-/validator-ajv8-6.0.0-beta.14.tgz#b09169837679b5bf4bae27e07db7efa0f62d8383"
-  integrity sha512-I90CEAeAiWNZJbU5JK2zNFjNKCH5GmWN5yeYgZEN8FDORGeGV0+TkdeKRCveec2EMCqaHImphnT3oETNwMCgSQ==
+  version "6.0.0-beta.15"
+  resolved "http://npm.lumigame.com/@rjsf/validator-ajv8/-/validator-ajv8-6.0.0-beta.15.tgz#ae8c236a7a3b1259c474833bed9bf0bfb3be6e46"
+  integrity sha512-M40hmygBfR8NlaR3JEiBJIqs03Qli7F5DRS7ypFDBDsZLcSm1Kd6BWbjC3EM2IutYyTgxg6lvi1lQw95PqqcYw==
   dependencies:
     ajv "^8.17.1"
     ajv-formats "^2.1.1"
