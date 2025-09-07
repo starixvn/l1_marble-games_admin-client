@@ -87,7 +87,7 @@
     "jsdom": "^26.1.0",
     "tw-animate-css": "^1.3.4",
     "typescript": "~5.9.0",
-    "typescript-eslint": "^8.30.1",
+    "typescript-eslint": "^8.41.0",
     "vite": "^7.0.0",
     "vitest": "^3.2.4"
   }
