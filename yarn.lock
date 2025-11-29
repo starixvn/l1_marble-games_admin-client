@@ -805,7 +805,7 @@
     "@radix-ui/react-use-is-hydrated" "0.1.0"
     "@radix-ui/react-use-layout-effect" "1.1.1"
 
-"@radix-ui/react-checkbox@^1.2.3", "@radix-ui/react-checkbox@^1.3.2":
+"@radix-ui/react-checkbox@^1.3.2", "@radix-ui/react-checkbox@^1.3.3":
   version "1.3.3"
   resolved "http://npm.lumigame.com/@radix-ui/react-checkbox/-/react-checkbox-1.3.3.tgz#db45ca8a6d5c056a92f74edbb564acee05318b79"
   integrity sha512-wBbpv+NQftHDdG86Qc0pIyXk5IR3tM8Vd0nWLKDcX8nNn4nXFOFwsKuqw2okA/1D/mpaAkmuyndrPJTYDNZtFw==
@@ -844,7 +844,7 @@
   resolved "http://npm.lumigame.com/@radix-ui/react-context/-/react-context-1.1.3.tgz#81286f643b310d040eaac13b18e223130861d839"
   integrity sha512-ieIFACdMpYfMEjF0rEf5KLvfVyIkOz6PDGyNnP+u+4xQ6jny3VCgA4OgXOwNx2aUkxn8zx9fiVcM8CfFYv9Lxw==
 
-"@radix-ui/react-dialog@1.1.15", "@radix-ui/react-dialog@^1.1.14":
+"@radix-ui/react-dialog@1.1.15", "@radix-ui/react-dialog@^1.1.14", "@radix-ui/react-dialog@^1.1.15":
   version "1.1.15"
   resolved "http://npm.lumigame.com/@radix-ui/react-dialog/-/react-dialog-1.1.15.tgz#1de3d7a7e9a17a9874d29c07f5940a18a119b632"
   integrity sha512-TCglVRtzlffRNxRMEyR36DGBLJpeusFcgMVD9PZEzAKnUs1lKCgX5u9BmC2Yg+LL9MgZDugFFs1Vl+Jp4t/PGw==
@@ -864,7 +864,7 @@
     aria-hidden "^1.2.4"
     react-remove-scroll "^2.6.3"
 
-"@radix-ui/react-dialog@^1.1.1", "@radix-ui/react-dialog@^1.1.11", "@radix-ui/react-dialog@^1.1.6":
+"@radix-ui/react-dialog@^1.1.1", "@radix-ui/react-dialog@^1.1.6":
   version "1.1.14"
   resolved "http://npm.lumigame.com/@radix-ui/react-dialog/-/react-dialog-1.1.14.tgz#4c69c80c258bc6561398cfce055202ea11075107"
   integrity sha512-+CpweKjqpzTmwRwcYECQcNYbI8V9VSQt0SNFKeEBLgfucbsLssU6Ppq7wUdNXEGb573bMjFhVjKVll8rmV6zMw==
@@ -943,7 +943,7 @@
     "@radix-ui/react-primitive" "2.1.3"
     "@radix-ui/react-use-callback-ref" "1.1.1"
 
-"@radix-ui/react-icons@^1.3.0":
+"@radix-ui/react-icons@^1.3.2":
   version "1.3.2"
   resolved "http://npm.lumigame.com/@radix-ui/react-icons/-/react-icons-1.3.2.tgz#09be63d178262181aeca5fb7f7bc944b10a7f441"
   integrity sha512-fyQIhGDhzfc9pK2kH6Pl9c4BDJGfMkPqkyIgYDthyNYoNg3wVhoJMMh19WS4Up/1KMPFVpNsT2q3WmXn2N1m6g==
@@ -955,7 +955,7 @@
   dependencies:
     "@radix-ui/react-use-layout-effect" "1.1.1"
 
-"@radix-ui/react-label@^2.1.4", "@radix-ui/react-label@^2.1.7":
+"@radix-ui/react-label@^2.1.7":
   version "2.1.8"
   resolved "http://npm.lumigame.com/@radix-ui/react-label/-/react-label-2.1.8.tgz#d93b7c063ef2ea034df143a2464bfc0548e4b7e5"
   integrity sha512-FmXs37I6hSBVDlO4y764TNz1rLgKwjJMQ0EGte6F3Cb3f4bIuHB/iLa/8I9VKkmOy+gNHq8rql3j686ACVV21A==
@@ -986,7 +986,7 @@
     aria-hidden "^1.2.4"
     react-remove-scroll "^2.6.3"
 
-"@radix-ui/react-popover@^1.1.11", "@radix-ui/react-popover@^1.1.14":
+"@radix-ui/react-popover@^1.1.14", "@radix-ui/react-popover@^1.1.15":
   version "1.1.15"
   resolved "http://npm.lumigame.com/@radix-ui/react-popover/-/react-popover-1.1.15.tgz#9c852f93990a687ebdc949b2c3de1f37cdc4c5d5"
   integrity sha512-kr0X2+6Yy/vJzLYJUPCZEc8SfQcf+1COFoAqauJm74umQhta9M7lNJHP7QQS3vkvcGLQUbWpMzwrXYwrYztHKA==
@@ -1061,36 +1061,21 @@
   dependencies:
     "@radix-ui/react-slot" "1.2.4"
 
-"@radix-ui/react-radio-group@^1.3.4":
-  version "1.3.7"
-  resolved "http://npm.lumigame.com/@radix-ui/react-radio-group/-/react-radio-group-1.3.7.tgz#49f822d97c26c4745976108a301ba2e8545d8928"
-  integrity sha512-9w5XhD0KPOrm92OTTE0SysH3sYzHsSTHNvZgUBo/VZ80VdYyB5RneDbc0dKpURS24IxkoFRu/hI0i4XyfFwY6g==
+"@radix-ui/react-radio-group@^1.3.8":
+  version "1.3.8"
+  resolved "http://npm.lumigame.com/@radix-ui/react-radio-group/-/react-radio-group-1.3.8.tgz#93f102b5b948d602c2f2adb1bc5c347cbaf64bd9"
+  integrity sha512-VBKYIYImA5zsxACdisNQ3BjCBfmbGH3kQlnFVqlWU4tXwjy7cGX8ta80BcrO+WJXIn5iBylEH3K6ZTlee//lgQ==
   dependencies:
-    "@radix-ui/primitive" "1.1.2"
+    "@radix-ui/primitive" "1.1.3"
     "@radix-ui/react-compose-refs" "1.1.2"
     "@radix-ui/react-context" "1.1.2"
     "@radix-ui/react-direction" "1.1.1"
-    "@radix-ui/react-presence" "1.1.4"
+    "@radix-ui/react-presence" "1.1.5"
     "@radix-ui/react-primitive" "2.1.3"
-    "@radix-ui/react-roving-focus" "1.1.10"
+    "@radix-ui/react-roving-focus" "1.1.11"
     "@radix-ui/react-use-controllable-state" "1.2.2"
     "@radix-ui/react-use-previous" "1.1.1"
     "@radix-ui/react-use-size" "1.1.1"
-
-"@radix-ui/react-roving-focus@1.1.10":
-  version "1.1.10"
-  resolved "http://npm.lumigame.com/@radix-ui/react-roving-focus/-/react-roving-focus-1.1.10.tgz#46030496d2a490c4979d29a7e1252465e51e4b0b"
-  integrity sha512-dT9aOXUen9JSsxnMPv/0VqySQf5eDQ6LCk5Sw28kamz8wSOW2bJdlX2Bg5VUIIcV+6XlHpWTIuTPCf/UNIyq8Q==
-  dependencies:
-    "@radix-ui/primitive" "1.1.2"
-    "@radix-ui/react-collection" "1.1.7"
-    "@radix-ui/react-compose-refs" "1.1.2"
-    "@radix-ui/react-context" "1.1.2"
-    "@radix-ui/react-direction" "1.1.1"
-    "@radix-ui/react-id" "1.1.1"
-    "@radix-ui/react-primitive" "2.1.3"
-    "@radix-ui/react-use-callback-ref" "1.1.1"
-    "@radix-ui/react-use-controllable-state" "1.2.2"
 
 "@radix-ui/react-roving-focus@1.1.11":
   version "1.1.11"
@@ -1122,7 +1107,7 @@
     "@radix-ui/react-use-callback-ref" "1.1.1"
     "@radix-ui/react-use-layout-effect" "1.1.1"
 
-"@radix-ui/react-select@^2.2.2", "@radix-ui/react-select@^2.2.5":
+"@radix-ui/react-select@^2.2.5", "@radix-ui/react-select@^2.2.6":
   version "2.2.6"
   resolved "http://npm.lumigame.com/@radix-ui/react-select/-/react-select-2.2.6.tgz#022cf8dab16bf05d0d1b4df9e53e4bea1b744fd9"
   integrity sha512-I30RydO+bnn2PQztvo25tswPH+wFBjehVGtmagkU78yMdwTwVf12wnAOF+AeP8S2N8xD+5UPbGhkUfPyvT+mwQ==
@@ -1149,20 +1134,20 @@
     aria-hidden "^1.2.4"
     react-remove-scroll "^2.6.3"
 
-"@radix-ui/react-separator@^1.1.4", "@radix-ui/react-separator@^1.1.7":
+"@radix-ui/react-separator@^1.1.7":
   version "1.1.8"
   resolved "http://npm.lumigame.com/@radix-ui/react-separator/-/react-separator-1.1.8.tgz#24f871fbf9630af316d0c14cbc7519a6e33aa11e"
   integrity sha512-sDvqVY4itsKwwSMEe0jtKgfTh+72Sy3gPmQpjqcQneqQ4PFmr/1I0YA+2/puilhggCe2gJcx5EBAYFkWkdpa5g==
   dependencies:
     "@radix-ui/react-primitive" "2.1.4"
 
-"@radix-ui/react-slider@^1.3.2":
-  version "1.3.5"
-  resolved "http://npm.lumigame.com/@radix-ui/react-slider/-/react-slider-1.3.5.tgz#f9c074dc0dd2850aa42609e72de74642a4851b79"
-  integrity sha512-rkfe2pU2NBAYfGaxa3Mqosi7VZEWX5CxKaanRv0vZd4Zhl9fvQrg0VM93dv3xGLGfrHuoTRF3JXH8nb9g+B3fw==
+"@radix-ui/react-slider@^1.3.6":
+  version "1.3.6"
+  resolved "http://npm.lumigame.com/@radix-ui/react-slider/-/react-slider-1.3.6.tgz#409453110b8f34ca00972750b80cd792f0b23a8c"
+  integrity sha512-JPYb1GuM1bxfjMRlNLE+BcmBC8onfCi60Blk7OBqi2MLTFdS+8401U4uFjnwkOr49BLmXxLC6JHkvAsx5OJvHw==
   dependencies:
     "@radix-ui/number" "1.1.1"
-    "@radix-ui/primitive" "1.1.2"
+    "@radix-ui/primitive" "1.1.3"
     "@radix-ui/react-collection" "1.1.7"
     "@radix-ui/react-compose-refs" "1.1.2"
     "@radix-ui/react-context" "1.1.2"
@@ -1173,14 +1158,14 @@
     "@radix-ui/react-use-previous" "1.1.1"
     "@radix-ui/react-use-size" "1.1.1"
 
-"@radix-ui/react-slot@1.2.3", "@radix-ui/react-slot@^1.2.0":
+"@radix-ui/react-slot@1.2.3":
   version "1.2.3"
   resolved "http://npm.lumigame.com/@radix-ui/react-slot/-/react-slot-1.2.3.tgz#502d6e354fc847d4169c3bc5f189de777f68cfe1"
   integrity sha512-aeNmHnBxbi2St0au6VBVC7JXFlhLlOnvIIlePNniyUNAClzmtAUEY8/pBiK3iHjufOlwA+c20/8jngo7xcrg8A==
   dependencies:
     "@radix-ui/react-compose-refs" "1.1.2"
 
-"@radix-ui/react-slot@1.2.4", "@radix-ui/react-slot@^1.2.3":
+"@radix-ui/react-slot@1.2.4", "@radix-ui/react-slot@^1.2.0", "@radix-ui/react-slot@^1.2.3":
   version "1.2.4"
   resolved "http://npm.lumigame.com/@radix-ui/react-slot/-/react-slot-1.2.4.tgz#63c0ba05fdf90cc49076b94029c852d7bac1fb83"
   integrity sha512-Jl+bCv8HxKnlTLVrcDE8zTMJ09R9/ukw4qBs/oZClOfoQk/cOTbDn+NceXfV7j09YPVQUryJPHurafcSg6EVKA==
@@ -1329,59 +1314,57 @@
     reselect "^5.1.0"
 
 "@rjsf/core@^6.0.0-beta.8":
-  version "6.0.0-beta.8"
-  resolved "http://npm.lumigame.com/@rjsf/core/-/core-6.0.0-beta.8.tgz#ba3b631024685994ac46af14dfbd23d7d67569ae"
-  integrity sha512-pfbnwOLospssSrZ9YG6T4yVHLRnIyveX0mcsI+q4pJIUAgVUM2a4PYnh+go4OjLGzbY2Tq56kb3Bw0CXB/jEqw==
+  version "6.1.2"
+  resolved "http://npm.lumigame.com/@rjsf/core/-/core-6.1.2.tgz#e31346432982f38b30b041081cea8b49c8bd24a9"
+  integrity sha512-fcEO6kArMcVIzTBoBxNStqxzAL417NDw049nmNx11pIcMwUnU5sAkSW18c8kgZOT6v1xaZhQrY+X5cBzzHy9+g==
   dependencies:
     lodash "^4.17.21"
     lodash-es "^4.17.21"
-    markdown-to-jsx "^7.7.6"
-    nanoid "^5.1.5"
+    markdown-to-jsx "^8.0.0"
     prop-types "^15.8.1"
 
 "@rjsf/shadcn@^6.0.0-beta.10":
-  version "6.0.0-beta.10"
-  resolved "http://npm.lumigame.com/@rjsf/shadcn/-/shadcn-6.0.0-beta.10.tgz#2bfb2a64bab9ca681e813c978f69eda431bbd08b"
-  integrity sha512-BXgbCZF+Xb7lqLYBWYRcq4xamB2I41yOx0fT7dNs09CbnyWge4yziE6Ebm7R4N87qf2M320PLdJymcpUe5WtLA==
+  version "6.1.2"
+  resolved "http://npm.lumigame.com/@rjsf/shadcn/-/shadcn-6.1.2.tgz#8ff3d2486518dab9d067d691deadfa8997075fe4"
+  integrity sha512-HnPqTUzQaiBpJuCtpSXtHrItwS9i8LNZP242zMFqgyoUSGL6lete4OQnnDqUn7VugcEcuVaEeOn3N94UxsyZuw==
   dependencies:
-    "@radix-ui/react-checkbox" "^1.2.3"
-    "@radix-ui/react-dialog" "^1.1.11"
-    "@radix-ui/react-icons" "^1.3.0"
-    "@radix-ui/react-label" "^2.1.4"
-    "@radix-ui/react-popover" "^1.1.11"
-    "@radix-ui/react-radio-group" "^1.3.4"
-    "@radix-ui/react-select" "^2.2.2"
-    "@radix-ui/react-separator" "^1.1.4"
-    "@radix-ui/react-slider" "^1.3.2"
+    "@radix-ui/react-checkbox" "^1.3.3"
+    "@radix-ui/react-dialog" "^1.1.15"
+    "@radix-ui/react-icons" "^1.3.2"
+    "@radix-ui/react-label" "^2.1.7"
+    "@radix-ui/react-popover" "^1.1.15"
+    "@radix-ui/react-radio-group" "^1.3.8"
+    "@radix-ui/react-select" "^2.2.6"
+    "@radix-ui/react-separator" "^1.1.7"
+    "@radix-ui/react-slider" "^1.3.6"
     "@radix-ui/react-slot" "^1.2.0"
     "@react-icons/all-files" "^4.1.0"
-    class-variance-authority "^0.7.0"
+    class-variance-authority "^0.7.1"
     clsx "^2.1.1"
-    cmdk "^1.0.0"
+    cmdk "^1.1.1"
     lodash "^4.17.21"
     lodash-es "^4.17.21"
-    lucide-react "^0.503.0"
-    tailwind-merge "^3.2.0"
+    lucide-react "^0.548.0"
+    tailwind-merge "^3.3.1"
     tailwindcss-animate "^1.0.7"
-    uuid "^11.1.0"
+    uuid "^13.0.0"
 
 "@rjsf/utils@^6.0.0-beta.8":
-  version "6.0.0-beta.8"
-  resolved "http://npm.lumigame.com/@rjsf/utils/-/utils-6.0.0-beta.8.tgz#07bc09310d3ed9f1f9d35f96031b618d1bdc4869"
-  integrity sha512-Moa/2kW2SgpASPYV/0acdKbs8dUq+ehcihSJiAuA2L3XLNhTLXrJts2lUbM9QMVRg/TlsRykKU90l5GplBwu8Q==
+  version "6.1.2"
+  resolved "http://npm.lumigame.com/@rjsf/utils/-/utils-6.1.2.tgz#bba9d98ba451697519655ab7990262dc0bcf37dd"
+  integrity sha512-Px3FIkE1KK0745Qng9v88RZ0O7hcLf/1JUu0j00g+r6C8Zyokna42Hz/5TKyyQSKJqgVYcj2Z47YroVLenUM3A==
   dependencies:
-    fast-uri "^3.0.6"
-    json-schema-merge-allof "^0.8.1"
+    "@x0k/json-schema-merge" "^1.0.2"
+    fast-uri "^3.1.0"
     jsonpointer "^5.0.1"
     lodash "^4.17.21"
     lodash-es "^4.17.21"
-    nanoid "^5.1.5"
-    react-is "^18.2.0"
+    react-is "^18.3.1"
 
 "@rjsf/validator-ajv8@^6.0.0-beta.8":
-  version "6.0.0-beta.17"
-  resolved "http://npm.lumigame.com/@rjsf/validator-ajv8/-/validator-ajv8-6.0.0-beta.17.tgz#f3eb731507918b419facd4f8f8a70628bb903bb5"
-  integrity sha512-TPtnuVtjin907r9k49d/fwCCP4B2RAGMucjLveTl17ZCC4xIDOx6c1vM+BaUpxmdLDORvT44i2g/vzeliv/mfA==
+  version "6.1.2"
+  resolved "http://npm.lumigame.com/@rjsf/validator-ajv8/-/validator-ajv8-6.1.2.tgz#67d6d54a8d3ab9027c253e78e1e4cef9faf87720"
+  integrity sha512-9P3np2d+TaZcFTEFLocbj19fqrAWB/bxtY0Y8EjP8Oiz8LL+/wUITaN3Wx9uxzWerJyphfpZXWhUS9XkllDLig==
   dependencies:
     ajv "^8.17.1"
     ajv-formats "^2.1.1"
@@ -2288,6 +2271,13 @@
     loupe "^3.1.4"
     tinyrainbow "^2.0.0"
 
+"@x0k/json-schema-merge@^1.0.2":
+  version "1.0.2"
+  resolved "http://npm.lumigame.com/@x0k/json-schema-merge/-/json-schema-merge-1.0.2.tgz#38ebed7cb4c375be3ca3e542197cac7ce2acb664"
+  integrity sha512-1734qiJHNX3+cJGDMMw2yz7R+7kpbAtl5NdPs1c/0gO5kYT6s4dMbLXiIfpZNsOYhGZI3aH7FWrj4Zxz7epXNg==
+  dependencies:
+    "@types/json-schema" "^7.0.15"
+
 acorn-jsx@^5.3.2:
   version "5.3.2"
   resolved "http://npm.lumigame.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz#7ed5bb55908b3b2f1bc55c6af1653bada7f07937"
@@ -2510,7 +2500,7 @@ check-error@^2.1.1:
   resolved "http://npm.lumigame.com/check-error/-/check-error-2.1.1.tgz#87eb876ae71ee388fa0471fe423f494be1d96ccc"
   integrity sha512-OAlb+T7V4Op9OwdkjmguYRqncdlx5JiofwOAUkmTF+jNdHwzTaTs4sRAGpzLF3oOz5xAyDGrPgeIDFQmDOTiJw==
 
-class-variance-authority@^0.7.0, class-variance-authority@^0.7.1:
+class-variance-authority@^0.7.1:
   version "0.7.1"
   resolved "http://npm.lumigame.com/class-variance-authority/-/class-variance-authority-0.7.1.tgz#4008a798a0e4553a781a57ac5177c9fb5d043787"
   integrity sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg==
@@ -2522,7 +2512,7 @@ clsx@^2.1.1:
   resolved "http://npm.lumigame.com/clsx/-/clsx-2.1.1.tgz#eed397c9fd8bd882bfb18deab7102049a2f32999"
   integrity sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==
 
-cmdk@^1.0.0, cmdk@^1.1.1:
+cmdk@^1.1.1:
   version "1.1.1"
   resolved "http://npm.lumigame.com/cmdk/-/cmdk-1.1.1.tgz#b8524272699ccaa37aaf07f36850b376bf3d58e5"
   integrity sha512-Vsv7kFaXm+ptHDMZ7izaRsP70GgrW9NBNGswt9OZaVBLlE0SNpDq8eu/VGXyF9r7M0azK3Wy7OlYXsuyYLFzHg==
@@ -2550,25 +2540,6 @@ combined-stream@^1.0.8:
   integrity sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==
   dependencies:
     delayed-stream "~1.0.0"
-
-compute-gcd@^1.2.1:
-  version "1.2.1"
-  resolved "http://npm.lumigame.com/compute-gcd/-/compute-gcd-1.2.1.tgz#34d639f3825625e1357ce81f0e456a6249d8c77f"
-  integrity sha512-TwMbxBNz0l71+8Sc4czv13h4kEqnchV9igQZBi6QUaz09dnz13juGnnaWWJTRsP3brxOoxeB4SA2WELLw1hCtg==
-  dependencies:
-    validate.io-array "^1.0.3"
-    validate.io-function "^1.0.2"
-    validate.io-integer-array "^1.0.0"
-
-compute-lcm@^1.1.2:
-  version "1.1.2"
-  resolved "http://npm.lumigame.com/compute-lcm/-/compute-lcm-1.1.2.tgz#9107c66b9dca28cefb22b4ab4545caac4034af23"
-  integrity sha512-OFNPdQAXnQhDSKioX8/XYT6sdUlXwpeMjfd6ApxMJfyZ4GxmLR1xvMERctlYhlHwIiz6CSpBc2+qYKjHGZw4TQ==
-  dependencies:
-    compute-gcd "^1.2.1"
-    validate.io-array "^1.0.3"
-    validate.io-function "^1.0.2"
-    validate.io-integer-array "^1.0.0"
 
 concat-map@0.0.1:
   version "0.0.1"
@@ -3036,15 +3007,10 @@ fast-levenshtein@^2.0.6:
   resolved "http://npm.lumigame.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
-fast-uri@^3.0.1:
+fast-uri@^3.0.1, fast-uri@^3.1.0:
   version "3.1.0"
   resolved "http://npm.lumigame.com/fast-uri/-/fast-uri-3.1.0.tgz#66eecff6c764c0df9b762e62ca7edcfb53b4edfa"
   integrity sha512-iPeeDKJSWf4IEOasVVrknXpaBV0IApz/gp7S2bb7Z4Lljbl2MGJRqInZiUrQwV16cpzw/D3S5j5Julj/gT52AA==
-
-fast-uri@^3.0.6:
-  version "3.0.6"
-  resolved "http://npm.lumigame.com/fast-uri/-/fast-uri-3.0.6.tgz#88f130b77cfaea2378d56bf970dea21257a68748"
-  integrity sha512-Atfo14OibSv5wAp4VWNsFYE1AchQRTv9cBGWET4pZWHzYshFSS9NQI6I57rdKn9croWVMbYFbLhJ+yJvmZIIHw==
 
 fastq@^1.6.0:
   version "1.19.1"
@@ -3469,22 +3435,6 @@ json-merge-patch@^1.0.2:
   dependencies:
     fast-deep-equal "^3.1.3"
 
-json-schema-compare@^0.2.2:
-  version "0.2.2"
-  resolved "http://npm.lumigame.com/json-schema-compare/-/json-schema-compare-0.2.2.tgz#dd601508335a90c7f4cfadb6b2e397225c908e56"
-  integrity sha512-c4WYmDKyJXhs7WWvAWm3uIYnfyWFoIp+JEoX34rctVvEkMYCPGhXtvmFFXiffBbxfZsvQ0RNnV5H7GvDF5HCqQ==
-  dependencies:
-    lodash "^4.17.4"
-
-json-schema-merge-allof@^0.8.1:
-  version "0.8.1"
-  resolved "http://npm.lumigame.com/json-schema-merge-allof/-/json-schema-merge-allof-0.8.1.tgz#ed2828cdd958616ff74f932830a26291789eaaf2"
-  integrity sha512-CTUKmIlPJbsWfzRRnOXz+0MjIqvnleIXwFTzz+t9T86HnYX/Rozria6ZVGLktAU9e+NygNljveP+yxqtQp/Q4w==
-  dependencies:
-    compute-lcm "^1.1.2"
-    json-schema-compare "^0.2.2"
-    lodash "^4.17.20"
-
 json-schema-traverse@^0.4.1:
   version "0.4.1"
   resolved "http://npm.lumigame.com/json-schema-traverse/-/json-schema-traverse-0.4.1.tgz#69f6a87d9513ab8bb8fe63bdb0979c448e684660"
@@ -3616,7 +3566,7 @@ lodash.merge@^4.6.2:
   resolved "http://npm.lumigame.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
   integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
 
-lodash@^4.17.20, lodash@^4.17.21, lodash@^4.17.4:
+lodash@^4.17.21:
   version "4.17.21"
   resolved "http://npm.lumigame.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -3650,15 +3600,15 @@ lru-cache@^5.1.1:
   dependencies:
     yallist "^3.0.2"
 
-lucide-react@^0.503.0:
-  version "0.503.0"
-  resolved "http://npm.lumigame.com/lucide-react/-/lucide-react-0.503.0.tgz#4ac55b262fa613f9497531c9df50ea0e883d2de2"
-  integrity sha512-HGGkdlPWQ0vTF8jJ5TdIqhQXZi6uh3LnNgfZ8MHiuxFfX3RZeA79r2MW2tHAZKlAVfoNE8esm3p+O6VkIvpj6w==
-
 lucide-react@^0.544.0:
   version "0.544.0"
   resolved "http://npm.lumigame.com/lucide-react/-/lucide-react-0.544.0.tgz#4719953c10fd53a64dd8343bb0ed16ec79f3eeef"
   integrity sha512-t5tS44bqd825zAW45UQxpG2CvcC4urOwn2TrwSH8u+MjeE+1NnWl6QqeQ/6NdjMqdOygyiT9p3Ev0p1NJykxjw==
+
+lucide-react@^0.548.0:
+  version "0.548.0"
+  resolved "http://npm.lumigame.com/lucide-react/-/lucide-react-0.548.0.tgz#14db954aea4d6e5c0ae9cbb107cdeb86197922e6"
+  integrity sha512-63b16z63jM9yc1MwxajHeuu0FRZFsDtljtDjYm26Kd86UQ5HQzu9ksEtoUUw4RBuewodw/tGFmvipePvRsKeDA==
 
 lz-string@^1.5.0:
   version "1.5.0"
@@ -3695,10 +3645,10 @@ make-dir@^4.0.0:
   dependencies:
     semver "^7.5.3"
 
-markdown-to-jsx@^7.7.6:
-  version "7.7.8"
-  resolved "http://npm.lumigame.com/markdown-to-jsx/-/markdown-to-jsx-7.7.8.tgz#d971e9531b408a6514f760c3b018b4f330a2e647"
-  integrity sha512-e+5bQJ30iIyJUV4tH/3wuBjpE5muLXsuBBi30N9t3B9O+UomC1Ocdqu7uD3X4YqtPrNLz+6QwHJaD7CXURBi+w==
+markdown-to-jsx@^8.0.0:
+  version "8.0.0"
+  resolved "http://npm.lumigame.com/markdown-to-jsx/-/markdown-to-jsx-8.0.0.tgz#324935e46671c6ec56c6c36fc0c737086f59267e"
+  integrity sha512-hWEaRxeCDjes1CVUQqU+Ov0mCqBqkGhLKjL98KdbwHSgEWZZSJQeGlJQatVfeZ3RaxrfTrZZ3eczl2dhp5c/pA==
 
 math-intrinsics@^1.1.0:
   version "1.1.0"
@@ -3775,11 +3725,6 @@ nanoid@^3.3.11:
   version "3.3.11"
   resolved "http://npm.lumigame.com/nanoid/-/nanoid-3.3.11.tgz#4f4f112cefbe303202f2199838128936266d185b"
   integrity sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==
-
-nanoid@^5.1.5:
-  version "5.1.5"
-  resolved "http://npm.lumigame.com/nanoid/-/nanoid-5.1.5.tgz#f7597f9d9054eb4da9548cdd53ca70f1790e87de"
-  integrity sha512-Ir/+ZpE9fDsNH0hQ3C68uyThDXzYcim2EqcZ8zn8Chtt1iylPT9xXJB0kPCnqzgcEGikO9RxSrh63MsmVCU7Fw==
 
 natural-compare@^1.4.0:
   version "1.4.0"
@@ -3967,7 +3912,7 @@ react-is@^17.0.1:
   resolved "http://npm.lumigame.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-is@^18.2.0:
+react-is@^18.3.1:
   version "18.3.1"
   resolved "http://npm.lumigame.com/react-is/-/react-is-18.3.1.tgz#e83557dc12eae63a99e003a46388b1dcbb44db7e"
   integrity sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==
@@ -3994,9 +3939,9 @@ react-remove-scroll-bar@^2.3.7:
     tslib "^2.0.0"
 
 react-remove-scroll@^2.6.3:
-  version "2.7.1"
-  resolved "http://npm.lumigame.com/react-remove-scroll/-/react-remove-scroll-2.7.1.tgz#d2101d414f6d81d7d3bf033f3c1cb4785789f753"
-  integrity sha512-HpMh8+oahmIdOuS5aFKKY6Pyog+FNaZV/XyJOq7b4YFwsFHe5yYfdbIalI4k3vU2nSDql7YskmUseHsRrJqIPA==
+  version "2.7.2"
+  resolved "http://npm.lumigame.com/react-remove-scroll/-/react-remove-scroll-2.7.2.tgz#6442da56791117661978ae99cd29be9026fecca0"
+  integrity sha512-Iqb9NjCCTt6Hf+vOdNIZGdTiH1QSqr27H/Ek9sv/a97gfueI/5h1s3yRi1nngzMUaOOToin5dI1dXKdXiF+u0Q==
   dependencies:
     react-remove-scroll-bar "^2.3.7"
     react-style-singleton "^2.2.3"
@@ -4310,10 +4255,15 @@ symbol-tree@^3.2.4:
   resolved "http://npm.lumigame.com/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
 
-tailwind-merge@^3.2.0, tailwind-merge@^3.3.0:
+tailwind-merge@^3.3.0:
   version "3.3.1"
   resolved "http://npm.lumigame.com/tailwind-merge/-/tailwind-merge-3.3.1.tgz#a7e7db7c714f6020319e626ecfb7e7dac8393a4b"
   integrity sha512-gBXpgUm/3rp1lMZZrM/w7D8GKqshif0zAymAhbCyIt8KMe+0v9DQ7cdYLR4FHH/cKpdTXb+A/tKKU3eolfsI+g==
+
+tailwind-merge@^3.3.1:
+  version "3.4.0"
+  resolved "http://npm.lumigame.com/tailwind-merge/-/tailwind-merge-3.4.0.tgz#5a264e131a096879965f1175d11f8c36e6b64eca"
+  integrity sha512-uSaO4gnW+b3Y2aWoWfFpX62vn2sR3skfhbjsEnaBI81WD1wBLlHZe5sWf0AqjksNdYTbGBEd0UasQMT3SNV15g==
 
 tailwindcss-animate@^1.0.7:
   version "1.0.7"
@@ -4500,40 +4450,10 @@ use-sync-external-store@^1.5.0:
   resolved "http://npm.lumigame.com/use-sync-external-store/-/use-sync-external-store-1.6.0.tgz#b174bfa65cb2b526732d9f2ac0a408027876f32d"
   integrity sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==
 
-uuid@^11.1.0:
-  version "11.1.0"
-  resolved "http://npm.lumigame.com/uuid/-/uuid-11.1.0.tgz#9549028be1753bb934fc96e2bca09bb4105ae912"
-  integrity sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==
-
-validate.io-array@^1.0.3:
-  version "1.0.6"
-  resolved "http://npm.lumigame.com/validate.io-array/-/validate.io-array-1.0.6.tgz#5b5a2cafd8f8b85abb2f886ba153f2d93a27774d"
-  integrity sha512-DeOy7CnPEziggrOO5CZhVKJw6S3Yi7e9e65R1Nl/RTN1vTQKnzjfvks0/8kQ40FP/dsjRAOd4hxmJ7uLa6vxkg==
-
-validate.io-function@^1.0.2:
-  version "1.0.2"
-  resolved "http://npm.lumigame.com/validate.io-function/-/validate.io-function-1.0.2.tgz#343a19802ed3b1968269c780e558e93411c0bad7"
-  integrity sha512-LlFybRJEriSuBnUhQyG5bwglhh50EpTL2ul23MPIuR1odjO7XaMLFV8vHGwp7AZciFxtYOeiSCT5st+XSPONiQ==
-
-validate.io-integer-array@^1.0.0:
-  version "1.0.0"
-  resolved "http://npm.lumigame.com/validate.io-integer-array/-/validate.io-integer-array-1.0.0.tgz#2cabde033293a6bcbe063feafe91eaf46b13a089"
-  integrity sha512-mTrMk/1ytQHtCY0oNO3dztafHYyGU88KL+jRxWuzfOmQb+4qqnWmI+gykvGp8usKZOM0H7keJHEbRaFiYA0VrA==
-  dependencies:
-    validate.io-array "^1.0.3"
-    validate.io-integer "^1.0.4"
-
-validate.io-integer@^1.0.4:
-  version "1.0.5"
-  resolved "http://npm.lumigame.com/validate.io-integer/-/validate.io-integer-1.0.5.tgz#168496480b95be2247ec443f2233de4f89878068"
-  integrity sha512-22izsYSLojN/P6bppBqhgUDjCkr5RY2jd+N2a3DCAUey8ydvrZ/OkGvFPR7qfOpwR2LC5p4Ngzxz36g5Vgr/hQ==
-  dependencies:
-    validate.io-number "^1.0.3"
-
-validate.io-number@^1.0.3:
-  version "1.0.3"
-  resolved "http://npm.lumigame.com/validate.io-number/-/validate.io-number-1.0.3.tgz#f63ffeda248bf28a67a8d48e0e3b461a1665baf8"
-  integrity sha512-kRAyotcbNaSYoDnXvb4MHg/0a1egJdLwS6oJ38TJY7aw9n93Fl/3blIXdyYvPOp55CNxywooG/3BcrwNrBpcSg==
+uuid@^13.0.0:
+  version "13.0.0"
+  resolved "http://npm.lumigame.com/uuid/-/uuid-13.0.0.tgz#263dc341b19b4d755eb8fe36b78d95a6b65707e8"
+  integrity sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==
 
 vaul@^1.1.2:
   version "1.1.2"
