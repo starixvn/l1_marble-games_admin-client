@@ -1810,17 +1810,17 @@
   dependencies:
     "@typescript-eslint/utils" "^8.44.1"
 
-"@tanstack/query-core@5.90.7":
-  version "5.90.7"
-  resolved "http://npm.lumigame.com/@tanstack/query-core/-/query-core-5.90.7.tgz#ebe0d692e83bd76bde36a371955b0944a204f10c"
-  integrity sha512-6PN65csiuTNfBMXqQUxQhCNdtm1rV+9kC9YwWAIKcaxAauq3Wu7p18j3gQY3YIBJU70jT/wzCCZ2uqto/vQgiQ==
+"@tanstack/query-core@5.90.12":
+  version "5.90.12"
+  resolved "http://npm.lumigame.com/@tanstack/query-core/-/query-core-5.90.12.tgz#e1f5f47e72ef7d0fc794325936921c700352515e"
+  integrity sha512-T1/8t5DhV/SisWjDnaiU2drl6ySvsHj1bHBCWNXd+/T+Hh1cf6JodyEYMd5sgwm+b/mETT4EV3H+zCVczCU5hg==
 
 "@tanstack/react-query@^5.80.5":
-  version "5.90.7"
-  resolved "http://npm.lumigame.com/@tanstack/react-query/-/react-query-5.90.7.tgz#68a32e9fc2bf8fa8c7890177f5ec35653731a1dd"
-  integrity sha512-wAHc/cgKzW7LZNFloThyHnV/AX9gTg3w5yAv0gvQHPZoCnepwqCMtzbuPbb2UvfvO32XZ46e8bPOYbfZhzVnnQ==
+  version "5.90.12"
+  resolved "http://npm.lumigame.com/@tanstack/react-query/-/react-query-5.90.12.tgz#49536842eff6487a9e645a453fea2642d8f4f209"
+  integrity sha512-graRZspg7EoEaw0a8faiUASCyJrqjKPdqJ9EwuDRUF9mEYJ1YPczI9H+/agJ0mOJkPCJDk0lsz5QTrLZ/jQ2rg==
   dependencies:
-    "@tanstack/query-core" "5.90.7"
+    "@tanstack/query-core" "5.90.12"
 
 "@tanstack/react-table@^8.21.3":
   version "8.21.3"
